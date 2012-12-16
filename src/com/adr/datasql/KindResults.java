@@ -38,6 +38,8 @@ public interface KindResults {
     public Date getTimestamp(String columnName) throws SQLException;
     public Date getDate(int columnIndex) throws SQLException;
     public Date getDate(String columnName) throws SQLException;
+    public Date getTime(int columnIndex) throws SQLException;
+    public Date getTime(String columnName) throws SQLException;
     public byte[] getBytes(int columnIndex) throws SQLException;
     public byte[] getBytes(String columnName) throws SQLException;
 }

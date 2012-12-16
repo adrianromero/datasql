@@ -99,6 +99,16 @@ public class StatementSelect<T> extends Statement {
             return da == null ? null : new java.util.Date(da.getTime());
         }
         @Override
+        public java.util.Date getTime(int columnIndex) throws SQLException {
+            java.sql.Time da = resultset.getTime(columnIndex);
+            return da == null ? null : new java.util.Date(da.getTime());
+        }
+        @Override
+        public java.util.Date getTime(String columnName) throws SQLException {
+            java.sql.Time da = resultset.getTime(columnName);
+            return da == null ? null : new java.util.Date(da.getTime());
+        }        
+        @Override
         public byte[] getBytes(int columnIndex) throws SQLException {
             return resultset.getBytes(columnIndex);
         }

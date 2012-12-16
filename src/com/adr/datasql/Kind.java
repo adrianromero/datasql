@@ -18,7 +18,12 @@
 package com.adr.datasql;
 
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -31,8 +36,10 @@ public abstract class Kind<T> {
     public final static Kind<Number> DOUBLE = new KindDOUBLE();
     public final static Kind<Boolean> BOOLEAN = new KindBOOLEAN();
     public final static Kind<Date> TIMESTAMP = new KindTIMESTAMP();
-//    public final static Kind<String> DATETIME = new KindDATETIME(); // JS Date Time
     public final static Kind<Date> DATE = new KindDATE();
+    public final static Kind<String> ISODATETIME = new KindISODATETIME();
+    public final static Kind<String> ISODATE = new KindISODATE();
+    public final static Kind<String> ISOTIME = new KindISOTIME();
     public final static Kind<byte[]> BYTEA = new KindBYTEA();
     public final static Kind<String> BASE64 = new KindBASE64();
 
@@ -136,26 +143,129 @@ public abstract class Kind<T> {
         }
     }
     
-//    private static final class KindDATETIME extends Kind<String> {
-//        @Override
-//        public String get(KindResults read, String name) throws SQLException {
-//            return read.getTimestamp(name);
-//        }
-//        @Override
-//        public String get(KindResults read, int index) throws SQLException {
-//            return read.getTimestamp(index);
-//        }
-//        @Override
-//        public void set(KindParameters write, String name, String value) throws SQLException {
-//            write.setTimestamp(name, value);
-//        }
-//        @Override
-//        public void set(KindParameters write, int index, String value) throws SQLException {
-//            write.setTimestamp(index, value);
-//        }
-//    }
-    
+    private static final class KindISODATETIME extends Kind<String> {
+        
+        private static DateFormat isodatetime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        private static DateFormat isodate = new SimpleDateFormat("yyyy-MM-dd");
+        
+        public String format(Date d) {
+            return d == null ? null : isodatetime.format(d);
+        }
+        
+        public Date parse(String s) throws ParseException {
+            if (s == null) {
+                return null;
+            } else {
+                try {
+                    return isodatetime.parse(s);
+                } catch (ParseException ex) {
+                    return isodate.parse(s);                   
+                }
+            }   
+        }
 
+        @Override
+        public String get(KindResults read, String name) throws SQLException {
+            return format(read.getTimestamp(name));
+        }
+        @Override
+        public String get(KindResults read, int index) throws SQLException {
+            return format(read.getTimestamp(index));
+        }
+        @Override
+        public void set(KindParameters write, String name, String value) throws SQLException {
+            try {
+                write.setTimestamp(name, parse(value));
+            } catch (ParseException ex) {
+                throw new SQLException(ex);
+            }
+        }
+        @Override
+        public void set(KindParameters write, int index, String value) throws SQLException {
+            try {
+                write.setTimestamp(index, parse(value));
+            } catch (ParseException ex) {
+                throw new SQLException(ex);
+            }
+        }
+    }
+    
+    private static final class KindISODATE extends Kind<String> {
+        
+        private static DateFormat isodate = new SimpleDateFormat("yyyy-MM-dd");
+        
+        public String format(Date d) {
+            return d == null ? null : isodate.format(d);
+        }
+        
+        public Date parse(String s) throws ParseException {
+            return s == null ? null : isodate.parse(s); 
+        }
+
+        @Override
+        public String get(KindResults read, String name) throws SQLException {
+            return format(read.getDate(name));
+        }
+        @Override
+        public String get(KindResults read, int index) throws SQLException {
+            return format(read.getDate(index));
+        }
+        @Override
+        public void set(KindParameters write, String name, String value) throws SQLException {
+            try {
+                write.setDate(name, parse(value));
+            } catch (ParseException ex) {
+                throw new SQLException(ex);
+            }
+        }
+        @Override
+        public void set(KindParameters write, int index, String value) throws SQLException {
+            try {
+                write.setDate(index, parse(value));
+            } catch (ParseException ex) {
+                throw new SQLException(ex);
+            }
+        }
+    }    
+    
+    private static final class KindISOTIME extends Kind<String> {
+        
+        private static DateFormat isotime = new SimpleDateFormat("HH:mm:ss.SSS");
+        
+        public String format(Date d) {
+            return d == null ? null : isotime.format(d);
+        }
+        
+        public Date parse(String s) throws ParseException {
+            return s == null ? null : isotime.parse(s); 
+        }
+
+        @Override
+        public String get(KindResults read, String name) throws SQLException {
+            return format(read.getTime(name));
+        }
+        @Override
+        public String get(KindResults read, int index) throws SQLException {
+            return format(read.getTime(index));
+        }
+        @Override
+        public void set(KindParameters write, String name, String value) throws SQLException {
+            try {
+                write.setTime(name, parse(value));
+            } catch (ParseException ex) {
+                throw new SQLException(ex);
+            }
+        }
+        @Override
+        public void set(KindParameters write, int index, String value) throws SQLException {
+            try {
+                write.setTime(index, parse(value));
+            } catch (ParseException ex) {
+                throw new SQLException(ex);
+            }
+        }
+    }    
+    
     private static final class KindDATE extends Kind<Date> {
         @Override
         public Date get(KindResults read, String name) throws SQLException {

@@ -38,6 +38,8 @@ public interface KindParameters {
     public void setTimestamp(String paramName, Date dValue) throws SQLException;
     public void setDate(int paramIndex, Date dValue) throws SQLException;
     public void setDate(String paramName, Date dValue) throws SQLException;
+    public void setTime(int paramIndex, Date dValue) throws SQLException;
+    public void setTime(String paramName, Date dValue) throws SQLException;
     public void setBytes(int paramIndex, byte[] value) throws SQLException;
     public void setBytes(String paramName, byte[] value) throws SQLException;
 }

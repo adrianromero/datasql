@@ -139,6 +139,18 @@ public abstract class Statement {
             }               
         }
         @Override
+        public void setTime(int paramIndex, java.util.Date dValue) throws SQLException {
+            stmt.setObject(paramIndex, dValue == null ? null : new java.sql.Date(dValue.getTime()), Types.TIME);
+        }
+        @Override
+        public void setTime(String paramName, java.util.Date dValue) throws SQLException {
+            for (int i = 0; i < params.length; i++) {
+                if (params[i] != null && params[i].equals(paramName)) {
+                    setTime(i + 1, dValue);
+                }
+            }               
+        }        
+        @Override
         public void setBytes(int paramIndex, byte[] value) throws SQLException {
             stmt.setBytes(paramIndex, value);
         }
