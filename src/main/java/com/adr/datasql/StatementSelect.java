@@ -26,11 +26,12 @@ import java.util.List;
 /**
  *
  * @author  adrianromero
+ * @param <T>
  */
 public class StatementSelect<T> extends Statement {
 
     private ResultSet resultset;
-    private KindResults kr = new KindResultsMap();
+    private final KindResults kr = new KindResultsMap();
 
     public StatementSelect(Connection conn, String sql) {
         super(conn, sql);
