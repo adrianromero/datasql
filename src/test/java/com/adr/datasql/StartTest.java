@@ -19,6 +19,9 @@ package com.adr.datasql;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.derby.jdbc.EmbeddedConnectionPoolDataSource;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -70,12 +73,29 @@ public class StartTest {
     }
     
      @Test
-     public void test1() throws SQLException {
+     public void test1() throws SQLException, ParseException {
 
          try (Connection c = cpds.getConnection()) {
              System.out.println(c.toString());
+             
+             Session session = new Session(c);
+             
+             session.exec(new SQLQuery("drop table mytest"));
+             session.exec(new SQLQuery("create table mytest(id varchar(32), code varchar(128), name varchar(1024))"));
+             
+             session.exec(new SQLQuery("insert into mytest(id, code, name) values (?, ?, ?)"), "one", "code one", "name one");
+             
+             
+             Map<String, String> parameters = new HashMap<String, String>();
+             parameters.put("id", "two");
+             parameters.put("code", "two code");
+             parameters.put("name", "two name");
+             session.exec(new NamedSQLQuery("insert into mytest(id, code, name) values (:id, :code, :name)"), parameters);
+             
+             
+             String [] result = session.find(new SQLQuery("select id, code, name from mytest where id = ?"), "two");
+             
+             System.out.println("--> " + result[0] + ", " + result[1] + ", " + result[2]);
          }
-     }
-     
-     
+     } 
 }

@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2012 Adrián Romero Corchado.
+//    Copyright (C) 2012-2014 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -42,4 +42,6 @@ public interface KindParameters {
     public void setTime(String paramName, Date dValue) throws SQLException;
     public void setBytes(int paramIndex, byte[] value) throws SQLException;
     public void setBytes(String paramName, byte[] value) throws SQLException;
+    
+    public int size() throws SQLException;
 }

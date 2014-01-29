@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2012 Adrián Romero Corchado.
+//    Copyright (C) 2014 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -15,27 +15,23 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql;
+package com.adr.datasql.data;
+
+import com.adr.datasql.KindParameters;
+import com.adr.datasql.Parameters;
+import java.sql.SQLException;
+import java.util.Map;
 
 /**
  *
  * @author adrian
  */
-public class KindValue<T> {
+public class ParametersStringMap implements Parameters<Map<String,String>> {
 
-    protected Kind<T> kind;
-    protected T value;
-
-    public KindValue(Kind<T> kind, T value) {
-        this.kind = kind;
-        this.value = value;
-    }
-
-    public Kind<T> getKind() {
-        return kind;
-    }
-
-    public T getValue() {
-        return value;
-    }
+    @Override
+    public void write(KindParameters dp, Map<String,String> param) throws SQLException {
+        for (Map.Entry<String, String> entry: param.entrySet()) {
+            dp.setString(entry.getKey(), entry.getValue());
+        }
+    } 
 }

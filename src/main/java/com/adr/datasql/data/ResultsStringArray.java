@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2012 Adrián Romero Corchado.
+//    Copyright (C) 2014 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -15,33 +15,28 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql;
+package com.adr.datasql.data;
 
+import com.adr.datasql.KindResults;
+import com.adr.datasql.Results;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  *
  * @author adrian
  */
-public class ResultsMap implements Results<Map<String, Object>> {
-
-    private KindValue<String>[] values;
-
-    public ResultsMap(KindValue<String> ... values) {
-        this.values = values;
-    }
+public class ResultsStringArray  implements Results<String[]> {
 
     @Override
-    public Map<String, Object> read(KindResults kr) throws SQLException {
+    public String[] read(KindResults kr) throws SQLException {
+        
+        int size = kr.size();
 
-        Map<String,Object> result = new HashMap<String, Object>();
-
-        for(KindValue<String> v : values) {
-            result.put(v.getValue(), v.getKind().get(kr, v.getValue()));
+        String[] result = new String[size];
+        for(int i = 0; i < size; i++) {
+            result[i] = kr.getString(i + 1);
         }
-
         return result;
     }
+    
 }

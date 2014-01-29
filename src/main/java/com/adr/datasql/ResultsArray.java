@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2012 Adrián Romero Corchado.
+//    Copyright (C) 2012-2014 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -25,7 +25,7 @@ import java.sql.SQLException;
  */
 public class ResultsArray implements Results<Object[]> {
 
-    private Kind[] kinds;
+    private final Kind[] kinds;
 
     public ResultsArray(Kind... kinds) {
         this.kinds = kinds;

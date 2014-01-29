@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2012-2014 Adrián Romero Corchado.
+//    Copyright (C) 2014 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -15,15 +15,25 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql;
+package com.adr.datasql.data;
 
+import com.adr.datasql.KindParameters;
+import com.adr.datasql.Parameters;
 import java.sql.SQLException;
 
 /**
  *
  * @author adrian
- * @param <T>
  */
-public interface Parameters<T> {
-    public void write(KindParameters dp, T param) throws SQLException;
+public class ParametersStringArray implements Parameters<String[]> {
+    @Override
+    public void write(KindParameters dp, String[] param) throws SQLException {
+        
+        int size = dp.size();
+        
+        for(int i = 0; i < size; i++) {
+            dp.setString(i + 1, i< param.length ? param[i] : null);
+        }
+    }
 }
+
