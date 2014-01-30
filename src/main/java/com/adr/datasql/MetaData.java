@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2014 Adrián Romero Corchado.
+//    Copyright (C) 2012-2014 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -20,13 +20,14 @@ package com.adr.datasql;
 /**
  *
  * @author adrian
- * @param <R>
- * @param <P>
  */
-public class SQLQuery<R, P> extends Query<R, P> {
-
-    public SQLQuery(String sql, String... paramnames) {
-        this.sql = sql;
-        this.paramnames = paramnames == null ? new String[0] : paramnames;
-    } 
+public class MetaData {
+    
+    public final Kind kind;
+    public final String name;
+    
+    public MetaData(String name, Kind kind) {
+        this.name = name;
+        this.kind = kind;
+    }  
 }

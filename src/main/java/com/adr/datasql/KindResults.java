@@ -42,6 +42,8 @@ public interface KindResults {
     public Date getTime(String columnName) throws SQLException;
     public byte[] getBytes(int columnIndex) throws SQLException;
     public byte[] getBytes(String columnName) throws SQLException;
+    public Object getObject(int columnIndex) throws SQLException;
+    public Object getObject(String columnName) throws SQLException;
     
-    public int size() throws SQLException;
+    public MetaData[] getMetaData() throws SQLException;
 }

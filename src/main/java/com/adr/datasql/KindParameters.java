@@ -42,6 +42,8 @@ public interface KindParameters {
     public void setTime(String paramName, Date dValue) throws SQLException;
     public void setBytes(int paramIndex, byte[] value) throws SQLException;
     public void setBytes(String paramName, byte[] value) throws SQLException;
+    public void setObject(int paramIndex, Object value) throws SQLException;
+    public void setObject(String paramName, Object value) throws SQLException;
     
-    public int size() throws SQLException;
+    public MetaData[] getMetaData() throws SQLException;
 }

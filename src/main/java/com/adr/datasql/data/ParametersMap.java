@@ -18,22 +18,23 @@
 package com.adr.datasql.data;
 
 import com.adr.datasql.KindParameters;
+import com.adr.datasql.MetaData;
 import com.adr.datasql.Parameters;
 import java.sql.SQLException;
+import java.util.Map;
 
 /**
  *
  * @author adrian
  */
-public class ParametersStringArray implements Parameters<String[]> {
-    @Override
-    public void write(KindParameters dp, String[] param) throws SQLException {
-        
-        int size = dp.size();
-        
-        for(int i = 0; i < size; i++) {
-            dp.setString(i + 1, i< param.length ? param[i] : null);
-        }
-    }
-}
+public class ParametersMap implements Parameters<Map<String, Object>> {
 
+    @Override
+    public void write(KindParameters dp, Map<String, Object> param) throws SQLException {
+        
+        MetaData[] meta = dp.getMetaData();
+        for(int i = 0; i < meta.length; i++) {
+            meta[i].kind.set(dp, meta[i].name, param.get(meta[i].name));
+        }
+    } 
+}

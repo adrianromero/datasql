@@ -18,6 +18,7 @@
 package com.adr.datasql;
 
 import java.sql.SQLException;
+import java.sql.Types;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -43,11 +44,55 @@ public abstract class Kind<T> {
     public final static Kind<String> ISOTIME = new KindISOTIME();
     public final static Kind<byte[]> BYTEA = new KindBYTEA();
     public final static Kind<String> BASE64 = new KindBASE64();
+    public final static Kind<Object> OBJECT = new KindOBJECT();
 
     public abstract T get(KindResults read, String name) throws SQLException;
     public abstract T get(KindResults read, int index) throws SQLException;
     public abstract void set(KindParameters write, String name, T value) throws SQLException;
     public abstract void set(KindParameters write, int index, T value) throws SQLException;
+    
+    public static final Kind<?> getKind(int type) {
+        switch (type) {
+            case Types.INTEGER:
+            case Types.BIGINT:
+            case Types.SMALLINT:
+            case Types.TINYINT:
+                return Kind.INT;
+            case Types.BIT:
+            case Types.BOOLEAN:
+                return Kind.BOOLEAN;
+            case Types.DECIMAL:
+            case Types.DOUBLE:
+            case Types.FLOAT:
+            case Types.REAL:
+            case Types.NUMERIC:
+                return Kind.DOUBLE;
+            case Types.CHAR:
+            case Types.VARCHAR:
+            case Types.LONGVARCHAR:
+            case Types.CLOB:
+                return Kind.STRING;
+            case Types.DATE:
+            case Types.TIME:
+            case Types.TIMESTAMP:
+                return Kind.TIMESTAMP;
+            case Types.BINARY:
+            case Types.VARBINARY:
+            case Types.LONGVARBINARY:
+            case Types.BLOB:
+                return Kind.BYTEA;
+            case Types.ARRAY:                    
+            case Types.DATALINK:
+            case Types.DISTINCT:
+            case Types.JAVA_OBJECT:
+            case Types.NULL:
+            case Types.OTHER:
+            case Types.REF:
+            case Types.STRUCT:
+            default:
+                return Kind.OBJECT;
+        }
+    }
 
     private static final class KindINT extends Kind<Number> {
         @Override
@@ -323,5 +368,23 @@ public abstract class Kind<T> {
             write.setBytes(index, EncodeUtils.decode(value));
         }
     }    
-    
+
+    private static final class KindOBJECT extends Kind<Object> {
+        @Override
+        public Object get(KindResults read, String name) throws SQLException {
+            return read.getObject(name);
+        }
+        @Override
+        public Object get(KindResults read, int index) throws SQLException {
+            return read.getObject(index);
+        }
+        @Override
+        public void set(KindParameters write, String name, Object value) throws SQLException {
+            write.setObject(name, value);
+        }
+        @Override
+        public void set(KindParameters write, int index, Object value) throws SQLException {
+            write.setObject(index, value);
+        }
+    }        
 }

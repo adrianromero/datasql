@@ -18,6 +18,7 @@
 package com.adr.datasql;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 /**
@@ -108,9 +109,26 @@ public final class KindResultsMap implements KindResults {
     public byte[] getBytes(String columnName) throws SQLException {
         return resultset.getBytes(columnName);
     }
-
     @Override
-    public int size() throws SQLException {
-        return resultset.getMetaData().getColumnCount();
+    public Object getObject(int columnIndex) throws SQLException {
+        return resultset.getObject(columnIndex);
     }
+    @Override
+    public Object getObject(String columnName) throws SQLException {
+        return resultset.getObject(columnName);
+    }
+    
+    @Override
+    public MetaData[] getMetaData() throws SQLException {
+        
+        ResultSetMetaData meta = resultset.getMetaData();
+        int size = meta.getColumnCount();
+        MetaData[] metadata = new MetaData[size];
+        
+        for (int i = 0; i < size; i++) {
+            metadata[i] = new MetaData(meta.getColumnName(i + 1), Kind.getKind(meta.getColumnType(i + 1)));
+        }
+        
+        return metadata;        
+    }    
 }

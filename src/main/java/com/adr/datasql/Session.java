@@ -17,9 +17,6 @@
 
 package com.adr.datasql;
 
-import com.adr.datasql.data.ParametersStringArray;
-import com.adr.datasql.data.ParametersStringMap;
-import com.adr.datasql.data.ResultsStringArray;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -48,71 +45,72 @@ public class Session {
         return c;
     }
     
-    public int exec(Query query) throws SQLException {
-        return exec(c, query, null, null);
+    public int exec(Query<?, ?> query) throws SQLException {
+        return exec(c, query, null);
     }
     
-    public int exec(Query query, String... params) throws SQLException {       
-        return exec(c, query, new ParametersStringArray(), params);
+    public int exec(Query<?, Object[]> query, Object... params) throws SQLException {       
+        return exec(c, query, params);
     }
     
-    public int exec(Query query, Map<String, String> params) throws SQLException {
-        return exec(c, query, new ParametersStringMap(), params);
+    public int exec(Query<?, Map<String, Object>> query, Map<String, Object> params) throws SQLException {
+        return exec(c, query, params);
     }
     
-    public String[] find(Query query) throws SQLException {
-        return find(c, query, new ResultsStringArray(), null, null);
+    public Object[] find(Query<Object[], ?> query) throws SQLException {
+        return find(c, query, null);
     }
     
-    public String[] find(Query query, String... params) throws SQLException {
-        return find(c, query, new ResultsStringArray(), new ParametersStringArray(), params);
+    public Object[] find(Query<Object[], Object[]> query, String... params) throws SQLException {
+        return find(c, query, params);
     }
     
-    public String[] find(Query query, Map<String, String> params) throws SQLException {
-        return find(c, query, new ResultsStringArray(), new ParametersStringMap(), params);
+    public Map<String, Object> find(Query<Map<String, Object>, Map<String, Object>> query, Map<String, Object> params) throws SQLException {
+        return find(c, query, params);
+    }
+
+    
+    public List<Object[]> list(Query<Object[], ?> query) throws SQLException {
+        return list(c, query, null);
     }
     
-    public List<String[]> list(Query query) throws SQLException {
-        return list(c, query, new ResultsStringArray(), null, null);
+    public List<Object[]> list(Query<Object[], Object[]> query, String... params) throws SQLException {
+        return list(c, query, params);
     }
     
-    public List<String[]> list(Query query, String... params) throws SQLException {
-        return list(c, query, new ResultsStringArray(), new ParametersStringArray(), params);
+    public List<Map<String, Object>> list(Query<Map<String, Object>, Map<String, Object>> query, Map<String, Object> params) throws SQLException {
+        return list(c, query, params);
     }
     
-    public List<String[]> list(Query query, Map<String, String> params) throws SQLException {
-        return list(c, query, new ResultsStringArray(), new ParametersStringMap(), params);
-    }
-    
-    public static final <P> int exec(Connection conn, Query sql, Parameters<P> paramwrite, P params) throws SQLException {
+    public static final <P> int exec(Connection conn, Query<?, P> query, P params) throws SQLException {
         
-        logger.log(Level.INFO, "Executing prepared SQL: {0}", sql.getSQL());
+        logger.log(Level.INFO, "Executing prepared SQL: {0}", query.getSQL());
 
-        try (PreparedStatement stmt = conn.prepareStatement(sql.getSQL())) {
-            KindParameters kp = new KindParametersMap(stmt, sql.getParamNames());
+        try (PreparedStatement stmt = conn.prepareStatement(query.getSQL())) {
+            KindParameters kp = new KindParametersMap(stmt, query.getParamNames());
 
-            if (paramwrite != null) {
-                paramwrite.write(kp, params);
+            if (query.getParameters() != null) {
+                query.getParameters().write(kp, params);
             }  
             return stmt.executeUpdate();
         }
     }
     
-    public static final <P, T> T find(Connection conn, Query sql, Results<T> resultread, Parameters<P> paramwrite, P params) throws SQLException {
+    public static final <R, P> R find(Connection conn, Query<R, P> query, P params) throws SQLException {
         
-        logger.log(Level.INFO, "Executing prepared SQL: {0}", sql.getSQL());
+        logger.log(Level.INFO, "Executing prepared SQL: {0}", query.getSQL());
 
-        try (PreparedStatement stmt = conn.prepareStatement(sql.getSQL())) {
-            KindParameters kp = new KindParametersMap(stmt, sql.getParamNames());
+        try (PreparedStatement stmt = conn.prepareStatement(query.getSQL())) {
+            KindParameters kp = new KindParametersMap(stmt, query.getParamNames());
 
-            if (paramwrite != null) {
-                paramwrite.write(kp, params);
+            if (query.getParameters() != null) {
+                query.getParameters().write(kp, params);
             }  
             try (ResultSet resultset = stmt.executeQuery()) {
                 KindResults kr = new KindResultsMap(resultset);
                 
                 if (resultset.next()) {
-                    return resultread.read(kr);
+                    return query.getResults().read(kr);
                 } else {
                     return null;
                 }
@@ -120,22 +118,22 @@ public class Session {
         }        
     }
     
-    public static final <P, T> List<T> list(Connection conn, Query sql, Results<T> resultread, Parameters<P> paramwrite, P params) throws SQLException {
+    public static final <R, P> List<R> list(Connection conn, Query<R, P> query, P params) throws SQLException {
         
-        logger.log(Level.INFO, "Executing prepared SQL: {0}", sql.getSQL());
+        logger.log(Level.INFO, "Executing prepared SQL: {0}", query.getSQL());
 
-        try (PreparedStatement stmt = conn.prepareStatement(sql.getSQL())) {
-            KindParameters kp = new KindParametersMap(stmt, sql.getParamNames());
+        try (PreparedStatement stmt = conn.prepareStatement(query.getSQL())) {
+            KindParameters kp = new KindParametersMap(stmt, query.getParamNames());
 
-            if (paramwrite != null) {
-                paramwrite.write(kp, params);
+            if (query.getParameters() != null) {
+                query.getParameters().write(kp, params);
             }  
             try (ResultSet resultset = stmt.executeQuery()) {
                 KindResults kr = new KindResultsMap(resultset);
                 
-                List<T> l = new ArrayList<T>();
+                List<R> l = new ArrayList<R>();
                 while (resultset.next()) {
-                    l.add(resultread.read(kr));
+                    l.add(query.getResults().read(kr));
                 }
                 return l;
             }

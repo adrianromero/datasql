@@ -15,18 +15,30 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql;
+package com.adr.datasql.data;
+
+import com.adr.datasql.KindResults;
+import com.adr.datasql.MetaData;
+import com.adr.datasql.Results;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
  * @author adrian
- * @param <R>
- * @param <P>
  */
-public class SQLQuery<R, P> extends Query<R, P> {
+public class ResultsMap  implements Results<Map<String, Object>> {
 
-    public SQLQuery(String sql, String... paramnames) {
-        this.sql = sql;
-        this.paramnames = paramnames == null ? new String[0] : paramnames;
-    } 
+    @Override
+    public Map<String, Object> read(KindResults kr) throws SQLException {
+        
+        MetaData[] meta = kr.getMetaData();  
+        Map<String, Object> result = new HashMap<String, Object>();
+        for(int i = 0; i < meta.length; i++) {
+            result.put(meta[i].name, meta[i].kind.get(kr, i + 1));
+        }  
+        return result;
+    }
+  
 }

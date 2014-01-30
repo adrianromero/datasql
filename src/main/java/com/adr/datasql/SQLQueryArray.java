@@ -15,28 +15,20 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql.data;
+package com.adr.datasql;
 
-import com.adr.datasql.KindResults;
-import com.adr.datasql.Results;
-import java.sql.SQLException;
+import com.adr.datasql.data.ParametersArray;
+import com.adr.datasql.data.ResultsArray;
 
 /**
  *
  * @author adrian
  */
-public class ResultsStringArray  implements Results<String[]> {
+public class SQLQueryArray extends SQLQuery<Object[], Object[]> {
 
-    @Override
-    public String[] read(KindResults kr) throws SQLException {
-        
-        int size = kr.size();
-
-        String[] result = new String[size];
-        for(int i = 0; i < size; i++) {
-            result[i] = kr.getString(i + 1);
-        }
-        return result;
+    public SQLQueryArray(String sql, String... paramnames) {
+        super(sql, paramnames);
+        this.setParameters(new ParametersArray());
+        this.setResults(new ResultsArray());
     }
-    
 }

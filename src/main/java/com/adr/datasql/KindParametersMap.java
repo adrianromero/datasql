@@ -17,6 +17,7 @@
 
 package com.adr.datasql;
 
+import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -132,9 +133,30 @@ public final class KindParametersMap implements KindParameters {
             }
         }               
     }
-
     @Override
-    public int size() throws SQLException {
-        return stmt.getParameterMetaData().getParameterCount();
+    public void setObject(int paramIndex, Object value) throws SQLException {
+        stmt.setObject(paramIndex, value);
+    }
+    @Override
+    public void setObject(String paramName, Object value) throws SQLException {
+        for (int i = 0; i < params.length; i++) {
+            if (params[i] != null && params[i].equals(paramName)) {
+                setObject(i + 1, value);
+            }
+        }       
+    }
+    
+    @Override
+    public MetaData[] getMetaData() throws SQLException {
+        
+        ParameterMetaData meta = stmt.getParameterMetaData();
+        int size = meta.getParameterCount();
+        MetaData[] metadata = new MetaData[size];
+        
+        for (int i = 0; i < size; i++) {
+            metadata[i] = new MetaData(i < params.length ? params[i] : null, Kind.getKind(meta.getParameterType(i + 1)));
+        }
+        
+        return metadata;        
     }
 }

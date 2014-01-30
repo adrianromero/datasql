@@ -25,7 +25,7 @@ import java.util.List;
  *
  * @author adrian
  */
-public class NamedSQLQuery extends Query {
+public class NamedSQLQuery<R, P> extends Query<R, P> {
     
     private static final char CHAR_ETX = '\u0003';
     

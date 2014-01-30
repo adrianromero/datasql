@@ -17,16 +17,20 @@
 
 package com.adr.datasql;
 
+import com.adr.datasql.data.ParametersMap;
+import com.adr.datasql.data.ResultsMap;
+import java.text.ParseException;
+import java.util.Map;
+
 /**
  *
  * @author adrian
- * @param <R>
- * @param <P>
  */
-public class SQLQuery<R, P> extends Query<R, P> {
+public class SQLQueryMap extends NamedSQLQuery<Map<String, Object>, Map<String, Object>> {
 
-    public SQLQuery(String sql, String... paramnames) {
-        this.sql = sql;
-        this.paramnames = paramnames == null ? new String[0] : paramnames;
-    } 
+    public SQLQueryMap(String sql) throws ParseException {
+        super(sql);
+        this.setParameters(new ParametersMap());
+        this.setResults(new ResultsMap());
+    }
 }
