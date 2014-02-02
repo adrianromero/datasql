@@ -30,7 +30,17 @@ public abstract class Query<R, P> {
     
     private Parameters<P> parameters = null;
     private Results<R> results = null;
-
+    
+    public Query(NSQL nsql) {
+        this.sql = nsql.getSQL();
+        this.paramnames = nsql.getParamNames();
+    }
+    
+    public Query(String sql, String... paramnames) {
+        this.sql = sql;
+        this.paramnames = paramnames == null ? new String[0] : paramnames;
+    }
+    
     public final String getSQL() {
         return sql;
     }
@@ -65,20 +75,5 @@ public abstract class Query<R, P> {
      */
     public void setResults(Results<R> results) {
         this.results = results;
-    }
-    
-    @Override
-    public String toString() {
-        StringBuilder s = new StringBuilder();
-        s.append(getSQL());
-        s.append('[');
-        for(int i = 0; i < getParamNames().length; i++) {
-            if (i > 0) {
-                s.append(", ");
-            }
-            s.append(getParamNames()[i]);
-        }
-        s.append(']');
-        return s.toString();
     }      
 }

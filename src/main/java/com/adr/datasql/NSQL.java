@@ -25,7 +25,7 @@ import java.util.List;
  *
  * @author adrian
  */
-public class NamedSQLQuery<R, P> extends Query<R, P> {
+public class NSQL {
     
     private static final char CHAR_ETX = '\u0003';
     
@@ -35,7 +35,10 @@ public class NamedSQLQuery<R, P> extends Query<R, P> {
     private static final int STATE_PARAMETERSTART = 3;
     private static final int STATE_PARAMETERPART = 4;
     
-    public NamedSQLQuery(String sql) throws ParseException {
+    private String sql;
+    private String[] paramnames;
+    
+    public NSQL(String sql) throws ParseException {
         
         StringBuilder parsedsql = new StringBuilder();
         StringBuilder parametername = new StringBuilder();
@@ -115,4 +118,34 @@ public class NamedSQLQuery<R, P> extends Query<R, P> {
             i++;
         }
     }      
+
+    /**
+     * @return the sql
+     */
+    public String getSQL() {
+        return sql;
+    }
+
+    /**
+     * @return the paramnames
+     */
+    public String[] getParamNames() {
+        return paramnames;
+    }
+    
+    
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        s.append(getSQL());
+        s.append('[');
+        for(int i = 0; i < getParamNames().length; i++) {
+            if (i > 0) {
+                s.append(", ");
+            }
+            s.append(getParamNames()[i]);
+        }
+        s.append(']');
+        return s.toString();
+    }    
 }

@@ -17,16 +17,29 @@
 
 package com.adr.datasql;
 
+import com.adr.datasql.data.ParametersMap;
+import com.adr.datasql.data.ResultsMap;
+import java.util.Map;
+
 /**
  *
  * @author adrian
- * @param <R>
- * @param <P>
  */
-public class SQLQuery<R, P> extends Query<R, P> {
 
-    public SQLQuery(String sql, String... paramnames) {
-        this.sql = sql;
-        this.paramnames = paramnames == null ? new String[0] : paramnames;
-    } 
+public class QueryMap extends Query<Map<String, Object>, Map<String, Object>> {
+
+    public QueryMap(String sql, String... paramnames) {
+        super(sql, paramnames);
+        init();
+    }
+
+    public QueryMap(NSQL nsql) {
+        super(nsql);
+        init();
+    }
+    
+    private void init() {
+        this.setParameters(new ParametersMap());
+        this.setResults(new ResultsMap());
+    }
 }

@@ -23,7 +23,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -49,36 +48,36 @@ public class Session {
         return exec(c, query, null);
     }
     
-    public int exec(Query<?, Object[]> query, Object... params) throws SQLException {       
+    public <P> int exec(Query<?, P[]> query, P... params) throws SQLException {       
         return exec(c, query, params);
     }
     
-    public int exec(Query<?, Map<String, Object>> query, Map<String, Object> params) throws SQLException {
+    public <P> int exec(Query<?, P> query, P params) throws SQLException {
         return exec(c, query, params);
     }
     
-    public Object[] find(Query<Object[], ?> query) throws SQLException {
+    public <R> R find(Query<R, ?> query) throws SQLException {
         return find(c, query, null);
     }
     
-    public Object[] find(Query<Object[], Object[]> query, String... params) throws SQLException {
+    public <R, P> R find(Query<R, P[]> query, P... params) throws SQLException {
         return find(c, query, params);
     }
     
-    public Map<String, Object> find(Query<Map<String, Object>, Map<String, Object>> query, Map<String, Object> params) throws SQLException {
+    public <R, P> R find(Query<R, P> query, P params) throws SQLException {
         return find(c, query, params);
     }
 
     
-    public List<Object[]> list(Query<Object[], ?> query) throws SQLException {
+    public <R> List<R> list(Query<R, ?> query) throws SQLException {
         return list(c, query, null);
     }
     
-    public List<Object[]> list(Query<Object[], Object[]> query, String... params) throws SQLException {
+    public <R, P> List<R> list(Query<R, P[]> query, P... params) throws SQLException {
         return list(c, query, params);
     }
     
-    public List<Map<String, Object>> list(Query<Map<String, Object>, Map<String, Object>> query, Map<String, Object> params) throws SQLException {
+    public <R, P> List<R> list(Query<R, P> query, P params) throws SQLException {
         return list(c, query, params);
     }
     

@@ -24,11 +24,20 @@ import com.adr.datasql.data.ResultsArray;
  *
  * @author adrian
  */
-public class SQLQueryArray extends SQLQuery<Object[], Object[]> {
+public class QueryArray extends Query<Object[], Object[]> {
 
-    public SQLQueryArray(String sql, String... paramnames) {
+    public QueryArray(String sql, String... paramnames) {
         super(sql, paramnames);
+        init();
+    }
+
+    public QueryArray(NSQL nsql) {
+        super(nsql);
+        init();
+    }
+    
+    private void init() {
         this.setParameters(new ParametersArray());
-        this.setResults(new ResultsArray());
+        this.setResults(new ResultsArray());    
     }
 }

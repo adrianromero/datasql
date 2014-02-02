@@ -14,9 +14,9 @@ import org.junit.Test;
  *
  * @author adrian
  */
-public class NamedSQLQueryTest {
+public class NSQLTest {
     
-    public NamedSQLQueryTest() {
+    public NSQLTest() {
     }
 
     @Test
@@ -24,15 +24,15 @@ public class NamedSQLQueryTest {
         
         Assert.assertEquals(
                 "select * from table where name = ? and surname = ?[name, surname]", 
-                new NamedSQLQuery("select * from table where name = :name and surname = :surname").toString());
+                new NSQL("select * from table where name = :name and surname = :surname").toString());
         Assert.assertEquals(
                 "select * from table where date > ? and date < ?[mydate, mydate]", 
-                new NamedSQLQuery("select * from table where date > :mydate and date < :mydate").toString());
+                new NSQL("select * from table where date > :mydate and date < :mydate").toString());
         Assert.assertEquals(
                 "select * from table where date > ':mydate' and date < ?[mydate]", 
-                new NamedSQLQuery("select * from table where date > ':mydate' and date < :mydate").toString());
+                new NSQL("select * from table where date > ':mydate' and date < :mydate").toString());
         try {
-            new NamedSQLQuery("select * from table where date > :mydate and date < :").toString();
+            new NSQL("select * from table where date > :mydate and date < :").toString();
         } catch (ParseException e) {
            Assert.assertEquals(e.getMessage(), 53, e.getErrorOffset());
         }

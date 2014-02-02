@@ -48,21 +48,21 @@ public class StartTest {
 
             Session session = new Session(c);
 
-            session.exec(new SQLQueryArray("drop table mytest"));
+            session.exec(new QueryArray("drop table mytest"));
             
-            session.exec(new SQLQueryArray("create table mytest(id varchar(32), code varchar(128), name varchar(1024))"));
+            session.exec(new QueryArray("create table mytest(id varchar(32), code varchar(128), name varchar(1024))"));
 
-            session.exec(new SQLQueryArray("insert into mytest(id, code, name) values (?, ?, ?)"), "one", "code one", "name one");
+            session.exec(new QueryArray("insert into mytest(id, code, name) values (?, ?, ?)"), "one", "code one", "name one");
 
 
             Map<String, Object> parameters = new HashMap<String, Object>();
             parameters.put("id", "two");
             parameters.put("code", "two code");
             parameters.put("name", "two name");
-            session.exec(new SQLQueryMap("insert into mytest(id, code, name) values (:id, :code, :name)"), parameters);
+            session.exec(new QueryMap(new NSQL("insert into mytest(id, code, name) values (:id, :code, :name)")), parameters);
 
 
-            Object[] result = session.find(new SQLQueryArray("select id, code, name from mytest where id = ?"), "two");
+            Object[] result = session.find(new QueryArray("select id, code, name from mytest where id = ?"), "two");
 
             System.out.println("--> " + result[0] + ", " + result[1] + ", " + result[2]);
         }
