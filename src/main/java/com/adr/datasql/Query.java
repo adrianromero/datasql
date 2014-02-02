@@ -17,14 +17,24 @@
 
 package com.adr.datasql;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author adrian
  * @param <R>
  * @param <P>
  */
-public abstract class Query<R, P> {
+public class Query<R, P> implements ProcExec<P>, ProcFind<R, P>, ProcList<R, P> {
     
+    private static final Logger logger = Logger.getLogger(Query.class.getName()); 
+
     protected String sql;
     protected String[] paramnames;  
     
@@ -41,13 +51,64 @@ public abstract class Query<R, P> {
         this.paramnames = paramnames == null ? new String[0] : paramnames;
     }
     
-    public final String getSQL() {
-        return sql;
+    @Override
+    public final int exec(Session s, P params) throws SQLException {
+        logger.log(Level.INFO, "Executing prepared SQL: {0}", sql);
+
+        try (PreparedStatement stmt = s.getConnection().prepareStatement(sql)) {
+            KindParameters kp = new KindParametersMap(stmt, paramnames);
+
+            if (parameters != null) {
+                parameters.write(kp, params);
+            }  
+            return stmt.executeUpdate();
+        }
     }
 
-    public final String[] getParamNames() {
-        return paramnames;
-    }   
+    @Override
+    public R find(Session s, P params) throws SQLException {
+        
+        logger.log(Level.INFO, "Executing prepared SQL: {0}", sql);
+
+        try (PreparedStatement stmt = s.getConnection().prepareStatement(sql)) {
+            KindParameters kp = new KindParametersMap(stmt, paramnames);
+
+            if (parameters != null) {
+                parameters.write(kp, params);
+            }  
+            try (ResultSet resultset = stmt.executeQuery()) {
+                KindResults kr = new KindResultsMap(resultset);
+                
+                if (resultset.next()) {
+                    return results.read(kr);
+                } else {
+                    return null;
+                }
+            }
+        } 
+    }
+    
+    @Override
+    public List<R> list(Session s, P params) throws SQLException {
+        logger.log(Level.INFO, "Executing prepared SQL: {0}", sql);
+
+        try (PreparedStatement stmt = s.getConnection().prepareStatement(sql)) {
+            KindParameters kp = new KindParametersMap(stmt, paramnames);
+
+            if (parameters != null) {
+                parameters.write(kp, params);
+            }  
+            try (ResultSet resultset = stmt.executeQuery()) {
+                KindResults kr = new KindResultsMap(resultset);
+                
+                List<R> l = new ArrayList<R>();
+                while (resultset.next()) {
+                    l.add(results.read(kr));
+                }
+                return l;
+            }
+        }
+    }  
 
     /**
      * @return the parameters
