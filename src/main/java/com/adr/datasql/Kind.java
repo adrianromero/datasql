@@ -17,14 +17,17 @@
 
 package com.adr.datasql;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 
 /**
  *
@@ -44,6 +47,7 @@ public abstract class Kind<T> {
     public final static Kind<String> ISOTIME = new KindISOTIME();
     public final static Kind<byte[]> BYTEA = new KindBYTEA();
     public final static Kind<String> BASE64 = new KindBASE64();
+    public final static Kind<BufferedImage> IMAGE = new KindIMAGE();
     public final static Kind<Object> OBJECT = new KindOBJECT();
 
     public abstract T get(KindResults read, String name) throws SQLException;
@@ -368,6 +372,60 @@ public abstract class Kind<T> {
             write.setBytes(index, EncodeUtils.decode(value));
         }
     }    
+    
+    private static final class KindIMAGE extends Kind<BufferedImage> {
+        @Override
+        public BufferedImage get(KindResults read, String name) throws SQLException {
+            try {
+                return readImage(read.getBytes(name));
+            } catch (IOException e) {
+                throw new SQLException(e);
+            }
+        }
+        @Override
+        public BufferedImage get(KindResults read, int index) throws SQLException {
+            try {
+                return readImage(read.getBytes(index));
+            } catch (IOException e) {
+                throw new SQLException(e);
+            }
+        }
+        @Override
+        public void set(KindParameters write, String name, BufferedImage value) throws SQLException {
+            try {
+                write.setBytes(name, writeImage(value));
+            } catch (IOException e) {
+                throw new SQLException(e);
+            }
+        }
+        @Override
+        public void set(KindParameters write, int index, BufferedImage value) throws SQLException {
+            try {
+                write.setBytes(index, writeImage(value));
+            } catch (IOException e) {
+                throw new SQLException(e);
+            }
+        }
+        
+        public BufferedImage readImage(byte[] b) throws IOException {
+            if (b == null) {
+                return null;
+            } else {
+                return ImageIO.read(new ByteArrayInputStream(b));
+            }
+        }
+
+        public byte[] writeImage(BufferedImage img)  throws IOException  {
+            if (img == null) {
+                return null;
+            } else {
+                try (ByteArrayOutputStream b = new ByteArrayOutputStream()) {
+                    ImageIO.write(img, "png", b);
+                    return b.toByteArray();
+                }
+            }
+        }        
+    }
 
     private static final class KindOBJECT extends Kind<Object> {
         @Override
