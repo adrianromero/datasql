@@ -15,23 +15,26 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql;
+package com.adr.datasql.data;
 
+import com.adr.datasql.Kind;
+import com.adr.datasql.KindResults;
+import com.adr.datasql.Results;
 import java.sql.SQLException;
 
 /**
  *
  * @author adrian
  */
-public class ResultsString  implements Results<String> {
+public class ResultsInteger implements Results<Number> {
 
-    public static final Results<String> INSTANCE = new ResultsString();
+    public static final Results<Number> INSTANCE = new ResultsInteger();
 
-    private ResultsString() {
+    private ResultsInteger() {
     }
 
     @Override
-    public String read(KindResults kr) throws SQLException {
-        return Kind.STRING.get(kr, 1);
+    public Number read(KindResults kr) throws SQLException {
+        return Kind.INT.get(kr, 1);
     }
 }

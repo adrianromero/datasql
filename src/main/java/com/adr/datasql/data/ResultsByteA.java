@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2012-2014 Adrián Romero Corchado.
+//    Copyright (C) 2012 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -15,30 +15,26 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql;
+package com.adr.datasql.data;
 
+import com.adr.datasql.Kind;
+import com.adr.datasql.KindResults;
+import com.adr.datasql.Results;
 import java.sql.SQLException;
 
 /**
  *
  * @author adrian
  */
-public class ResultsArray implements Results<Object[]> {
+public class ResultsByteA implements Results<byte[]> {
 
-    private final Kind[] kinds;
+    public static final Results<byte[]> INSTANCE = new ResultsByteA();
 
-    public ResultsArray(Kind... kinds) {
-        this.kinds = kinds;
+    private ResultsByteA() {
     }
 
     @Override
-    public Object[] read(KindResults kr) throws SQLException {
-
-        Object[] result = new Object[kinds.length];
-
-        for(int i = 0; i < kinds.length; i++) {
-            result[i] = kinds[i].get(kr, i + 1);
-        }
-        return result;
+    public byte[] read(KindResults kr) throws SQLException {
+        return Kind.BYTEA.get(kr, 1);
     }
 }
