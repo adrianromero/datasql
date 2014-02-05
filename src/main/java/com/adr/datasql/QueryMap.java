@@ -18,7 +18,9 @@
 package com.adr.datasql;
 
 import com.adr.datasql.data.ParametersMap;
+import com.adr.datasql.data.ParametersMapMeta;
 import com.adr.datasql.data.ResultsMap;
+import com.adr.datasql.data.ResultsMapMeta;
 import java.util.Map;
 
 /**
@@ -39,7 +41,17 @@ public class QueryMap extends Query<Map<String, Object>, Map<String, Object>> {
     }
     
     private void init() {
-        this.setParameters(new ParametersMap());
-        this.setResults(new ResultsMap());
-    }
+        this.setParameters(ParametersMapMeta.getInstance());
+        this.setResults(ResultsMapMeta.getInstance());
+    }   
+    
+    public QueryMap setParameters(MetaData... metadatas) {
+        setParameters(new ParametersMap(metadatas));
+        return this;
+    }       
+
+    public QueryMap setResults(MetaData... metadatas) {
+        setResults(new ResultsMap(metadatas));
+        return this;
+    }     
 }

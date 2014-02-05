@@ -39,15 +39,23 @@ public abstract class Data<P> implements Parameters<P> {
     }
     
     protected abstract Object getValue(Field f, P param) throws SQLException;
+    protected abstract void setValue(Field f, P param, Object value) throws SQLException;
     
-    public boolean isEmptyKey(P param) throws SQLException {
-        
+    public Object getKey(P param) throws SQLException {
         for (Field f : definition.getFields()) {  
-            if (f.isKey() && getValue(f, param) != null) {
-                return false;
+            if (f.isKey()) {
+                return getValue(f, param);
             }
-        }          
-        return true;
+        }     
+        return null;
+    }
+    
+    public void setKey(P param, Object key) throws SQLException {
+        for (Field f : definition.getFields()) {  
+            if (f.isKey()) {
+                setValue(f, param, key);
+            }
+        }           
     }
 
     @Override

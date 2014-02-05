@@ -28,13 +28,17 @@ import java.util.Map;
  * @author adrian
  */
 public class ParametersMap implements Parameters<Map<String, Object>> {
-
+    
+    private final MetaData[] metadatas;
+    
+    public ParametersMap(MetaData... metadatas) {
+        this.metadatas = metadatas;
+    }
+    
     @Override
     public void write(KindParameters dp, Map<String, Object> param) throws SQLException {
-        
-        MetaData[] meta = dp.getMetaData();
-        for(int i = 0; i < meta.length; i++) {
-            meta[i].kind.set(dp, meta[i].name, param.get(meta[i].name));
+        for(int i = 0; i < metadatas.length; i++) {
+            metadatas[i].kind.set(dp, metadatas[i].name, param.get(metadatas[i].name));
         }
     } 
 }

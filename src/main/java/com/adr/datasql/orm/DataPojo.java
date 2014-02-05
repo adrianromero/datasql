@@ -45,5 +45,29 @@ public class DataPojo<P> extends Data<P> {
                 |SecurityException ex) {
             throw new SQLException (ex);
         }        
-    }        
+    } 
+    
+    @Override
+    protected void setValue(Field f, P param, Object value) throws SQLException {
+        try {          
+            Method m = param.getClass().getMethod(f.getSetterName());       
+            Class<?>[] types = m.getParameterTypes();
+            
+            if (types.length != 1) {
+                throw new SQLException("Setter methods must have exactly one parameters.");
+            }
+            
+            if (value == null && types[0].isPrimitive()) {
+                return; // should not assign null to a primitive field.
+            }
+
+            m.invoke(param, value);              
+        } catch (IllegalAccessException 
+                |IllegalArgumentException 
+                |InvocationTargetException 
+                |NoSuchMethodException 
+                |SecurityException ex) {
+            throw new SQLException (ex);
+        }          
+    }  
 }

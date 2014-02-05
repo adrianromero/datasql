@@ -17,6 +17,7 @@
 
 package com.adr.datasql.data;
 
+import com.adr.datasql.Kind;
 import com.adr.datasql.KindParameters;
 import com.adr.datasql.MetaData;
 import com.adr.datasql.Parameters;
@@ -27,12 +28,21 @@ import java.sql.SQLException;
  * @author adrian
  */
 public class ParametersArray implements Parameters<Object[]> {
+    
+    private final MetaData[] metadatas;
+    
+    public ParametersArray(MetaData... metadatas) {
+        this.metadatas = metadatas;
+    }
+    
+    public ParametersArray(Kind... kinds) {
+        this.metadatas = MetaData.fromKinds(kinds);
+    }
+    
     @Override
-    public void write(KindParameters dp, Object[] param) throws SQLException {
-        
-        MetaData[] meta = dp.getMetaData();       
-        for(int i = 0; i < meta.length; i++) {
-            meta[i].kind.set(dp, i + 1, i < param.length ? param[i] : null);
+    public void write(KindParameters dp, Object[] param) throws SQLException {      
+        for(int i = 0; i < metadatas.length; i++) {
+            metadatas[i].kind.set(dp, i + 1, i < param.length ? param[i] : null);
         }
     }
 }

@@ -23,11 +23,9 @@ import com.adr.datasql.orm.Definition;
 import com.adr.datasql.orm.Field;
 import com.adr.datasql.orm.FieldKey;
 import com.adr.datasql.orm.InsertData;
+import com.adr.datasql.orm.UpsertData;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.util.HashMap;
-import java.util.Map;
 import javax.json.Json;
 import javax.json.JsonObject;
 import org.junit.After;
@@ -40,36 +38,9 @@ import org.junit.Test;
  *
  * @author adrian
  */
-public class StartTest {
-
-    
-    public StartTest() {
-    }
-
-    @Test
-    public void initialTest() throws SQLException, ParseException {
+public class ORMTest {
 
 
-        try (Connection c = DataTestSuite.getDataSource().getConnection()) {
-            System.out.println(c.toString());
-
-            Session session = new Session(c);
-
-            session.exec(new QueryArray("insert into mytest(id, code, name) values (?, ?, ?)"), "one", "code one", "name one");
-
-            Map<String, Object> parameters = new HashMap<String, Object>();
-            parameters.put("id", "two");
-            parameters.put("code", "two code");
-            parameters.put("name", "two name");
-            session.exec(new QueryMap(new NSQL("insert into mytest(id, code, name) values (:id, :code, :name)")), parameters);
-
-
-            Object[] result = session.find(new QueryArray("select id, code, name from mytest where id = ?"), "two");
-
-            System.out.println("--> " + result[0] + ", " + result[1] + ", " + result[2]);
-        }
-    } 
-    
     @Test
     public void InsertPojo() throws SQLException {
         try (Connection c = DataTestSuite.getDataSource().getConnection()) {        
@@ -113,7 +84,7 @@ public class StartTest {
                 .add("name", "pepeto")
                 .build();            
             
-            ProcExec<JsonObject> insertJson = new InsertData<JsonObject>(DATAJSON);
+            ProcExec<JsonObject> insertJson = new UpsertData<JsonObject>(DATAJSON);
             
             session.exec(insertJson, value);
         }
@@ -128,8 +99,7 @@ public class StartTest {
    
         try (Connection c = DataTestSuite.getDataSource().getConnection()) {        
             Session session = new Session(c);  
-        
-            session.exec(new QueryArray("create table mytest(id varchar(32), code varchar(128), name varchar(1024))"));
+       
             session.exec(new QueryArray("create table samplepojo(id varchar(32), code varchar(128), name varchar(1024))"));     
         }
     }

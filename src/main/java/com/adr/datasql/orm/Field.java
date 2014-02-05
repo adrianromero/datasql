@@ -28,12 +28,14 @@ public class Field {
     private final Kind kind;
     
     private final String getterName;
+    private final String setterName;
     
     public Field(String name, Kind kind) {
         this.name = name;
         this.kind = kind;
         
         this.getterName = "get" + Character.toUpperCase(name.charAt(0)) + name.substring(1);
+        this.setterName = "set" + Character.toUpperCase(name.charAt(0)) + name.substring(1);
     }
     
     public final String getName() {
@@ -46,6 +48,10 @@ public class Field {
     
     public final String getGetterName() {
         return getterName;
+    }
+     
+    public final String getSetterName() {
+        return setterName;
     }
     
     public final Kind getKind() {

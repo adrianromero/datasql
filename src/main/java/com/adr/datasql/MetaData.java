@@ -26,8 +26,21 @@ public class MetaData {
     public final Kind kind;
     public final String name;
     
+    public MetaData(Kind kind) {
+        this.name = null;
+        this.kind = kind;
+    }
+    
     public MetaData(String name, Kind kind) {
         this.name = name;
         this.kind = kind;
     }  
+    
+    public static MetaData[] fromKinds(Kind[] kinds) {
+        MetaData[] metadatas = new MetaData[kinds.length];
+        for (int i = 0; i < kinds.length; i++) {
+            metadatas[i] = new MetaData(kinds[i]);
+        }
+        return metadatas;
+    }
 }

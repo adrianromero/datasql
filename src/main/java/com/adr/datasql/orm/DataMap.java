@@ -24,14 +24,19 @@ import java.util.Map;
  *
  * @author adrian
  */
-public class DataMap extends Data<Map<String, ?>> {
+public class DataMap extends Data<Map<String, Object>> {
     
     public DataMap(Definition definition) {
         super(definition);
     }
 
     @Override
-    protected Object getValue(Field f, Map<String, ?> param) throws SQLException {
+    protected Object getValue(Field f, Map<String, Object> param) throws SQLException {
         return param.get(f.getName());      
     }        
+
+    @Override
+    protected void setValue(Field f, Map<String, Object> param, Object value) throws SQLException {
+        param.put(f.getName(), value);
+    }
 }

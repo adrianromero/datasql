@@ -21,6 +21,7 @@ import com.adr.datasql.ProcExec;
 import com.adr.datasql.Query;
 import com.adr.datasql.Session;
 import java.sql.SQLException;
+import java.util.UUID;
 
 /**
  *
@@ -45,7 +46,8 @@ public class SaveData<P> implements ProcExec<P> {
     @Override
     public int exec(Session s, P params) throws SQLException {
         
-        if (data.isEmptyKey(params)) {
+        if (data.getKey(params) == null) {
+            data.setKey(params, UUID.randomUUID().toString());
             return queryinsert.exec(s, params);
         } else {       
             return queryupdate.exec(s, params);

@@ -17,9 +17,7 @@
 
 package com.adr.datasql.data;
 
-import com.adr.datasql.Kind;
 import com.adr.datasql.KindResults;
-import com.adr.datasql.MetaData;
 import com.adr.datasql.Results;
 import java.sql.SQLException;
 
@@ -27,25 +25,23 @@ import java.sql.SQLException;
  *
  * @author adrian
  */
-public class ResultsArray  implements Results<Object[]> {
+public class ResultsArrayMeta  implements Results<Object[]> {
     
-    private final MetaData[] metadatas;
+    private static ResultsArrayMeta instance = null;
     
-    public ResultsArray(MetaData... metadatas) {
-        this.metadatas = metadatas;
+    public static ResultsArrayMeta getInstance() {
+        if (instance == null) {
+            instance = new ResultsArrayMeta();
+        }
+        return instance;
     }
     
-    public ResultsArray(Kind... kinds) {
-        this.metadatas = MetaData.fromKinds(kinds);
+    private ResultsArrayMeta() {
     }
-    
+        
     @Override
     public Object[] read(KindResults kr) throws SQLException {
-         
-        Object[] result = new Object[metadatas.length];
-        for(int i = 0; i < metadatas.length; i++) {
-            result[i] = metadatas[i].kind.get(kr, i + 1);
-        }        
-        return result;
+        Results<Object[]> results = new ResultsArray(kr.getMetaData());
+        return results.read(kr);
     }   
 }

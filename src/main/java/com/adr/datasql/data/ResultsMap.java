@@ -29,16 +29,19 @@ import java.util.Map;
  * @author adrian
  */
 public class ResultsMap  implements Results<Map<String, Object>> {
-
+    
+    private final MetaData[] metadatas;
+    
+    public ResultsMap(MetaData... metadatas) {
+        this.metadatas = metadatas;
+    }
+    
     @Override
-    public Map<String, Object> read(KindResults kr) throws SQLException {
-        
-        MetaData[] meta = kr.getMetaData();  
+    public Map<String, Object> read(KindResults kr) throws SQLException {        
         Map<String, Object> result = new HashMap<String, Object>();
-        for(int i = 0; i < meta.length; i++) {
-            result.put(meta[i].name, meta[i].kind.get(kr, i + 1));
+        for(int i = 0; i < metadatas.length; i++) {
+            result.put(metadatas[i].name, metadatas[i].kind.get(kr, i + 1));
         }  
         return result;
-    }
-  
+    } 
 }

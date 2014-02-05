@@ -18,6 +18,7 @@
 package com.adr.datasql.orm;
 
 import java.sql.SQLException;
+import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 
@@ -53,4 +54,38 @@ public class DataJson extends Data<JsonObject> {
             throw new SQLException("Not valid Json value.");
         }  
     }        
+
+    @Override
+    protected void setValue(Field f, JsonObject param, Object value) throws SQLException {
+        
+        if (value == null) {
+            param.put(f.getName(), JsonValue.NULL);            
+        } else if (value instanceof Boolean) {
+            param.put(f.getName(), ((Boolean) value) ? JsonValue.TRUE : JsonValue.FALSE);                        
+        } else if (value instanceof Number) {
+            param.put(f.getName(), new JsonValueImpl(value, JsonValue.ValueType.NUMBER));
+        } else {
+            param.put(f.getName(), new JsonValueImpl(value, JsonValue.ValueType.STRING));
+        }
+    }
+    
+    private static final class JsonValueImpl implements JsonValue {
+        
+        private final String value;
+        private final JsonValue.ValueType valuetype;
+        
+        public JsonValueImpl(Object value, JsonValue.ValueType valuetype) {
+            this.value = value.toString();
+            this.valuetype = valuetype;
+        }
+
+        @Override
+        public JsonValue.ValueType getValueType() {
+            return valuetype;
+        }
+        @Override
+        public String toString() {
+            return value;
+        }
+    }
 }

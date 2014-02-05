@@ -35,8 +35,10 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-    com.adr.datasql.StartTest.class, 
-    com.adr.datasql.NSQLTest.class})
+    com.adr.datasql.QueriesTest.class, 
+    com.adr.datasql.NSQLTest.class,
+    com.adr.datasql.ORMTest.class
+})
 public class DataTestSuite {
     
     private static EmbeddedConnectionPoolDataSource cpds;   

@@ -17,35 +17,32 @@
 
 package com.adr.datasql.data;
 
-import com.adr.datasql.Kind;
-import com.adr.datasql.KindResults;
-import com.adr.datasql.MetaData;
-import com.adr.datasql.Results;
+import com.adr.datasql.KindParameters;
+import com.adr.datasql.Parameters;
 import java.sql.SQLException;
 
 /**
  *
  * @author adrian
  */
-public class ResultsArray  implements Results<Object[]> {
+public class ParametersArrayMeta implements Parameters<Object[]> {
     
-    private final MetaData[] metadatas;
+    private static ParametersArrayMeta instance = null;
     
-    public ResultsArray(MetaData... metadatas) {
-        this.metadatas = metadatas;
+    public static ParametersArrayMeta getInstance() {
+        if (instance == null) {
+            instance = new ParametersArrayMeta();
+        }
+        return instance;
     }
     
-    public ResultsArray(Kind... kinds) {
-        this.metadatas = MetaData.fromKinds(kinds);
+    private ParametersArrayMeta() {
     }
     
     @Override
-    public Object[] read(KindResults kr) throws SQLException {
-         
-        Object[] result = new Object[metadatas.length];
-        for(int i = 0; i < metadatas.length; i++) {
-            result[i] = metadatas[i].kind.get(kr, i + 1);
-        }        
-        return result;
-    }   
+    public void write(KindParameters dp, Object[] param) throws SQLException {        
+        Parameters<Object[]> parameters = new ParametersArray(dp.getMetaData());
+        parameters.write(dp, param);
+    }
 }
+

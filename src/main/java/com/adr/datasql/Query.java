@@ -119,9 +119,11 @@ public class Query<R, P> implements ProcExec<P>, ProcFind<R, P>, ProcList<R, P> 
 
     /**
      * @param parameters the parameters to set
+     * @return 
      */
-    public void setParameters(Parameters<P> parameters) {
+    public Query<R, P> setParameters(Parameters<P> parameters) {
         this.parameters = parameters;
+        return this;
     }
 
     /**
@@ -133,8 +135,10 @@ public class Query<R, P> implements ProcExec<P>, ProcFind<R, P>, ProcList<R, P> 
 
     /**
      * @param results the results to set
+     * @return 
      */
-    public void setResults(Results<R> results) {
+    public Query<R, P> setResults(Results<R> results) {
         this.results = results;
+        return this;
     }      
 }

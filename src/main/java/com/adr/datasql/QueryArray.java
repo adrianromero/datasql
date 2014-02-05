@@ -18,7 +18,9 @@
 package com.adr.datasql;
 
 import com.adr.datasql.data.ParametersArray;
+import com.adr.datasql.data.ParametersArrayMeta;
 import com.adr.datasql.data.ResultsArray;
+import com.adr.datasql.data.ResultsArrayMeta;
 
 /**
  *
@@ -37,7 +39,27 @@ public class QueryArray extends Query<Object[], Object[]> {
     }
     
     private void init() {
-        this.setParameters(new ParametersArray());
-        this.setResults(new ResultsArray());    
+        this.setParameters(ParametersArrayMeta.getInstance());
+        this.setResults(ResultsArrayMeta.getInstance());    
     }
+    
+    public QueryArray setParameters(Kind... kinds) {
+        setParameters(new ParametersArray(kinds));
+        return this;
+    }    
+    
+    public QueryArray setParameters(MetaData... metadatas) {
+        setParameters(new ParametersArray(metadatas));
+        return this;
+    }       
+    
+    public QueryArray setResults(Kind... kinds) {
+        setResults(new ResultsArray(kinds));
+        return this;
+    }    
+    
+    public QueryArray setResults(MetaData... metadatas) {
+        setResults(new ResultsArray(metadatas));
+        return this;
+    }      
 }
