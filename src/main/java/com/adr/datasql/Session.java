@@ -26,7 +26,7 @@ import java.util.logging.Logger;
  *
  * @author adrian
  */
-public class Session {
+public class Session implements AutoCloseable {
     
     private static final Logger logger = Logger.getLogger(Session.class.getName());   
     
@@ -75,4 +75,9 @@ public class Session {
     public <R, P> List<R> list(ProcList<R, P> proc, P params) throws SQLException {
         return proc.list(this, params);
     }
+
+    @Override
+    public void close() throws SQLException {
+        c.close();
+    }  
 }

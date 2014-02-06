@@ -43,8 +43,8 @@ public class ORMTest {
 
     @Test
     public void InsertPojo() throws SQLException {
-        try (Connection c = DataTestSuite.getDataSource().getConnection()) {        
-            Session session = new Session(c);            
+
+        try (Session session = new Session(DataTestSuite.getDataSource().getConnection())) {        
             
             ProcExec<SamplePojo> insertSamplePojo = new InsertData<SamplePojo>(SamplePojo.DATA);
             
@@ -63,8 +63,8 @@ public class ORMTest {
     
     @Test
     public void InsertJson() throws SQLException {
-        try (Connection c = DataTestSuite.getDataSource().getConnection()) {        
-            Session session = new Session(c);  
+        
+        try (Session session = new Session(DataTestSuite.getDataSource().getConnection())) {
  
             // Metadata Definition
             Data<JsonObject> DATAJSON = new DataJson(new Definition(
@@ -97,8 +97,7 @@ public class ORMTest {
     @BeforeClass
     public static void setUpClass() throws SQLException {   
    
-        try (Connection c = DataTestSuite.getDataSource().getConnection()) {        
-            Session session = new Session(c);  
+        try (Session session = new Session(DataTestSuite.getDataSource().getConnection())) {;  
        
             session.exec(new QueryArray("create table samplepojo(id varchar(32), code varchar(128), name varchar(1024))"));     
         }
