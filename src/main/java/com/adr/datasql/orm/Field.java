@@ -18,34 +18,24 @@
 package com.adr.datasql.orm;
 
 import com.adr.datasql.Kind;
+import com.adr.datasql.MetaData;
 
 /**
  *
  * @author adrian
  */
-public class Field {
-    private final String name;
-    private final Kind kind;
-    
+public class Field extends MetaData {
+
     private final String getterName;
     private final String setterName;
     
     public Field(String name, Kind kind) {
-        this.name = name;
-        this.kind = kind;
+        super(name, kind);
         
         this.getterName = "get" + Character.toUpperCase(name.charAt(0)) + name.substring(1);
         this.setterName = "set" + Character.toUpperCase(name.charAt(0)) + name.substring(1);
     }
-    
-    public final String getName() {
-        return name;
-    }
-    
-    public final String getParamName() {
-        return name;
-    }
-    
+
     public final String getGetterName() {
         return getterName;
     }
@@ -53,10 +43,7 @@ public class Field {
     public final String getSetterName() {
         return setterName;
     }
-    
-    public final Kind getKind() {
-        return kind;
-    }
+
     
     public boolean isKey() {
         return false;

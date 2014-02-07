@@ -40,7 +40,7 @@ public class ResultsMap  implements Results<Map<String, Object>> {
     public Map<String, Object> read(KindResults kr) throws SQLException {        
         Map<String, Object> result = new HashMap<String, Object>();
         for(int i = 0; i < metadatas.length; i++) {
-            result.put(metadatas[i].name, metadatas[i].kind.get(kr, i + 1));
+            result.put(metadatas[i].getName(), metadatas[i].getKind().get(kr, i + 1));
         }  
         return result;
     } 

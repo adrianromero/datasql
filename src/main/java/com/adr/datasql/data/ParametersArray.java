@@ -42,7 +42,7 @@ public class ParametersArray implements Parameters<Object[]> {
     @Override
     public void write(KindParameters dp, Object[] param) throws SQLException {      
         for(int i = 0; i < metadatas.length; i++) {
-            metadatas[i].kind.set(dp, i + 1, i < param.length ? param[i] : null);
+            metadatas[i].getKind().set(dp, i + 1, i < param.length ? param[i] : null);
         }
     }
 }

@@ -18,7 +18,9 @@
 package com.adr.datasql.orm;
 
 import com.adr.datasql.KindParameters;
+import com.adr.datasql.KindResults;
 import com.adr.datasql.Parameters;
+import com.adr.datasql.Results;
 import java.sql.SQLException;
 
 /**
@@ -26,7 +28,7 @@ import java.sql.SQLException;
  * @author adrian
  * @param <P>
  */
-public abstract class Data<P> implements Parameters<P> {
+public abstract class Data<P> implements Parameters<P>, Results<P> {
     
     private final Definition definition;
     
@@ -40,6 +42,7 @@ public abstract class Data<P> implements Parameters<P> {
     
     protected abstract Object getValue(Field f, P param) throws SQLException;
     protected abstract void setValue(Field f, P param, Object value) throws SQLException;
+    protected abstract P create() throws SQLException;
     
     public Object getKey(P param) throws SQLException {
         for (Field f : definition.getFields()) {  
@@ -61,7 +64,16 @@ public abstract class Data<P> implements Parameters<P> {
     @Override
     public void write(KindParameters dp, P param) throws SQLException {
         for (Field f : definition.getFields()) {           
-            f.getKind().set(dp, f.getParamName(), getValue(f, param));              
+            f.getKind().set(dp, f.getName(), getValue(f, param));              
         }
     }     
+
+    @Override
+    public P read(KindResults dp) throws SQLException {
+        P param = create();
+        for (Field f : definition.getFields()) {           
+            setValue(f, param, f.getKind().get(dp, f.getName()));              
+        }
+        return param;
+    }
 }

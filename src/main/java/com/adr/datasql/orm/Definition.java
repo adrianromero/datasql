@@ -38,8 +38,22 @@ public class Definition {
         return tablename;
     }
     
+    public String getClassName() {
+        return tablename.replaceAll("_", ".");
+    }
+ 
     public Field[] getFields() {
         return fields;
+    }
+ 
+    public Field[] getFieldsKey() {
+        ArrayList<Field> keys = new ArrayList<Field>();
+        for (Field f: fields) {
+            if (f.isKey()) {
+                keys.add(f);
+            }
+        }        
+        return keys.toArray(new Field[keys.size()]);
     }
 
     public Query getStatementInsert() {
@@ -58,7 +72,7 @@ public class Definition {
             sql.append(f.getName());
 
             values.append(filter ? ", ?": "?");
-            fieldslist.add(f.getParamName());
+            fieldslist.add(f.getName());
 
             filter = true;
         }  
@@ -81,21 +95,20 @@ public class Definition {
                
         boolean filter = false;
         for (Field f: fields) {
+            // UPDATE
             sql.append(filter ? ", " : " SET ");
             sql.append(f.getName());
             sql.append(" = ?");    
-            fieldslist.add(f.getParamName());
+            fieldslist.add(f.getName());
             filter = true;
-        }  
-        
-        for (Field f: fields) {
+            // WHERE
             if (f.isKey()) {
                 sqlfilter.append(sqlfilter.length() == 0 ? " WHERE " : " AND ");
                 sqlfilter.append(f.getName());
                 sqlfilter.append(" = ?");
-                fieldslist.add(f.getParamName());
+                fieldslist.add(f.getName());
             }
-        }
+        }  
         sql.append(sqlfilter);
             
         return new Query(sql.toString(), fieldslist.toArray(new String[fieldslist.size()]));
@@ -115,11 +128,40 @@ public class Definition {
                 sqlfilter.append(sqlfilter.length() == 0 ? " WHERE " : " AND ");
                 sqlfilter.append(f.getName());
                 sqlfilter.append(" = ?");
-                fieldslist.add(f.getParamName());
+                fieldslist.add(f.getName());
             }
         }
         sql.append(sqlfilter);
             
         return new Query(sql.toString(), fieldslist.toArray(new String[fieldslist.size()]));
     } 
+    
+    public Query getStatementSelect() {
+        
+        StringBuilder sql = new StringBuilder();
+        StringBuilder sqlfilter = new StringBuilder();
+        ArrayList<String> fieldslist = new ArrayList<String>();
+        
+        sql.append("SELECT ");
+        boolean filter = false;
+        for (Field f: fields) {
+            // SELECT
+            sql.append(filter ? ", " : "");
+            sql.append(f.getName());
+            filter = true;           
+            // WHERE
+            if (f.isKey()) {
+                sqlfilter.append(sqlfilter.length() == 0 ? " WHERE " : " AND ");
+                sqlfilter.append(f.getName());
+                sqlfilter.append(" = ?");
+                fieldslist.add(f.getName());
+            }
+        }     
+        
+        sql.append(" FROM ");       
+        sql.append(getTableName());
+        sql.append(sqlfilter);
+ 
+        return new Query(sql.toString(), fieldslist.toArray(new String[fieldslist.size()]));        
+    }
 }

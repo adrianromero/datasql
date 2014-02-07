@@ -23,8 +23,8 @@ package com.adr.datasql;
  */
 public class MetaData {
     
-    public final Kind kind;
-    public final String name;
+    private final Kind kind;
+    private final String name;
     
     public MetaData(Kind kind) {
         this.name = null;
@@ -35,6 +35,14 @@ public class MetaData {
         this.name = name;
         this.kind = kind;
     }  
+    
+    public final String getName() {
+        return name;
+    }
+    
+    public final Kind getKind() {
+        return kind;
+    }    
     
     public static MetaData[] fromKinds(Kind[] kinds) {
         MetaData[] metadatas = new MetaData[kinds.length];

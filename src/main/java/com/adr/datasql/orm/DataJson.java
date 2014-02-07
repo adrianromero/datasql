@@ -18,7 +18,7 @@
 package com.adr.datasql.orm;
 
 import java.sql.SQLException;
-import javax.json.JsonNumber;
+import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 
@@ -67,6 +67,11 @@ public class DataJson extends Data<JsonObject> {
         } else {
             param.put(f.getName(), new JsonValueImpl(value, JsonValue.ValueType.STRING));
         }
+    }
+
+    @Override
+    protected JsonObject create() throws SQLException {
+        return Json.createObjectBuilder().build();
     }
     
     private static final class JsonValueImpl implements JsonValue {

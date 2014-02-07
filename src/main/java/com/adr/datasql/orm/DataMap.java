@@ -18,6 +18,7 @@
 package com.adr.datasql.orm;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -38,5 +39,10 @@ public class DataMap extends Data<Map<String, Object>> {
     @Override
     protected void setValue(Field f, Map<String, Object> param, Object value) throws SQLException {
         param.put(f.getName(), value);
+    }
+
+    @Override
+    protected Map<String, Object> create() throws SQLException {
+        return new HashMap<String, Object>();
     }
 }

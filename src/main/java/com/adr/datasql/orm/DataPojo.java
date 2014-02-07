@@ -20,6 +20,8 @@ package com.adr.datasql.orm;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -70,4 +72,16 @@ public class DataPojo<P> extends Data<P> {
             throw new SQLException (ex);
         }          
     }  
+
+    @Override
+    protected P create() throws SQLException {
+        try {
+            return (P) Class.forName(getDefinition().getClassName()).newInstance();
+        } catch (ClassNotFoundException 
+                | InstantiationException 
+                | IllegalAccessException 
+                | ClassCastException ex) {
+            throw new SQLException (ex);
+        }
+    }
 }

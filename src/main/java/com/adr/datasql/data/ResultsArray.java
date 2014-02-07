@@ -44,7 +44,7 @@ public class ResultsArray  implements Results<Object[]> {
          
         Object[] result = new Object[metadatas.length];
         for(int i = 0; i < metadatas.length; i++) {
-            result[i] = metadatas[i].kind.get(kr, i + 1);
+            result[i] = metadatas[i].getKind().get(kr, i + 1);
         }        
         return result;
     }   
