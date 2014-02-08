@@ -20,8 +20,8 @@ package com.adr.datasql.orm;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -30,20 +30,46 @@ import java.util.logging.Logger;
  */
 public class DataPojo<P> extends Data<P> {
     
+    private Class<P> clazz;
+    private Map<String, Method> setters;
+    private Map<String, Method> getters;
+    
     public DataPojo(Definition definition) {
         super(definition);
+        try {
+            clazz = (Class<P>) Class.forName(definition.getClassName());
+            
+            setters = new HashMap<String, Method>();
+            getters = new HashMap<String, Method>();
+            Method[] methods = clazz.getMethods();
+            for (Field f: definition.getFields()) {
+                for (Method m: methods) {
+                    if (m.getParameterTypes().length == 1 && m.getName().equals(f.getSetterName())) {
+                        setters.put(f.getSetterName(), m);
+                    }
+                    if (m.getParameterTypes().length == 0 && m.getName().equals(f.getGetterName())) {
+                        getters.put(f.getGetterName(), m);
+                    }
+                }
+            }
+            
+        } catch (ClassNotFoundException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     @Override
     protected Object getValue(Field f, P param) throws SQLException {
         
         try {          
-            Method m = param.getClass().getMethod(f.getGetterName());       
+            Method m = getters.get(f.getGetterName()); 
+            if (m == null) {
+              throw new SQLException ("Getter not found: " + f.getGetterName() + "().");  
+            }
             return m.invoke(param);              
         } catch (IllegalAccessException 
                 |IllegalArgumentException 
-                |InvocationTargetException 
-                |NoSuchMethodException 
+                |InvocationTargetException  
                 |SecurityException ex) {
             throw new SQLException (ex);
         }        
@@ -52,12 +78,11 @@ public class DataPojo<P> extends Data<P> {
     @Override
     protected void setValue(Field f, P param, Object value) throws SQLException {
         try {          
-            Method m = param.getClass().getMethod(f.getSetterName());       
+            Method m = setters.get(f.getSetterName());    
+            if (m == null) {
+              throw new SQLException ("Setter not found: " + f.getSetterName() + "(?).");  
+            }            
             Class<?>[] types = m.getParameterTypes();
-            
-            if (types.length != 1) {
-                throw new SQLException("Setter methods must have exactly one parameters.");
-            }
             
             if (value == null && types[0].isPrimitive()) {
                 return; // should not assign null to a primitive field.
@@ -67,7 +92,6 @@ public class DataPojo<P> extends Data<P> {
         } catch (IllegalAccessException 
                 |IllegalArgumentException 
                 |InvocationTargetException 
-                |NoSuchMethodException 
                 |SecurityException ex) {
             throw new SQLException (ex);
         }          
@@ -76,11 +100,9 @@ public class DataPojo<P> extends Data<P> {
     @Override
     protected P create() throws SQLException {
         try {
-            return (P) Class.forName(getDefinition().getClassName()).newInstance();
-        } catch (ClassNotFoundException 
-                | InstantiationException 
-                | IllegalAccessException 
-                | ClassCastException ex) {
+            return (P) clazz.newInstance();
+        } catch (InstantiationException 
+                | IllegalAccessException ex) {
             throw new SQLException (ex);
         }
     }
