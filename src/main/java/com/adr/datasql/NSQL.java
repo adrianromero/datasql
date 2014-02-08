@@ -25,7 +25,7 @@ import java.util.List;
  *
  * @author adrian
  */
-public class NSQL {
+public class NSQL implements AbstractSQL {
     
     private static final char CHAR_ETX = '\u0003';
     
@@ -122,6 +122,7 @@ public class NSQL {
     /**
      * @return the sql
      */
+    @Override
     public String getSQL() {
         return sql;
     }
@@ -129,10 +130,10 @@ public class NSQL {
     /**
      * @return the paramnames
      */
+    @Override
     public String[] getParamNames() {
         return paramnames;
-    }
-    
+    }  
     
     @Override
     public String toString() {

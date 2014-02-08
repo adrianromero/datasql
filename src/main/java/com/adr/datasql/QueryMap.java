@@ -35,8 +35,8 @@ public class QueryMap extends Query<Map<String, Object>, Map<String, Object>> {
         init();
     }
 
-    public QueryMap(NSQL nsql) {
-        super(nsql);
+    public QueryMap(AbstractSQL sql) {
+        super(sql);
         init();
     }
     

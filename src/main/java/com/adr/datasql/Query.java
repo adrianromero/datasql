@@ -35,28 +35,25 @@ public class Query<R, P> implements ProcExec<P>, ProcFind<R, P>, ProcList<R, P> 
     
     private static final Logger logger = Logger.getLogger(Query.class.getName()); 
 
-    protected String sql;
-    protected String[] paramnames;  
+    private AbstractSQL sql;
     
     private Parameters<P> parameters = null;
     private Results<R> results = null;
-    
-    public Query(NSQL nsql) {
-        this.sql = nsql.getSQL();
-        this.paramnames = nsql.getParamNames();
+
+    public Query(AbstractSQL sql) {
+        this.sql = sql;
     }
     
     public Query(String sql, String... paramnames) {
-        this.sql = sql;
-        this.paramnames = paramnames == null ? new String[0] : paramnames;
+        this.sql = new SQL(sql, paramnames);
     }
     
     @Override
     public final int exec(Session s, P params) throws SQLException {
         logger.log(Level.INFO, "Executing prepared SQL: {0}", sql);
 
-        try (PreparedStatement stmt = s.getConnection().prepareStatement(sql)) {
-            KindParameters kp = new KindParametersMap(stmt, paramnames);
+        try (PreparedStatement stmt = s.getConnection().prepareStatement(sql.getSQL())) {
+            KindParameters kp = new KindParametersMap(stmt, sql.getParamNames());
 
             if (parameters != null) {
                 parameters.write(kp, params);
@@ -70,8 +67,8 @@ public class Query<R, P> implements ProcExec<P>, ProcFind<R, P>, ProcList<R, P> 
         
         logger.log(Level.INFO, "Executing prepared SQL: {0}", sql);
 
-        try (PreparedStatement stmt = s.getConnection().prepareStatement(sql)) {
-            KindParameters kp = new KindParametersMap(stmt, paramnames);
+        try (PreparedStatement stmt = s.getConnection().prepareStatement(sql.getSQL())) {
+            KindParameters kp = new KindParametersMap(stmt, sql.getParamNames());
 
             if (parameters != null) {
                 parameters.write(kp, params);
@@ -92,8 +89,8 @@ public class Query<R, P> implements ProcExec<P>, ProcFind<R, P>, ProcList<R, P> 
     public List<R> list(Session s, P params) throws SQLException {
         logger.log(Level.INFO, "Executing prepared SQL: {0}", sql);
 
-        try (PreparedStatement stmt = s.getConnection().prepareStatement(sql)) {
-            KindParameters kp = new KindParametersMap(stmt, paramnames);
+        try (PreparedStatement stmt = s.getConnection().prepareStatement(sql.getSQL())) {
+            KindParameters kp = new KindParametersMap(stmt, sql.getParamNames());
 
             if (parameters != null) {
                 parameters.write(kp, params);
