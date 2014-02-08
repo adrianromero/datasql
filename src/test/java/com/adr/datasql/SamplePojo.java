@@ -33,7 +33,7 @@ public class SamplePojo {
     private String code;
     
     public final static Data<SamplePojo> DATA = new DataPojo(new Definition(
-            "samplepojo",
+            "com_adr_datasql_SamplePojo",
             new FieldKey("id", Kind.STRING),
             new Field("code", Kind.STRING),
             new Field("name", Kind.STRING)));
