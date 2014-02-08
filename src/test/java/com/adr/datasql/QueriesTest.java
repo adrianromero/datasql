@@ -41,7 +41,7 @@ public class QueriesTest {
     @Test
     public void initialTest() throws SQLException, ParseException {
 
-        try (Session session = new Session(DataTestSuite.getDataSource().getConnection())) {
+        try (Session session = DataTestSuite.newSession()) {
 
             session.exec(new QueryArray("insert into mytest(id, code, name) values (?, ?, ?)"), "one", "code one", "name one");
 
@@ -61,7 +61,7 @@ public class QueriesTest {
     @Test
     public void query2Test() throws SQLException, ParseException {   
         
-        try (Session session = new Session(DataTestSuite.getDataSource().getConnection())) {
+        try (Session session = DataTestSuite.newSession()) {
             
             ProcExec<Object[]> insertMYTEST = new QueryArray("insert into mytest(id, code, name) values (?, ?, ?)")
                     .setParameters(Kind.STRING, Kind.STRING, Kind.STRING);
@@ -73,7 +73,7 @@ public class QueriesTest {
     @BeforeClass
     public static void setUpClass() throws SQLException {   
    
-        try (Session session = new Session(DataTestSuite.getDataSource().getConnection())) {
+        try (Session session = DataTestSuite.newSession()) {
         
             session.exec(new QueryArray("create table mytest(id varchar(32), code varchar(128), name varchar(1024))"));
         }

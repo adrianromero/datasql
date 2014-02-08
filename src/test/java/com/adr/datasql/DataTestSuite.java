@@ -70,8 +70,8 @@ public class DataTestSuite {
         }        
     }
     
-    public static DataSource getDataSource() {
-        return cpds;
+    public static Session newSession() throws SQLException {
+        return new Session(cpds.getConnection()); 
     }
 
     @Before
