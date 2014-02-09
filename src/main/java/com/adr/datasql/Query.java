@@ -35,12 +35,12 @@ public class Query<R, P> implements ProcExec<P>, ProcFind<R, P>, ProcList<R, P> 
     
     private static final Logger logger = Logger.getLogger(Query.class.getName()); 
 
-    private AbstractSQL sql;
+    private SQL sql;
     
     private Parameters<P> parameters = null;
     private Results<R> results = null;
 
-    public Query(AbstractSQL sql) {
+    public Query(SQL sql) {
         this.sql = sql;
     }
     

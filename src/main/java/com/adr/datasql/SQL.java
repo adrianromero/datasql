@@ -21,23 +21,28 @@ package com.adr.datasql;
  *
  * @author adrian
  */
-public class SQL implements AbstractSQL {
+public class SQL {
 
-    protected String sql;
-    protected String[] paramnames;  
+    private String sql;
+    private String[] paramnames;  
     
     public SQL(String sql, String... paramnames) {
-        this.sql = sql;
-        this.paramnames = paramnames == null ? new String[0] : paramnames;
+        init(sql, paramnames);
     }
     
-    @Override
-    public String getSQL() {
+    protected SQL() {
+    }
+    
+    protected final void init(String sql, String... paramnames) {
+        this.sql = sql;
+        this.paramnames = paramnames == null ? new String[0] : paramnames;        
+    }
+    
+    public final String getSQL() {
         return sql;
     }
 
-    @Override
-    public String[] getParamNames() {
+    public final String[] getParamNames() {
         return paramnames;
     } 
     

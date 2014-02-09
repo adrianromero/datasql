@@ -25,7 +25,7 @@ import java.util.List;
  *
  * @author adrian
  */
-public class NSQL implements AbstractSQL {
+public class NSQL extends SQL {
     
     private static final char CHAR_ETX = '\u0003';
     
@@ -34,10 +34,7 @@ public class NSQL implements AbstractSQL {
     private static final int STATE_DOUBLEQUOTE = 2;
     private static final int STATE_PARAMETERSTART = 3;
     private static final int STATE_PARAMETERPART = 4;
-    
-    private String sql;
-    private String[] paramnames;
-    
+
     public NSQL(String sql) throws ParseException {
         
         StringBuilder parsedsql = new StringBuilder();
@@ -61,8 +58,7 @@ public class NSQL implements AbstractSQL {
                 } else if (c == ':') {
                     state = STATE_PARAMETERSTART;
                 } else if (c == CHAR_ETX) {
-                    this.sql = parsedsql.toString();
-                    this.paramnames = parsedparams.toArray(new String[parsedparams.size()]);
+                    init(parsedsql.toString(), parsedparams.toArray(new String[parsedparams.size()]));
                     return;
                 } else {
                     parsedsql.append(c);
@@ -100,8 +96,7 @@ public class NSQL implements AbstractSQL {
                     parsedsql.append('?');
                     parsedparams.add(parametername.toString());
                     
-                    this.sql = parsedsql.toString();
-                    this.paramnames = parsedparams.toArray(new String[parsedparams.size()]);
+                    init(parsedsql.toString(), parsedparams.toArray(new String[parsedparams.size()]));
                     return;   
                 } else if (Character.isJavaIdentifierPart(c)) {
                     parametername.append(c);
@@ -117,36 +112,5 @@ public class NSQL implements AbstractSQL {
 
             i++;
         }
-    }      
-
-    /**
-     * @return the sql
-     */
-    @Override
-    public String getSQL() {
-        return sql;
-    }
-
-    /**
-     * @return the paramnames
-     */
-    @Override
-    public String[] getParamNames() {
-        return paramnames;
-    }  
-    
-    @Override
-    public String toString() {
-        StringBuilder s = new StringBuilder();
-        s.append(getSQL());
-        s.append('[');
-        for(int i = 0; i < getParamNames().length; i++) {
-            if (i > 0) {
-                s.append(", ");
-            }
-            s.append(getParamNames()[i]);
-        }
-        s.append(']');
-        return s.toString();
-    }    
+    }        
 }

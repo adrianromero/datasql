@@ -33,7 +33,7 @@ public class QueryArray extends Query<Object[], Object[]> {
         init();
     }
 
-    public QueryArray(AbstractSQL sql) {
+    public QueryArray(SQL sql) {
         super(sql);
         init();
     }

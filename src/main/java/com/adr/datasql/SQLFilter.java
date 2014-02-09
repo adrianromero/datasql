@@ -21,8 +21,18 @@ package com.adr.datasql;
  *
  * @author adrian
  */
-public interface AbstractSQL {
-   
-    public String getSQL();
-    public String[] getParamNames();
+public class SQLFilter extends SQL {
+
+    public SQLFilter(String sql, String[] filters) {
+        StringBuilder where = new StringBuilder("(1 = 1");
+        for(String p: filters) {
+            where.append(" AND ");
+            where.append(p);
+            where.append(" = :");
+            where.append(p);
+        }
+        where.append(")");
+        
+        init(sql.replaceFirst(":\\(filter\\)", where.toString()), filters);
+    }
 }
