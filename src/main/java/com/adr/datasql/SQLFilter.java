@@ -23,14 +23,23 @@ package com.adr.datasql;
  */
 public class SQLFilter extends SQL {
 
-    public SQLFilter(String sql, String[] filters) {
-        StringBuilder where = new StringBuilder("(1 = 1");
-        for(String p: filters) {
-            where.append(" AND ");
-            where.append(p);
-            where.append(" = :");
-            where.append(p);
-        }
+    public SQLFilter(String sql, String... filters) {
+        StringBuilder where = new StringBuilder("(");
+        if (filters.length == 0) {
+            where.append("1 = 1");
+        } else {
+            boolean addand = false;
+            for(String p: filters) {
+                if (addand) {
+                    where.append(" AND ");
+                } else {
+                    addand = true;
+                }
+                where.append(p);
+                where.append(" = :");
+                where.append(p);
+            }            
+        }       
         where.append(")");
         
         init(sql.replaceFirst(":\\(filter\\)", where.toString()), filters);
