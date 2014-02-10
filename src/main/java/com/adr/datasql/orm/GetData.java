@@ -15,7 +15,7 @@ import java.sql.SQLException;
 /**
  *
  * @author adrian
- * @param <P>
+ * @param <R>
  */
 public class GetData<R> implements ProcFind<R, Object[]> {
         
@@ -23,9 +23,11 @@ public class GetData<R> implements ProcFind<R, Object[]> {
     
     public GetData(Data<R> data) {
         
-        queryfind = data.getDefinition().getStatementSelect();
-        queryfind.setResults(data);
-        queryfind.setParameters(new ParametersArray(data.getDefinition().getFieldsKey()));
+        Field[] fieldskey = data.getDefinition().getFieldsKey();
+        
+        queryfind = new Query<R, Object[]>(data.getDefinition().getStatementSelect(fieldskey))
+                .setResults(data)
+                .setParameters(new ParametersArray(fieldskey));
     }
 
     @Override

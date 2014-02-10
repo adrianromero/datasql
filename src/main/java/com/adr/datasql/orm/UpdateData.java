@@ -29,12 +29,12 @@ import java.sql.SQLException;
  */
 public class UpdateData<P> implements ProcExec<P> {
         
-    private final Query<?,P> queryupdate;
+    private final Query<Void, P> queryupdate;
     
     public UpdateData(Data<P> data) {
         
-        queryupdate = data.getDefinition().getStatementUpdate();
-        queryupdate.setParameters(data);
+        queryupdate = new Query<Void, P>(data.getDefinition().getStatementUpdate())
+                .setParameters(data);
     }
 
     @Override

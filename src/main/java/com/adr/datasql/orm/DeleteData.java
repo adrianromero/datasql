@@ -29,12 +29,12 @@ import java.sql.SQLException;
  */
 public class DeleteData<P> implements ProcExec<P> {
         
-    private final Query<?,P> querydelete;
+    private final Query<Void, P> querydelete;
     
     public DeleteData(Data<P> data) {
         
-        querydelete = data.getDefinition().getStatementDelete();
-        querydelete.setParameters(data);
+        querydelete = new Query<Void,P>(data.getDefinition().getStatementDelete())
+                .setParameters(data);
     }
 
     @Override

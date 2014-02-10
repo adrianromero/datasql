@@ -29,17 +29,15 @@ import java.sql.SQLException;
  */
 public class UpsertData<P> implements ProcExec<P> {
         
-    private final Query<?,P> queryinsert;
-    private final Query<?,P> queryupdate;
-    private final Data<P> data;
+    private final Query<Void, P> queryinsert;
+    private final Query<Void, P> queryupdate;
     
     public UpsertData(Data<P> data) {
         
-        this.data = data;   
-        queryinsert = data.getDefinition().getStatementInsert();
-        queryinsert.setParameters(data);       
-        queryupdate = data.getDefinition().getStatementUpdate();
-        queryupdate.setParameters(data);
+        queryinsert = new Query<Void, P>(data.getDefinition().getStatementInsert())
+                .setParameters(data);       
+        queryupdate = new Query<Void, P>(data.getDefinition().getStatementUpdate())
+                .setParameters(data);
     }
 
     @Override

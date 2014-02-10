@@ -17,8 +17,9 @@
 
 package com.adr.datasql.orm;
 
-import com.adr.datasql.Query;
+import com.adr.datasql.SQL;
 import java.util.ArrayList;
+import java.util.Set;
 
 /**
  *
@@ -55,8 +56,18 @@ public class Definition {
         }        
         return keys.toArray(new Field[keys.size()]);
     }
-
-    public Query getStatementInsert() {
+ 
+    public Field[] getFields(Set<String> fieldsname) {
+        ArrayList<Field> keys = new ArrayList<Field>();
+        for (Field f: fields) {
+            if (fieldsname.contains(f.getName())) {
+                keys.add(f);
+            }
+        }        
+        return keys.toArray(new Field[keys.size()]);
+    }
+    
+    public SQL getStatementInsert() {
         
         StringBuilder sql = new StringBuilder();
         StringBuilder values = new StringBuilder();
@@ -81,13 +92,12 @@ public class Definition {
         sql.append(values);
         sql.append(")");
             
-        return new Query(sql.toString(), fieldslist.toArray(new String[fieldslist.size()]));
+        return new SQL(sql.toString(), fieldslist.toArray(new String[fieldslist.size()]));
     } 
     
-    public Query getStatementUpdate() {
+    public SQL getStatementUpdate() {
         
         StringBuilder sql = new StringBuilder();
-        StringBuilder sqlfilter = new StringBuilder();
         ArrayList<String> fieldslist = new ArrayList<String>();
         
         sql.append("UPDATE ");
@@ -95,26 +105,28 @@ public class Definition {
                
         boolean filter = false;
         for (Field f: fields) {
-            // UPDATE
             sql.append(filter ? ", " : " SET ");
             sql.append(f.getName());
             sql.append(" = ?");    
             fieldslist.add(f.getName());
             filter = true;
-            // WHERE
+        }  
+        
+        filter = false;
+        for (Field f: fields) {
             if (f.isKey()) {
-                sqlfilter.append(sqlfilter.length() == 0 ? " WHERE " : " AND ");
-                sqlfilter.append(f.getName());
-                sqlfilter.append(" = ?");
+                sql.append(filter ? " AND " : " WHERE ");
+                sql.append(f.getName());
+                sql.append(" = ?");
                 fieldslist.add(f.getName());
+                filter = true;
             }
         }  
-        sql.append(sqlfilter);
             
-        return new Query(sql.toString(), fieldslist.toArray(new String[fieldslist.size()]));
+        return new SQL(sql.toString(), fieldslist.toArray(new String[fieldslist.size()]));
     }
     
-    public Query getStatementDelete() {
+    public SQL getStatementDelete() {
         
         StringBuilder sql = new StringBuilder();
         StringBuilder sqlfilter = new StringBuilder();
@@ -133,35 +145,41 @@ public class Definition {
         }
         sql.append(sqlfilter);
             
-        return new Query(sql.toString(), fieldslist.toArray(new String[fieldslist.size()]));
+        return new SQL(sql.toString(), fieldslist.toArray(new String[fieldslist.size()]));
     } 
-    
-    public Query getStatementSelect() {
+       
+    public SQL getStatementSelect(Field... filterfields) {
         
         StringBuilder sql = new StringBuilder();
-        StringBuilder sqlfilter = new StringBuilder();
         ArrayList<String> fieldslist = new ArrayList<String>();
         
         sql.append("SELECT ");
-        boolean filter = false;
+        boolean comma = false;
         for (Field f: fields) {
-            // SELECT
-            sql.append(filter ? ", " : "");
-            sql.append(f.getName());
-            filter = true;           
-            // WHERE
-            if (f.isKey()) {
-                sqlfilter.append(sqlfilter.length() == 0 ? " WHERE " : " AND ");
-                sqlfilter.append(f.getName());
-                sqlfilter.append(" = ?");
-                fieldslist.add(f.getName());
+            if (comma) {
+                sql.append(", ");
+            } else {
+                comma = true;       
             }
-        }     
+            sql.append(f.getName()); 
+        }    
         
         sql.append(" FROM ");       
         sql.append(getTableName());
-        sql.append(sqlfilter);
- 
-        return new Query(sql.toString(), fieldslist.toArray(new String[fieldslist.size()]));        
+        
+        comma = false;
+        for (Field f: filterfields) {
+            if (comma) {
+                sql.append(" AND ");
+            } else {
+                sql.append(" WHERE ");
+                comma = true;
+            }           
+            sql.append(f.getName());
+            sql.append(" = ?");
+            fieldslist.add(f.getName());            
+        }
+
+        return new SQL(sql.toString(), fieldslist.toArray(new String[fieldslist.size()]));            
     }
 }
