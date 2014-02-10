@@ -40,8 +40,13 @@ public class ListData<R> implements ProcList<R, Map<String, Object>> {
 
     @Override
     public List<R> list(Session s, Map<String, Object> params) throws SQLException {
-                
-        Field[] fieldsparams = data.getDefinition().getFields(params.keySet());
+            
+        Field[] fieldsparams;
+        if (params == null) {
+            fieldsparams = new Field[0];
+        } else {
+            fieldsparams = data.getDefinition().getFields(params.keySet());
+        }
         
         Query<R, Map<String, Object>> querylist = new Query<R, Map<String, Object>>(data.getDefinition().getStatementSelect(fieldsparams))
                 .setResults(data)
