@@ -24,8 +24,12 @@ import com.adr.datasql.orm.Field;
 import com.adr.datasql.orm.FieldKey;
 import com.adr.datasql.orm.GetData;
 import com.adr.datasql.orm.InsertData;
+import com.adr.datasql.orm.ListData;
 import com.adr.datasql.orm.UpsertData;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.json.Json;
 import javax.json.JsonObject;
 import org.junit.After;
@@ -109,44 +113,50 @@ public class ORMTest {
         
     }  
     
-//    // @Test
-//    public void listPojo() throws SQLException {
-//        
-//
-//        try (Session session = new Session(DataTestSuite.getDataSource().getConnection())) {        
-//            
-//            ProcList<SamplePojo, Object[]> listSamplePojo = new ListData<SamplePojo>(SamplePojo.DATA);
-//                    
-//            List<SamplePojo> pojo = session.list(listSamplePojo);   
-//            
-//            //System.out.println(pojo.toString());              
-//        }        
-//        
-//    }  
-//    
-//    // @Test
-//    public void filterPojo() throws SQLException {
-//        
-//        try (Session session = new Session(DataTestSuite.getDataSource().getConnection())) {        
-//            
-//            ProcList<SamplePojo, Object[]> listSamplePojo = new ListData<SamplePojo>(SamplePojo.DATA);
-//            
-//            Map<String, Object> parameters = new HashMap<String, Object>();
-//            parameters.put("name", "two name")
-//                    
-//            List<SamplePojo> pojo = session.list(listSamplePojo, parameters);   
-//            
-//            //System.out.println(pojo.toString());              
-//        }       
-//        
-//    }  
+    @Test
+    public void listPojo() throws SQLException {
+        
+
+        try (Session session = DataTestSuite.newSession()) { 
+            
+            ProcList<SamplePojo, Map<String, Object>> listSamplePojo = new ListData<SamplePojo>(SamplePojo.DATA);
+                             
+            List<SamplePojo> pojos = session.list(listSamplePojo);   
+            
+            System.out.println(pojos);              
+        }        
+        
+    }  
+    
+    @Test
+    public void filterPojo() throws SQLException {
+        
+
+        try (Session session = DataTestSuite.newSession()) { 
+            
+            ProcList<SamplePojo, Map<String, Object>> listSamplePojo = new ListData<SamplePojo>(SamplePojo.DATA);
+                             
+            Map<String, Object> filter = new HashMap<String, Object>();
+            filter.put("code", "code x");
+            
+            List<SamplePojo> pojos = session.list(listSamplePojo, filter);   
+            
+            System.out.println(pojos);              
+        }           
+        
+    }  
     
     @BeforeClass
     public static void setUpClass() throws SQLException {   
    
         try (Session session = DataTestSuite.newSession()) { 
        
-            session.exec(new QueryArray("create table com_adr_datasql_SamplePojo(id varchar(32), code varchar(128), name varchar(1024))"));     
+            session.exec(new QueryArray("create table com_adr_datasql_SamplePojo(id varchar(32), code varchar(128), name varchar(1024))"));    
+            session.exec(new QueryArray("insert into com_adr_datasql_SamplePojo(id, code, name) values (?, ?, ?)"), "a", "code x", "name a");
+            session.exec(new QueryArray("insert into com_adr_datasql_SamplePojo(id, code, name) values (?, ?, ?)"), "b", "code x", "name b");
+            session.exec(new QueryArray("insert into com_adr_datasql_SamplePojo(id, code, name) values (?, ?, ?)"), "c", "code x", "name c");
+            session.exec(new QueryArray("insert into com_adr_datasql_SamplePojo(id, code, name) values (?, ?, ?)"), "d", "code x", "name d");
+            session.exec(new QueryArray("insert into com_adr_datasql_SamplePojo(id, code, name) values (?, ?, ?)"), "e", "code x", "name e");
         }
     }
     

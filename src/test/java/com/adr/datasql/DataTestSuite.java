@@ -19,7 +19,6 @@ package com.adr.datasql;
 
 import java.io.File;
 import java.sql.SQLException;
-import javax.sql.DataSource;
 import org.apache.commons.io.FileUtils;
 import org.apache.derby.jdbc.EmbeddedConnectionPoolDataSource;
 import org.junit.After;
