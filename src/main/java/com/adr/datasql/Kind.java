@@ -21,6 +21,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.DateFormat;
@@ -39,6 +40,7 @@ public abstract class Kind<T> {
     public final static Kind<Number> INT = new KindINT();
     public final static Kind<String> STRING = new KindSTRING();
     public final static Kind<Number> DOUBLE = new KindDOUBLE();
+    public final static Kind<BigDecimal> DECIMAL = new KindDECIMAL();
     public final static Kind<Boolean> BOOLEAN = new KindBOOLEAN();
     public final static Kind<Date> TIMESTAMP = new KindTIMESTAMP();
     public final static Kind<Date> DATE = new KindDATE();
@@ -155,6 +157,25 @@ public abstract class Kind<T> {
         }
     }
 
+    private static final class KindDECIMAL extends Kind<BigDecimal> {
+        @Override
+        public BigDecimal get(KindResults read, String name) throws SQLException {
+            return read.getBigDecimal(name);
+        }
+        @Override
+        public BigDecimal get(KindResults read, int index) throws SQLException {
+            return read.getBigDecimal(index);
+        }
+        @Override
+        public void set(KindParameters write, String name, BigDecimal value) throws SQLException {
+            write.setBigDecimal(name, value);
+        }
+        @Override
+        public void set(KindParameters write, int index, BigDecimal value) throws SQLException {
+            write.setBigDecimal(index, value);
+        }
+    }
+
     private static final class KindBOOLEAN extends Kind<Boolean> {
         @Override
         public Boolean get(KindResults read, String name) throws SQLException {
@@ -195,8 +216,8 @@ public abstract class Kind<T> {
     
     private static final class KindISODATETIME extends Kind<String> {
         
-        private static DateFormat isodatetime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-        private static DateFormat isodate = new SimpleDateFormat("yyyy-MM-dd");
+        private static final DateFormat isodatetime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        private static final DateFormat isodate = new SimpleDateFormat("yyyy-MM-dd");
         
         public String format(Date d) {
             return d == null ? null : isodatetime.format(d);
@@ -242,7 +263,7 @@ public abstract class Kind<T> {
     
     private static final class KindISODATE extends Kind<String> {
         
-        private static DateFormat isodate = new SimpleDateFormat("yyyy-MM-dd");
+        private static final DateFormat isodate = new SimpleDateFormat("yyyy-MM-dd");
         
         public String format(Date d) {
             return d == null ? null : isodate.format(d);
@@ -280,7 +301,7 @@ public abstract class Kind<T> {
     
     private static final class KindISOTIME extends Kind<String> {
         
-        private static DateFormat isotime = new SimpleDateFormat("HH:mm:ss.SSS");
+        private static final DateFormat isotime = new SimpleDateFormat("HH:mm:ss.SSS");
         
         public String format(Date d) {
             return d == null ? null : isotime.format(d);

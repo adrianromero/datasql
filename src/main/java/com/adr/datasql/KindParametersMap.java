@@ -17,6 +17,7 @@
 
 package com.adr.datasql;
 
+import java.math.BigDecimal;
 import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -70,6 +71,18 @@ public final class KindParametersMap implements KindParameters {
         for (int i = 0; i < params.length; i++) {
             if (params[i] != null && params[i].equals(paramName)) {
                 setDouble(i + 1, dValue);
+            }
+        }               
+    }
+    @Override
+    public void setBigDecimal(int paramIndex, BigDecimal value) throws SQLException {
+        stmt.setBigDecimal(paramIndex, value);
+    }
+    @Override
+    public void setBigDecimal(String paramName, BigDecimal value) throws SQLException {
+        for (int i = 0; i < params.length; i++) {
+            if (params[i] != null && params[i].equals(paramName)) {
+                stmt.setBigDecimal(i + 1, value);
             }
         }               
     }

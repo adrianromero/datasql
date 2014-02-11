@@ -17,6 +17,7 @@
 
 package com.adr.datasql;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -60,6 +61,14 @@ public final class KindResultsMap implements KindResults {
     public Double getDouble(String columnName) throws SQLException {
         double dValue = resultset.getDouble(columnName);
         return resultset.wasNull() ? null : new Double(dValue);
+    }
+    @Override
+    public BigDecimal getBigDecimal(int columnIndex) throws SQLException {
+        return resultset.getBigDecimal(columnIndex);
+    }
+    @Override
+    public BigDecimal getBigDecimal(String columnName) throws SQLException {
+        return resultset.getBigDecimal(columnName);
     }
     @Override
     public Boolean getBoolean(int columnIndex) throws SQLException {

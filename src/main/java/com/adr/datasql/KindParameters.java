@@ -17,6 +17,7 @@
 
 package com.adr.datasql;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Date;
 
@@ -32,6 +33,8 @@ public interface KindParameters {
     public void setString(String paramName, String sValue) throws SQLException;
     public void setDouble(int paramIndex, Double dValue) throws SQLException;
     public void setDouble(String paramName, Double dValue) throws SQLException;
+    public void setBigDecimal(int paramIndex, BigDecimal value) throws SQLException;
+    public void setBigDecimal(String paramName, BigDecimal value) throws SQLException;
     public void setBoolean(int paramIndex, Boolean bValue) throws SQLException;
     public void setBoolean(String paramName, Boolean bValue) throws SQLException;
     public void setTimestamp(int paramIndex, Date dValue) throws SQLException;
