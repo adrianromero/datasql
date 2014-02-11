@@ -19,7 +19,9 @@ package com.adr.datasql.orm;
 
 import java.sql.SQLException;
 import javax.json.Json;
+import javax.json.JsonNumber;
 import javax.json.JsonObject;
+import javax.json.JsonString;
 import javax.json.JsonValue;
 
 /**
@@ -47,9 +49,10 @@ public class DataJson extends Data<JsonObject> {
         } else if (value.getValueType() == JsonValue.ValueType.TRUE) {
             return true;
         } else if (value.getValueType() == JsonValue.ValueType.STRING) {
-            return value.toString();
+            return ((JsonString)value).getString();
         } else if (value.getValueType() == JsonValue.ValueType.NUMBER) {
-            return Double.parseDouble(value.toString());
+            JsonNumber num = (JsonNumber) value;
+            return num.isIntegral() ? num.intValue(): num.doubleValue();
         } else {
             throw new SQLException("Not valid Json value.");
         }  
