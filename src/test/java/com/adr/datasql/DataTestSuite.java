@@ -17,6 +17,7 @@
 
 package com.adr.datasql;
 
+import com.adr.datasql.orm.ORMSession;
 import java.io.File;
 import java.sql.SQLException;
 import org.apache.commons.io.FileUtils;
@@ -69,8 +70,8 @@ public class DataTestSuite {
         }        
     }
     
-    public static Session newSession() throws SQLException {
-        return new Session(cpds.getConnection()); 
+    public static ORMSession newSession() throws SQLException {
+        return new ORMSession(cpds.getConnection()); 
     }
 
     @Before

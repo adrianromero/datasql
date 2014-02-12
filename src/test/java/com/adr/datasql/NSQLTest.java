@@ -20,7 +20,6 @@ package com.adr.datasql;
 import com.adr.datasql.orm.Definition;
 import java.text.ParseException;
 import java.util.Collections;
-import java.util.Set;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -68,17 +67,23 @@ public class NSQLTest {
 
         Definition def = SamplePojo.DATA.getDefinition();
         
-        Assert.assertEquals("UPDATE com_adr_datasql_SamplePojo SET id = ?, code = ?, name = ? WHERE id = ?[id, code, name, id]",
+//        System.out.println(def.getStatementUpdate().toString());
+//        System.out.println(def.getStatementInsert().toString());
+//        System.out.println(def.getStatementDelete().toString());
+//        System.out.println(def.getStatementSelect().toString());
+//        System.out.println(def.getStatementSelect(def.getFieldsKey()).toString());
+//        System.out.println(def.getStatementSelect(def.getFields(Collections.singleton("name"))));
+        Assert.assertEquals("UPDATE com_adr_datasql_SamplePojo SET id = ?, code = ?, name = ?, valdate = ?, valdouble = ?, valdecimal = ?, valinteger = ?, valboolean = ? WHERE id = ?[id, code, name, valdate, valdouble, valdecimal, valinteger, valboolean, id]",
                 def.getStatementUpdate().toString());
-        Assert.assertEquals("INSERT INTO com_adr_datasql_SamplePojo(id, code, name) VALUES (?, ?, ?)[id, code, name]",
+        Assert.assertEquals("INSERT INTO com_adr_datasql_SamplePojo(id, code, name, valdate, valdouble, valdecimal, valinteger, valboolean) VALUES (?, ?, ?, ?, ?, ?, ?, ?)[id, code, name, valdate, valdouble, valdecimal, valinteger, valboolean]",
                 def.getStatementInsert().toString());
         Assert.assertEquals("DELETE FROM com_adr_datasql_SamplePojo WHERE id = ?[id]",
                 def.getStatementDelete().toString());
-        Assert.assertEquals("SELECT id, code, name FROM com_adr_datasql_SamplePojo[]",
+        Assert.assertEquals("SELECT id, code, name, valdate, valdouble, valdecimal, valinteger, valboolean FROM com_adr_datasql_SamplePojo[]",
                 def.getStatementSelect().toString());
-        Assert.assertEquals("SELECT id, code, name FROM com_adr_datasql_SamplePojo WHERE id = ?[id]",
+        Assert.assertEquals("SELECT id, code, name, valdate, valdouble, valdecimal, valinteger, valboolean FROM com_adr_datasql_SamplePojo WHERE id = ?[id]",
                 def.getStatementSelect(def.getFieldsKey()).toString());
-        Assert.assertEquals("SELECT id, code, name FROM com_adr_datasql_SamplePojo WHERE name = ?[name]",
+        Assert.assertEquals("SELECT id, code, name, valdate, valdouble, valdecimal, valinteger, valboolean FROM com_adr_datasql_SamplePojo WHERE name = ?[name]",
                 def.getStatementSelect(def.getFields(Collections.singleton("name"))).toString());
     }
     

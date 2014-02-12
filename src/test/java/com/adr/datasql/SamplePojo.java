@@ -22,6 +22,8 @@ import com.adr.datasql.orm.DataPojo;
 import com.adr.datasql.orm.Definition;
 import com.adr.datasql.orm.Field;
 import com.adr.datasql.orm.FieldKey;
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  *
@@ -31,12 +33,22 @@ public class SamplePojo {
     private String id;
     private String name;
     private String code;
+    private Date valdate;
+    private Double valdouble;
+    private BigDecimal valdecimal;
+    private Integer valinteger;
+    private Boolean valboolean;
     
     public final static Data<SamplePojo> DATA = new DataPojo(new Definition(
             "com_adr_datasql_SamplePojo",
             new FieldKey("id", Kind.STRING),
             new Field("code", Kind.STRING),
-            new Field("name", Kind.STRING)));
+            new Field("name", Kind.STRING),
+            new Field("valdate", Kind.TIMESTAMP),
+            new Field("valdouble", Kind.DOUBLE),
+            new Field("valdecimal", Kind.DECIMAL),
+            new Field("valinteger", Kind.INT),
+            new Field("valboolean", Kind.BOOLEAN)));
 
     /**
      * @return the id
@@ -80,8 +92,78 @@ public class SamplePojo {
         this.code = code;
     }
     
+    /**
+     * @return the valdate
+     */
+    public Date getValdate() {
+        return valdate;
+    }
+
+    /**
+     * @param valdate the valdate to set
+     */
+    public void setValdate(Date valdate) {
+        this.valdate = valdate;
+    }
+
+    /**
+     * @return the valdouble
+     */
+    public Double getValdouble() {
+        return valdouble;
+    }
+
+    /**
+     * @param valdouble the valdouble to set
+     */
+    public void setValdouble(Double valdouble) {
+        this.valdouble = valdouble;
+    }
+
+    /**
+     * @return the valboolean
+     */
+    public Boolean getValboolean() {
+        return valboolean;
+    }
+
+    /**
+     * @param valboolean the valboolean to set
+     */
+    public void setValboolean(Boolean valboolean) {
+        this.valboolean = valboolean;
+    }    
+
+    /**
+     * @return the valdecimal
+     */
+    public BigDecimal getValdecimal() {
+        return valdecimal;
+    }
+
+    /**
+     * @param valdecimal the valdecimal to set
+     */
+    public void setValdecimal(BigDecimal valdecimal) {
+        this.valdecimal = valdecimal;
+    }
+
+    /**
+     * @return the valinteger
+     */
+    public Integer getValinteger() {
+        return valinteger;
+    }
+
+    /**
+     * @param valinteger the valinteger to set
+     */
+    public void setValinteger(Integer valinteger) {
+        this.valinteger = valinteger;
+    }
+    
     @Override
     public String toString() {
         return "(" + id + ", " + code + ", " + name + ")";
-    }       
+    }        
 }
