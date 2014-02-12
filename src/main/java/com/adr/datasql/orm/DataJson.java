@@ -17,12 +17,12 @@
 
 package com.adr.datasql.orm;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import java.math.BigInteger;
 import java.sql.SQLException;
-import javax.json.Json;
-import javax.json.JsonNumber;
-import javax.json.JsonObject;
-import javax.json.JsonString;
-import javax.json.JsonValue;
 
 /**
  *
@@ -37,22 +37,29 @@ public class DataJson extends Data<JsonObject> {
     @Override
     protected Object getValue(Field f, JsonObject param) throws SQLException {
         
-        JsonValue value = param.get(f.getName());
+        JsonElement value = param.get(f.getName());
         if (value == null) {
             return null;
         }
         
-        if (value.getValueType() == JsonValue.ValueType.NULL) {
+        if (value.isJsonNull()) {
             return null;
-        } else if (value.getValueType() == JsonValue.ValueType.FALSE) {
-            return false;
-        } else if (value.getValueType() == JsonValue.ValueType.TRUE) {
-            return true;
-        } else if (value.getValueType() == JsonValue.ValueType.STRING) {
-            return ((JsonString)value).getString();
-        } else if (value.getValueType() == JsonValue.ValueType.NUMBER) {
-            JsonNumber num = (JsonNumber) value;
-            return num.isIntegral() ? num.intValue(): num.doubleValue();
+        } else if (value.isJsonPrimitive()) {
+            JsonPrimitive primitive = value.getAsJsonPrimitive();
+            if (primitive.isBoolean()) {
+                return primitive.getAsBoolean();
+            } else if (primitive.isNumber()) {
+                Number n = primitive.getAsNumber();           
+                if (isIntegral(n)) {
+                    return n.intValue();
+                } else {
+                    return n.doubleValue();
+                }
+            } else if (primitive.isString()) {
+                return primitive.getAsString();
+            } else {
+                throw new SQLException("Not valid Json primitive value.");
+            }
         } else {
             throw new SQLException("Not valid Json value.");
         }  
@@ -62,38 +69,23 @@ public class DataJson extends Data<JsonObject> {
     protected void setValue(Field f, JsonObject param, Object value) throws SQLException {
         
         if (value == null) {
-            param.put(f.getName(), JsonValue.NULL);            
+            param.add(f.getName(), JsonNull.INSTANCE);            
         } else if (value instanceof Boolean) {
-            param.put(f.getName(), ((Boolean) value) ? JsonValue.TRUE : JsonValue.FALSE);                        
+            param.add(f.getName(), new JsonPrimitive((Boolean)value));                        
         } else if (value instanceof Number) {
-            param.put(f.getName(), new JsonValueImpl(value, JsonValue.ValueType.NUMBER));
+            param.add(f.getName(), new JsonPrimitive((Number)value));
         } else {
-            param.put(f.getName(), new JsonValueImpl(value, JsonValue.ValueType.STRING));
+            param.add(f.getName(), new JsonPrimitive(value.toString()));
         }
     }
 
     @Override
     protected JsonObject create() throws SQLException {
-        return Json.createObjectBuilder().build();
+        return new JsonObject();
     }
     
-    private static final class JsonValueImpl implements JsonValue {
-        
-        private final String value;
-        private final JsonValue.ValueType valuetype;
-        
-        public JsonValueImpl(Object value, JsonValue.ValueType valuetype) {
-            this.value = value.toString();
-            this.valuetype = valuetype;
-        }
-
-        @Override
-        public JsonValue.ValueType getValueType() {
-            return valuetype;
-        }
-        @Override
-        public String toString() {
-            return value;
-        }
+    private boolean isIntegral(Number number) {
+      return number instanceof BigInteger || number instanceof Long || number instanceof Integer
+          || number instanceof Short || number instanceof Byte;
     }
 }

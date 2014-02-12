@@ -19,7 +19,7 @@ package com.adr.datasql.orm;
 
 import com.adr.datasql.ProcExec;
 import com.adr.datasql.Query;
-import com.adr.datasql.Session;
+import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
@@ -41,11 +41,11 @@ public class UpsertData<P> implements ProcExec<P> {
     }
 
     @Override
-    public int exec(Session s, P params) throws SQLException {
+    public int exec(Connection c, P params) throws SQLException {
         
-        int i = queryupdate.exec(s, params);
+        int i = queryupdate.exec(c, params);
         if (i == 0) {
-            return queryinsert.exec(s, params);
+            return queryinsert.exec(c, params);
         } else {
             return i;
         }

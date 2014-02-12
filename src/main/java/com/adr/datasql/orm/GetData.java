@@ -8,8 +8,8 @@ package com.adr.datasql.orm;
 
 import com.adr.datasql.ProcFind;
 import com.adr.datasql.Query;
-import com.adr.datasql.Session;
 import com.adr.datasql.data.ParametersArray;
+import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
@@ -31,7 +31,7 @@ public class GetData<R> implements ProcFind<R, Object[]> {
     }
 
     @Override
-    public R find(Session s, Object[] params) throws SQLException {
-        return queryfind.find(s, params);
+    public R find(Connection c, Object[] params) throws SQLException {
+        return queryfind.find(c, params);
     }
 }

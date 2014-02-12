@@ -19,7 +19,7 @@ package com.adr.datasql.orm;
 
 import com.adr.datasql.ProcExec;
 import com.adr.datasql.Query;
-import com.adr.datasql.Session;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.UUID;
 
@@ -44,13 +44,13 @@ public class SaveData<P> implements ProcExec<P> {
     }
 
     @Override
-    public int exec(Session s, P params) throws SQLException {
+    public int exec(Connection c, P params) throws SQLException {
         
         if (data.getKey(params) == null) {
             data.setKey(params, UUID.randomUUID().toString());
-            return queryinsert.exec(s, params);
+            return queryinsert.exec(c, params);
         } else {       
-            return queryupdate.exec(s, params);
+            return queryupdate.exec(c, params);
         }
     }   
 }

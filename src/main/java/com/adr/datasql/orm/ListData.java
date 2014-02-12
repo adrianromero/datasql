@@ -19,8 +19,8 @@ package com.adr.datasql.orm;
 
 import com.adr.datasql.ProcList;
 import com.adr.datasql.Query;
-import com.adr.datasql.Session;
 import com.adr.datasql.data.ParametersMap;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +39,7 @@ public class ListData<R> implements ProcList<R, Map<String, Object>> {
     }
 
     @Override
-    public List<R> list(Session s, Map<String, Object> params) throws SQLException {
+    public List<R> list(Connection c, Map<String, Object> params) throws SQLException {
             
         Field[] fieldsparams;
         if (params == null) {
@@ -52,6 +52,6 @@ public class ListData<R> implements ProcList<R, Map<String, Object>> {
                 .setResults(data)
                 .setParameters(new ParametersMap(fieldsparams));
         
-        return querylist.list(s, params);
+        return querylist.list(c, params);
     }
 }

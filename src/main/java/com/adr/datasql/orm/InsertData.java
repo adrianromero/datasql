@@ -19,7 +19,7 @@ package com.adr.datasql.orm;
 
 import com.adr.datasql.ProcExec;
 import com.adr.datasql.Query;
-import com.adr.datasql.Session;
+import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
@@ -38,8 +38,8 @@ public class InsertData<P> implements ProcExec<P> {
     }
 
     @Override
-    public int exec(Session s, P params) throws SQLException {
-        return queryinsert.exec(s, params);
+    public int exec(Connection c, P params) throws SQLException {
+        return queryinsert.exec(c, params);
     }
     
 }
