@@ -30,54 +30,54 @@ public class Session implements AutoCloseable {
     
     private static final Logger logger = Logger.getLogger(Session.class.getName());   
     
-    private final Connection c;
+    protected final Connection c;
     
     public Session(Connection c) {
         this.c = c;
     }
     
-    public Connection getConnection() {
+    public final Connection getConnection() {
         return c;
     }
     
-    public int exec(ProcExec<?> proc) throws SQLException {
-        return proc.exec(this, null);
+    public final int exec(ProcExec<?> proc) throws SQLException {
+        return proc.exec(c, null);
     }
     
-    public <P> int exec(ProcExec<P[]> proc, P... params) throws SQLException {       
-        return proc.exec(this, params);
+    public final <P> int exec(ProcExec<P[]> proc, P... params) throws SQLException {       
+        return proc.exec(c, params);
     }
     
-    public <P> int exec(ProcExec<P> proc, P params) throws SQLException {
-        return proc.exec(this, params);
+    public final <P> int exec(ProcExec<P> proc, P params) throws SQLException {
+        return proc.exec(c, params);
     }
     
-    public <R> R find(ProcFind<R, ?> proc) throws SQLException {
-        return proc.find(this, null);
+    public final <R> R find(ProcFind<R, ?> proc) throws SQLException {
+        return proc.find(c, null);
     }
     
-    public <R, P> R find(ProcFind<R, P[]> proc, P... params) throws SQLException {
-        return proc.find(this, params);
+    public final <R, P> R find(ProcFind<R, P[]> proc, P... params) throws SQLException {
+        return proc.find(c, params);
     }
     
-    public <R, P> R find(ProcFind<R, P> proc, P params) throws SQLException {
-        return proc.find(this, params);
+    public final <R, P> R find(ProcFind<R, P> proc, P params) throws SQLException {
+        return proc.find(c, params);
     }
 
-    public <R> List<R> list(ProcList<R, ?> proc) throws SQLException {
-        return proc.list(this, null);
+    public final <R> List<R> list(ProcList<R, ?> proc) throws SQLException {
+        return proc.list(c, null);
     }
     
-    public <R, P> List<R> list(ProcList<R, P[]> proc, P... params) throws SQLException {
-        return proc.list(this, params);
+    public final <R, P> List<R> list(ProcList<R, P[]> proc, P... params) throws SQLException {
+        return proc.list(c, params);
     }
     
-    public <R, P> List<R> list(ProcList<R, P> proc, P params) throws SQLException {
-        return proc.list(this, params);
+    public final <R, P> List<R> list(ProcList<R, P> proc, P params) throws SQLException {
+        return proc.list(c, params);
     }
 
     @Override
-    public void close() throws SQLException {
+    public final void close() throws SQLException {
         c.close();
     }  
 }

@@ -17,6 +17,7 @@
 
 package com.adr.datasql;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
@@ -25,5 +26,5 @@ import java.sql.SQLException;
  * @param <P>
  */
 public interface ProcExec<P> {
-    public int exec(Session s, P params) throws SQLException; 
+    public int exec(Connection c, P params) throws SQLException; 
 }

@@ -17,6 +17,7 @@
 
 package com.adr.datasql;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -27,5 +28,5 @@ import java.util.List;
  * @param <P>
  */
 public interface ProcList<R, P> {
-    public List<R> list(Session s, P params) throws SQLException;
+    public List<R> list(Connection c, P params) throws SQLException;
 }

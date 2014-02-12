@@ -17,6 +17,7 @@
 
 package com.adr.datasql;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -49,10 +50,10 @@ public class Query<R, P> implements ProcExec<P>, ProcFind<R, P>, ProcList<R, P> 
     }
     
     @Override
-    public final int exec(Session s, P params) throws SQLException {
+    public final int exec(Connection c, P params) throws SQLException {
         logger.log(Level.INFO, "Executing prepared SQL: {0}", sql);
 
-        try (PreparedStatement stmt = s.getConnection().prepareStatement(sql.getSQL())) {
+        try (PreparedStatement stmt = c.prepareStatement(sql.getSQL())) {
             KindParameters kp = new KindParametersMap(stmt, sql.getParamNames());
 
             if (parameters != null) {
@@ -63,11 +64,11 @@ public class Query<R, P> implements ProcExec<P>, ProcFind<R, P>, ProcList<R, P> 
     }
 
     @Override
-    public R find(Session s, P params) throws SQLException {
+    public R find(Connection c, P params) throws SQLException {
         
         logger.log(Level.INFO, "Executing prepared SQL: {0}", sql);
 
-        try (PreparedStatement stmt = s.getConnection().prepareStatement(sql.getSQL())) {
+        try (PreparedStatement stmt = c.prepareStatement(sql.getSQL())) {
             KindParameters kp = new KindParametersMap(stmt, sql.getParamNames());
 
             if (parameters != null) {
@@ -86,10 +87,10 @@ public class Query<R, P> implements ProcExec<P>, ProcFind<R, P>, ProcList<R, P> 
     }
     
     @Override
-    public List<R> list(Session s, P params) throws SQLException {
+    public List<R> list(Connection c, P params) throws SQLException {
         logger.log(Level.INFO, "Executing prepared SQL: {0}", sql);
 
-        try (PreparedStatement stmt = s.getConnection().prepareStatement(sql.getSQL())) {
+        try (PreparedStatement stmt = c.prepareStatement(sql.getSQL())) {
             KindParameters kp = new KindParametersMap(stmt, sql.getParamNames());
 
             if (parameters != null) {
