@@ -24,11 +24,11 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.imageio.ImageIO;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 
 /**
  *
@@ -56,7 +56,7 @@ public abstract class Kind<T> {
     public abstract T get(KindResults read, int index) throws SQLException;
     public abstract void set(KindParameters write, String name, T value) throws SQLException;
     public abstract void set(KindParameters write, int index, T value) throws SQLException;
-    
+
     public static final Kind<?> getKind(int type) {
         switch (type) {
             case Types.INTEGER:
@@ -216,22 +216,17 @@ public abstract class Kind<T> {
     
     private static final class KindISODATETIME extends Kind<String> {
         
-        private static final DateFormat isodatetime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-        private static final DateFormat isodate = new SimpleDateFormat("yyyy-MM-dd");
+        private static final DateTimeFormatter fmtisodatetime = ISODateTimeFormat.dateTime();
         
         public String format(Date d) {
-            return d == null ? null : isodatetime.format(d);
+            return d == null ? null : fmtisodatetime.print(d.getTime());
         }
         
         public Date parse(String s) throws ParseException {
             if (s == null) {
                 return null;
             } else {
-                try {
-                    return isodatetime.parse(s);
-                } catch (ParseException ex) {
-                    return isodate.parse(s);                   
-                }
+                return new Date(fmtisodatetime.parseMillis(s));
             }   
         }
 
@@ -263,14 +258,14 @@ public abstract class Kind<T> {
     
     private static final class KindISODATE extends Kind<String> {
         
-        private static final DateFormat isodate = new SimpleDateFormat("yyyy-MM-dd");
+        private final static DateTimeFormatter fmtisodate= ISODateTimeFormat.date();
         
         public String format(Date d) {
-            return d == null ? null : isodate.format(d);
+            return d == null ? null : fmtisodate.print(d.getTime());
         }
         
         public Date parse(String s) throws ParseException {
-            return s == null ? null : isodate.parse(s); 
+            return s == null ? null : new Date(fmtisodate.parseMillis(s)); 
         }
 
         @Override
@@ -301,14 +296,14 @@ public abstract class Kind<T> {
     
     private static final class KindISOTIME extends Kind<String> {
         
-        private static final DateFormat isotime = new SimpleDateFormat("HH:mm:ss.SSS");
+        private final static DateTimeFormatter fmtisotime= ISODateTimeFormat.time();
         
         public String format(Date d) {
-            return d == null ? null : isotime.format(d);
+            return d == null ? null : fmtisotime.print(d.getTime());
         }
         
         public Date parse(String s) throws ParseException {
-            return s == null ? null : isotime.parse(s); 
+            return s == null ? null : new Date(fmtisotime.parseMillis(s)); 
         }
 
         @Override
