@@ -51,7 +51,9 @@ public final class KindResultsJson implements KindResults {
     @Override
     public Integer getInt(String columnName) throws SQLException {
         JsonElement element = json.get(columnName);
-        return element.isJsonNull() ? null : element.getAsInt();
+        return element == null || element.isJsonNull() 
+                ? null 
+                : element.getAsInt();
     }
     @Override
     public String getString(int columnIndex) throws SQLException {
@@ -60,7 +62,9 @@ public final class KindResultsJson implements KindResults {
     @Override
     public String getString(String columnName) throws SQLException {
         JsonElement element = json.get(columnName);
-        return element.isJsonNull() ? null : element.getAsString();
+        return element == null || element.isJsonNull() 
+                ? null 
+                : element.getAsString();
     }
     @Override
     public Double getDouble(int columnIndex) throws SQLException {
@@ -69,7 +73,9 @@ public final class KindResultsJson implements KindResults {
     @Override
     public Double getDouble(String columnName) throws SQLException {
         JsonElement element = json.get(columnName);
-        return element.isJsonNull() ? null : element.getAsDouble();
+        return element == null || element.isJsonNull() 
+                ? null 
+                : element.getAsDouble();
     }
     @Override
     public BigDecimal getBigDecimal(int columnIndex) throws SQLException {
@@ -78,7 +84,9 @@ public final class KindResultsJson implements KindResults {
     @Override
     public BigDecimal getBigDecimal(String columnName) throws SQLException {
         JsonElement element = json.get(columnName);
-        return element.isJsonNull() ? null : element.getAsBigDecimal();
+        return element == null || element.isJsonNull() 
+                ? null 
+                : element.getAsBigDecimal();
     }
     @Override
     public Boolean getBoolean(int columnIndex) throws SQLException {
@@ -87,7 +95,9 @@ public final class KindResultsJson implements KindResults {
     @Override
     public Boolean getBoolean(String columnName) throws SQLException {
         JsonElement element = json.get(columnName);
-        return element.isJsonNull() ? null : element.getAsBoolean();
+        return element == null || element.isJsonNull() 
+                ? null 
+                : element.getAsBoolean();
 
     }
     @Override
@@ -97,7 +107,9 @@ public final class KindResultsJson implements KindResults {
     @Override
     public java.util.Date getTimestamp(String columnName) throws SQLException {
         JsonElement element = json.get(columnName);
-        return element.isJsonNull() ? null : new Date(fmtisodatetime.parseMillis(element.getAsString()));
+        return element == null || element.isJsonNull() 
+                ? null 
+                : new Date(fmtisodatetime.parseMillis(element.getAsString()));
     }
     @Override
     public java.util.Date getDate(int columnIndex) throws SQLException {
@@ -106,7 +118,9 @@ public final class KindResultsJson implements KindResults {
     @Override
     public java.util.Date getDate(String columnName) throws SQLException {
         JsonElement element = json.get(columnName);
-        return element.isJsonNull() ? null : new Date(fmtisodate.parseMillis(element.getAsString()));
+        return element == null || element.isJsonNull() 
+                ? null 
+                : new Date(fmtisodate.parseMillis(element.getAsString()));
 
     }
     @Override
@@ -116,7 +130,9 @@ public final class KindResultsJson implements KindResults {
     @Override
     public java.util.Date getTime(String columnName) throws SQLException {
         JsonElement element = json.get(columnName);
-        return element.isJsonNull() ? null : new Date(fmtisotime.parseMillis(element.getAsString()));
+        return element == null || element.isJsonNull() 
+                ? null 
+                : new Date(fmtisotime.parseMillis(element.getAsString()));
     }        
     @Override
     public byte[] getBytes(int columnIndex) throws SQLException {
@@ -125,7 +141,9 @@ public final class KindResultsJson implements KindResults {
     @Override
     public byte[] getBytes(String columnName) throws SQLException {
         JsonElement element = json.get(columnName);
-        return element.isJsonNull() ? null : EncodeUtils.decode(element.getAsString());
+        return element == null || element.isJsonNull() 
+                ? null 
+                : EncodeUtils.decode(element.getAsString());
     }
     @Override
     public Object getObject(int columnIndex) throws SQLException {
@@ -134,7 +152,9 @@ public final class KindResultsJson implements KindResults {
     @Override
     public Object getObject(String columnName) throws SQLException {
         JsonElement element = json.get(columnName);
-        return element.isJsonNull() ? null : element.getAsString();
+        return element == null || element.isJsonNull() 
+                ? null 
+                : element.getAsString();
     }
     
     @Override
