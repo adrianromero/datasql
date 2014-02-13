@@ -17,11 +17,7 @@
 
 package com.adr.datasql.orm;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
-import java.math.BigInteger;
 import java.sql.SQLException;
 
 /**
@@ -36,56 +32,16 @@ public class DataJson extends Data<JsonObject> {
 
     @Override
     protected Object getValue(Field f, JsonObject param) throws SQLException {
-        
-        JsonElement value = param.get(f.getName());
-        if (value == null) {
-            return null;
-        }
-        
-        if (value.isJsonNull()) {
-            return null;
-        } else if (value.isJsonPrimitive()) {
-            JsonPrimitive primitive = value.getAsJsonPrimitive();
-            if (primitive.isBoolean()) {
-                return primitive.getAsBoolean();
-            } else if (primitive.isNumber()) {
-                Number n = primitive.getAsNumber();           
-                if (isIntegral(n)) {
-                    return n.intValue();
-                } else {
-                    return n.doubleValue();
-                }
-            } else if (primitive.isString()) {
-                return primitive.getAsString();
-            } else {
-                throw new SQLException("Not valid Json primitive value.");
-            }
-        } else {
-            throw new SQLException("Not valid Json value.");
-        }  
+        return f.getKind().get(new KindResultsJson(param), f.getName());  
     }        
 
     @Override
     protected void setValue(Field f, JsonObject param, Object value) throws SQLException {
-        
-        if (value == null) {
-            param.add(f.getName(), JsonNull.INSTANCE);            
-        } else if (value instanceof Boolean) {
-            param.add(f.getName(), new JsonPrimitive((Boolean)value));                        
-        } else if (value instanceof Number) {
-            param.add(f.getName(), new JsonPrimitive((Number)value));
-        } else {
-            param.add(f.getName(), new JsonPrimitive(value.toString()));
-        }
+        f.getKind().set(new KindParametersJson(param), f.getName(), value);
     }
 
     @Override
     protected JsonObject create() throws SQLException {
         return new JsonObject();
-    }
-    
-    private boolean isIntegral(Number number) {
-      return number instanceof BigInteger || number instanceof Long || number instanceof Integer
-          || number instanceof Short || number instanceof Byte;
     }
 }
