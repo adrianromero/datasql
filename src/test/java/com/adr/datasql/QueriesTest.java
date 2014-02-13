@@ -72,7 +72,7 @@ public class QueriesTest {
                    .setParameters(Kind.STRING)
                    .setResults(Kind.STRING, Kind.STRING, Kind.STRING, Kind.ISODATETIME, Kind.DOUBLE, Kind.DECIMAL, Kind.INT, Kind.BOOLEAN);       
            Object[] result = session.find(selectMyTest, "code 1");         
-           Assert.assertEquals("[a, code 1, name a, 2014-01-01 18:00:32.212, 12.23, 12.12, 1234, true]", Arrays.toString(result));
+           Assert.assertEquals("[a, code 1, name a, 2014-01-01T18:00:32.212+01:00, 12.23, 12.12, 1234, true]", Arrays.toString(result));
        }
     } 
     

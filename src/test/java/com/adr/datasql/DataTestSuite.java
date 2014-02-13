@@ -37,7 +37,8 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
     com.adr.datasql.QueriesTest.class, 
     com.adr.datasql.NSQLTest.class,
-    com.adr.datasql.ORMTest.class
+    com.adr.datasql.ORMTest.class,
+    com.adr.datasql.JsonORMTest.class
 })
 public class DataTestSuite {
     
