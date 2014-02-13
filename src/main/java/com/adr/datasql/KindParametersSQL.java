@@ -28,12 +28,12 @@ import java.sql.Types;
  *
  * @author adrian
  */
-public final class KindParametersMap implements KindParameters {
+public final class KindParametersSQL implements KindParameters {
 
     private final String[] params;
     private final PreparedStatement stmt;
 
-    public KindParametersMap(PreparedStatement stmt, String[] params) {
+    public KindParametersSQL(PreparedStatement stmt, String[] params) {
         this.stmt = stmt;
         this.params = params;
     }

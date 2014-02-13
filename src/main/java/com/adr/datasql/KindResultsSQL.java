@@ -26,11 +26,11 @@ import java.sql.SQLException;
  *
  * @author adrian
  */
-public final class KindResultsMap implements KindResults {
+public final class KindResultsSQL implements KindResults {
     
     private final ResultSet resultset;
     
-    public KindResultsMap(ResultSet resultset) {
+    public KindResultsSQL(ResultSet resultset) {
         this.resultset = resultset;
     }
     

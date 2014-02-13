@@ -54,7 +54,7 @@ public class Query<R, P> implements ProcExec<P>, ProcFind<R, P>, ProcList<R, P> 
         logger.log(Level.INFO, "Executing prepared SQL: {0}", sql);
 
         try (PreparedStatement stmt = c.prepareStatement(sql.getSQL())) {
-            KindParameters kp = new KindParametersMap(stmt, sql.getParamNames());
+            KindParameters kp = new KindParametersSQL(stmt, sql.getParamNames());
 
             if (parameters != null) {
                 parameters.write(kp, params);
@@ -69,13 +69,13 @@ public class Query<R, P> implements ProcExec<P>, ProcFind<R, P>, ProcList<R, P> 
         logger.log(Level.INFO, "Executing prepared SQL: {0}", sql);
 
         try (PreparedStatement stmt = c.prepareStatement(sql.getSQL())) {
-            KindParameters kp = new KindParametersMap(stmt, sql.getParamNames());
+            KindParameters kp = new KindParametersSQL(stmt, sql.getParamNames());
 
             if (parameters != null) {
                 parameters.write(kp, params);
             }  
             try (ResultSet resultset = stmt.executeQuery()) {
-                KindResults kr = new KindResultsMap(resultset);
+                KindResults kr = new KindResultsSQL(resultset);
                 
                 if (resultset.next()) {
                     return results.read(kr);
@@ -91,13 +91,13 @@ public class Query<R, P> implements ProcExec<P>, ProcFind<R, P>, ProcList<R, P> 
         logger.log(Level.INFO, "Executing prepared SQL: {0}", sql);
 
         try (PreparedStatement stmt = c.prepareStatement(sql.getSQL())) {
-            KindParameters kp = new KindParametersMap(stmt, sql.getParamNames());
+            KindParameters kp = new KindParametersSQL(stmt, sql.getParamNames());
 
             if (parameters != null) {
                 parameters.write(kp, params);
             }  
             try (ResultSet resultset = stmt.executeQuery()) {
-                KindResults kr = new KindResultsMap(resultset);
+                KindResults kr = new KindResultsSQL(resultset);
                 
                 List<R> l = new ArrayList<R>();
                 while (resultset.next()) {
