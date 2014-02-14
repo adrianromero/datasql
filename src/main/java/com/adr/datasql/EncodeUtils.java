@@ -36,7 +36,7 @@ public class EncodeUtils {
         try {
             return base64 == null ? null : Base64.decodeBase64(base64.getBytes("ASCII"));
         } catch (UnsupportedEncodingException e) {
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
@@ -44,7 +44,7 @@ public class EncodeUtils {
         try {
             return raw == null ? null : new String(Base64.encodeBase64(raw), "ASCII");
         } catch (UnsupportedEncodingException e) {
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
@@ -52,7 +52,7 @@ public class EncodeUtils {
         try {
             return hex == null ? null : Hex.decodeHex(hex.toCharArray());
         } catch (DecoderException ex) {
-            return null;
+            throw new RuntimeException(ex);
         }
     }
 
