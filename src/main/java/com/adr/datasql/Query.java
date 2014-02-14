@@ -36,7 +36,7 @@ public class Query<R, P> implements ProcExec<P>, ProcFind<R, P>, ProcList<R, P> 
     
     private static final Logger logger = Logger.getLogger(Query.class.getName()); 
 
-    private SQL sql;
+    private final SQL sql;
     
     private Parameters<P> parameters = null;
     private Results<R> results = null;
