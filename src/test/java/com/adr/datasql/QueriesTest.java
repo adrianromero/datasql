@@ -37,7 +37,6 @@ import org.junit.Test;
  */
 public class QueriesTest {
 
-    
     public QueriesTest() {
     }
 

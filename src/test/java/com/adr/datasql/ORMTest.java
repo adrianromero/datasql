@@ -67,7 +67,6 @@ public class ORMTest {
     @Test
     public void findPojo() throws SQLException {
         
-
         try (Session session = DataTestSuite.newSession()) {        
             
             ProcFind<SamplePojo, Object[]> findSamplePojo = new GetData<SamplePojo>(SamplePojo.DATA);
@@ -76,12 +75,10 @@ public class ORMTest {
             
             System.out.println(pojo.toString());              
         }        
-        
     }  
     
     @Test
-    public void listPojo() throws SQLException {
-        
+    public void listPojo() throws SQLException {      
 
         try (Session session = DataTestSuite.newSession()) { 
             
@@ -91,13 +88,11 @@ public class ORMTest {
             
             System.out.println(pojos);              
         }        
-        
     }  
     
     @Test
     public void filterPojo() throws SQLException {
         
-
         try (Session session = DataTestSuite.newSession()) { 
             
             ProcList<SamplePojo, Map<String, Object>> listSamplePojo = new ListData<SamplePojo>(SamplePojo.DATA);
@@ -108,8 +103,7 @@ public class ORMTest {
             List<SamplePojo> pojos = session.list(listSamplePojo, filter);   
             
             System.out.println(pojos);              
-        }           
-        
+        }               
     }
     
     @BeforeClass

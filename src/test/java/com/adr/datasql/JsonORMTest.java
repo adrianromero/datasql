@@ -54,7 +54,6 @@ public class JsonORMTest {
             new Field("valdecimal", Kind.DECIMAL),
             new Field("valinteger", Kind.INT),
             new Field("valboolean", Kind.BOOLEAN)));
-
     
     @Test
     public void insertJson() throws SQLException {

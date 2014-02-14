@@ -59,20 +59,13 @@ public class NSQLTest {
         
         Assert.assertEquals("select * from table where (1 = 1)[]",
                 new SQLFilter("select * from table where :(filter)").toString());       
-    }
-    
+    }  
         
     @Test
     public void testDefinitionsSQL() throws ParseException {
 
         Definition def = SamplePojo.DATA.getDefinition();
         
-//        System.out.println(def.getStatementUpdate().toString());
-//        System.out.println(def.getStatementInsert().toString());
-//        System.out.println(def.getStatementDelete().toString());
-//        System.out.println(def.getStatementSelect().toString());
-//        System.out.println(def.getStatementSelect(def.getFieldsKey()).toString());
-//        System.out.println(def.getStatementSelect(def.getFields(Collections.singleton("name"))));
         Assert.assertEquals("UPDATE com_adr_datasql_SamplePojo SET id = ?, code = ?, name = ?, valdate = ?, valdouble = ?, valdecimal = ?, valinteger = ?, valboolean = ? WHERE id = ?[id, code, name, valdate, valdouble, valdecimal, valinteger, valboolean, id]",
                 def.getStatementUpdate().toString());
         Assert.assertEquals("INSERT INTO com_adr_datasql_SamplePojo(id, code, name, valdate, valdouble, valdecimal, valinteger, valboolean) VALUES (?, ?, ?, ?, ?, ?, ?, ?)[id, code, name, valdate, valdouble, valdecimal, valinteger, valboolean]",
@@ -86,5 +79,4 @@ public class NSQLTest {
         Assert.assertEquals("SELECT id, code, name, valdate, valdouble, valdecimal, valinteger, valboolean FROM com_adr_datasql_SamplePojo WHERE name = ?[name]",
                 def.getStatementSelect(def.getFields(Collections.singleton("name"))).toString());
     }
-    
 }
