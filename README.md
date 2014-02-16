@@ -21,9 +21,11 @@ These are few examples how to use DataSQL.
 
 This code uses Java 7 syntax. Because the `Session` object implements `Autocloseable`, the `try` block will automatically close the connection requested to the `Datasource` object.
 
-        try (Session session = new Session(datasource.getConnection())) {
-            // Here goes your database code
-        }
+```java
+try (Session session = new Session(datasource.getConnection())) {
+    // Here goes your database code
+}
+```
 
 ### Executing simple statements
 
