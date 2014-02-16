@@ -67,11 +67,6 @@ Consider the following declaration:
 
         package com.adr.datasql.samples;
         public class TestPojo {
-            // Fields    
-            private String id;
-            private Double code;
-            private String name;
-            private Boolean good;
             // TestPojo Configuration   
             public final static Data<SamplePojo> DATA = new DataPojo(new Definition(
                 "com_adr_datasql_samples_TestPojo",
@@ -79,6 +74,11 @@ Consider the following declaration:
                 new Field("code", Kind.DOUBLE),
                 new Field("name", Kind.STRING),
                 new Field("good", Kind.BOOLEAN));
+            // Fields    
+            private String id;
+            private Double code;
+            private String name;
+            private Boolean good;
             // Access methods
             public String getId() { return id; }
             public void setId(String id) { this.id = id; }
