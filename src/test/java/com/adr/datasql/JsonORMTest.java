@@ -22,7 +22,6 @@ import com.adr.datasql.orm.DataJson;
 import com.adr.datasql.orm.Definition;
 import com.adr.datasql.orm.Field;
 import com.adr.datasql.orm.FieldKey;
-import com.adr.datasql.orm.ListData;
 import com.adr.datasql.orm.ORMSession;
 import com.google.gson.JsonObject;
 import java.math.BigDecimal;
