@@ -32,7 +32,7 @@ public class Field extends MetaData {
     public Field(String name, Kind kind) {
         super(name, kind);
         
-        this.getterName = "get" + Character.toUpperCase(name.charAt(0)) + name.substring(1);
+        this.getterName = (Kind.BOOLEAN == kind ? "is" : "get") + Character.toUpperCase(name.charAt(0)) + name.substring(1);
         this.setterName = "set" + Character.toUpperCase(name.charAt(0)) + name.substring(1);
     }
 
@@ -44,7 +44,6 @@ public class Field extends MetaData {
         return setterName;
     }
 
-    
     public boolean isKey() {
         return false;
     }
