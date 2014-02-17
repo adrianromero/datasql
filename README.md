@@ -32,41 +32,41 @@ try (Session session = new Session(datasource.getConnection())) {
 In the following example parameter number and types are inspected from sentence and results metadata provided by JDBC.
 
 ```java
-try (Session session = new Session(datasource.getConnection())) {
+try (Session session = new Session(getDataSource().getConnection())) {
     // Insert a record
-    session.exec(new QueryArray("INSERT INTO TESTTABLE(ID, CODE, NAME, GOOD) VALUES (?, ?, ?, ?)"),
-        "record one", 12.4, "name one", true);
+    session.exec(new QueryArray("insert into testtable(id, name, line, amount) values (?, ?, ?, ?)"),
+        "record one", "name one", 10, 65.0);
     // Find a record
-    Object[] record = session.find(new QueryArray("SELECT ID, CODE, NAME, GOOD FROM TESTTABLE WHERE NAME = ?"), "name one");
+    Object[] record = session.find(new QueryArray("select id, name, line, amount from testtable where name = ?"), "name one");
     // List records
-    List<Object[]> records = session.list(new QueryArray("SELECT ID, CODE, NAME, GOOD FROM TESTTABLE"));
-}
+    List<Object[]> records = session.list(new QueryArray("select id, name, line, amount from testtable"));
+} 
 ```
 
 But you can also especify the type of parameters
 
-```java            
-try (Session session = new Session(datasource.getConnection())) {
+```java
+try (Session session = new Session(getDataSource().getConnection())) {
     // Find a record specifying types
     ProcFind<Object[], Object[]> selectTestTable = new QueryArray(
-        "SELECT ID, CODE, NAME, GOOD FROM TESTTABLE WHERE NAME = ?")
+        "select id, name, line, amount from testtable where name = ?")
         .setParameters(Kind.STRING)
-        .setResults(Kind.STRING, Kind.DOUBLE, Kind.STRING, Kind.BOOLEAN);       
-    Object[] result = session.find(selectTestTable, "name one");   
-}
+        .setResults(Kind.STRING, Kind.STRING, Kind.INT, Kind.DOUBLE);       
+    Object[] result = session.find(selectTestTable, "name one");
+}  
 ```
 
 Also you have predefined classes for primitive results and parameters.
 
 ```java 
-try (Session session = new Session(datasource.getConnection())) {
+try (Session session = new Session(getDataSource().getConnection())) {
     // Count records
-    ProcFind<Number, Number> countTestTable = new QueryArray(
-        "SELECT COUNT(*) FROM TESTTABLE WHERE CODE > ?")
+    ProcFind<Number, Number> countTestTable = new Query(
+        "select count(*) from testtable where amount > ?")
         .setParameters(ParametersDouble.INSTANCE)
-        .setResults(ParametersInteger.INSTANCE);       
+        .setResults(ResultsInteger.INSTANCE);       
     int countrows = session.find(countTestTable, 10.0).intValue();   
-}
+}  
 ```
 
 ### Working with POJO objects
@@ -75,58 +75,61 @@ Consider the following declaration:
 
 ```java
 package com.adr.datasql.samples;
-public class TestPojo {
-    // TestPojo Configuration   
-    public final static Data<SamplePojo> DATA = new DataPojo(new Definition(
-        "com_adr_datasql_samples_TestPojo",
+public class ObjectPojo {
+    // ObjectPojo Configuration   
+    public final static Data<ObjectPojo> DATA = new DataPojo(new Definition(
+        "com_adr_datasql_samples_ObjectPojo",
         new FieldKey("id", Kind.STRING),
-        new Field("code", Kind.DOUBLE),
-        new Field("name", Kind.STRING),
-        new Field("good", Kind.BOOLEAN));
+        new Field("name", Kind.STRING),            
+        new Field("line", Kind.INT),
+        new Field("amount", Kind.DOUBLE)));
     // Fields    
     private String id;
-    private Double code;
     private String name;
-    private Boolean good;
+    private Integer line;
+    private Double amount;
+
     // Access methods
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
-    public Double getCode() { return code; }
-    public void setCode(Double code) { this.code = code; }
-    public Boolean isGood() { return good; }
-    public void setGood(Boolean good) { this.good = good; }
+    public Integer getLine() { return line; }
+    public void setLine(Integer line) { this.line = line; }
+    public Double getAmount() { return amount; }
+    public void setAmount(Double amount) { this.amount = amount; }
 }
 ```
 
 The important part in this declaration is the static field `DATA`. If present, Data SQL will use it for persistence using its capabilities to work with POJO objects. In this case it asumes that `TestPojo` is persisted in a table created the following way:
             
 ```java
-// Create table using Derby syntax. Porting to other database engines will easy
-session.exec(new QueryArray(
-    "create table com_adr_datasql_samples_TestPojo (" +
-    "id varchar(32) not null primary key, " +
-    "code double precision, " +
-    "name varchar(1024), " +
-    "good smallint)"));
+try (Session session = DataTestSuite.newSession()) {           
+    // Create table using Derby syntax. Porting to other database engines will easy
+    session.exec(new QueryArray(
+        "create table com_adr_datasql_samples_ObjectPojo (" +
+        "id varchar(32) not null primary key, " +
+        "name varchar(1024), " +                        
+        "line integer, " +
+        "amount double precision)")); 
+}
 ```
 
 You can insert / retrieve an instance of a new `TestPojo` instance using the following code. You also have more operations to delete, upsert, list, etc.. Take into account that now we are using an `ORMSession` instead of a `Session`.
             
 ```java
-try (ORMSession session = new Session(datasource.getConnection())) { 
-    // Defining a new instance of our TestPojo
-    TestPojo pojo = new TestPojo();
+try (ORMSession session = new ORMSession(getDataSource().getConnection())) { 
+    // Defining a new instance of our ObjectPojo
+    ObjectPojo pojo = new ObjectPojo();
     pojo.setId("pojoid");
-    pojo.setCode(100.0);
     pojo.setName("pojoname");
-    pojo.setGood(true);
+    pojo.setLine(10);
+    pojo.setAmount(50.0);
     // Insert
     session.insert(pojo);  
     // Get an instance
-    SamplePojo returnpojo = session.get(SamplePojo.class, "pojoid");
-}
+    ObjectPojo returnpojo = session.get(ObjectPojo.class, "pojoid");
+} 
 ```
 
 License
