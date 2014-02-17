@@ -40,7 +40,7 @@ public class SimpleTest {
     public SimpleTest() {
     }
 
-    private DataSource getDataSource() {
+    private static DataSource getDataSource() {
         return DataTestSuite.getDataSource();
     }
 
@@ -87,7 +87,7 @@ public class SimpleTest {
     @BeforeClass
     public static void setUpClass() throws SQLException {   
    
-        try (Session session = DataTestSuite.newSession()) {           
+        try (Session session = new Session(getDataSource().getConnection())) {        
             // Create table using Derby syntax. Porting to other database engines will easy
             session.exec(new QueryArray(
                 "create table testtable (" +

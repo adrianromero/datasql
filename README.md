@@ -22,7 +22,7 @@ These are few examples how to use DataSQL.
 This code uses Java 7 syntax. Because the `Session` object implements `Autocloseable`, the `try` block will automatically close the connection requested to the `Datasource` object.
 
 ```java
-try (Session session = new Session(datasource.getConnection())) {
+try (Session session = new Session(getDataSource().getConnection())) {
     // Here goes your database code
 }
 ```
@@ -104,7 +104,7 @@ public class ObjectPojo {
 The important part in this declaration is the static field `DATA`. If present, Data SQL will use it for persistence using its capabilities to work with POJO objects. In this case it asumes that `TestPojo` is persisted in a table created the following way:
             
 ```java
-try (Session session = DataTestSuite.newSession()) {           
+try (ORMSession session = new ORMSession(getDataSource().getConnection())) { 
     // Create table using Derby syntax. Porting to other database engines will easy
     session.exec(new QueryArray(
         "create table com_adr_datasql_samples_ObjectPojo (" +
