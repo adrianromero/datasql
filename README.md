@@ -15,7 +15,7 @@ Benefits
 Getting started
 ===============
 
-These are few examples how to use DataSQL.
+These are few examples how to use DataSQL. All the code for these examples can be found in https://github.com/adrianromero/datasql/tree/master/src/test/java/com/adr/datasql/samples
 
 ### Creating and using a `Session` object from a `DataSource` object:
 
@@ -101,7 +101,7 @@ public class ObjectPojo {
 }
 ```
 
-The important part in this declaration is the static field `DATA`. If present, Data SQL will use it for persistence using its capabilities to work with POJO objects. In this case it asumes that `TestPojo` is persisted in a table created the following way:
+The important part in this declaration is the static field `DATA`. If present, Data SQL will use it for persistence using its capabilities to work with POJO objects. In this case it asumes that `ObjectPojo` is persisted in a table created the following way:
             
 ```java
 try (ORMSession session = new ORMSession(getDataSource().getConnection())) { 
@@ -115,7 +115,7 @@ try (ORMSession session = new ORMSession(getDataSource().getConnection())) {
 }
 ```
 
-You can insert / retrieve an instance of a new `TestPojo` instance using the following code. You also have more operations to delete, upsert, list, etc.. Take into account that now we are using an `ORMSession` instead of a `Session`.
+You can insert / retrieve an instance of a new `ObjectPojo` instance using the following code. You also have more operations to delete, upsert, list, etc.. Take into account that now we are using an `ORMSession` instead of a `Session`.
             
 ```java
 try (ORMSession session = new ORMSession(getDataSource().getConnection())) { 
