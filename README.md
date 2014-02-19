@@ -39,8 +39,8 @@ try (Session session = new Session(getDataSource().getConnection())) {
     // Find a record
     Object[] record = session.find(new QueryArray("select id, name, line, amount from testtable where name = ?"), "name one");
     // List records
-    List<Object[]> records = session.list(new QueryArray("select id, name, line, amount from testtable"));
-} 
+    List<Object[]> records = session.query(new QueryArray("select id, name, line, amount from testtable"));
+}   
 ```
 
 But you can also especify the type of parameters
@@ -48,12 +48,12 @@ But you can also especify the type of parameters
 ```java
 try (Session session = new Session(getDataSource().getConnection())) {
     // Find a record specifying types
-    ProcFind<Object[], Object[]> selectTestTable = new QueryArray(
+    StatementFind<Object[], Object[]> selectTestTable = new QueryArray(
         "select id, name, line, amount from testtable where name = ?")
         .setParameters(Kind.STRING)
         .setResults(Kind.STRING, Kind.STRING, Kind.INT, Kind.DOUBLE);       
     Object[] result = session.find(selectTestTable, "name one");
-}  
+} 
 ```
 
 Also you have predefined classes for primitive results and parameters.
@@ -61,12 +61,12 @@ Also you have predefined classes for primitive results and parameters.
 ```java 
 try (Session session = new Session(getDataSource().getConnection())) {
     // Count records
-    ProcFind<Number, Number> countTestTable = new Query(
+    StatementFind<Number, Number> countTestTable = new Query(
         "select count(*) from testtable where amount > ?")
         .setParameters(ParametersDouble.INSTANCE)
         .setResults(ResultsInteger.INSTANCE);       
     int countrows = session.find(countTestTable, 10.0).intValue();   
-}  
+} 
 ```
 
 ### Working with POJO objects
