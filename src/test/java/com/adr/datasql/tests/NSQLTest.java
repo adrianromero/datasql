@@ -17,7 +17,7 @@
 
 package com.adr.datasql.tests;
 
-import com.adr.datasql.NSQL;
+import com.adr.datasql.SQLNamed;
 import com.adr.datasql.SQLFilter;
 import com.adr.datasql.orm.Definition;
 import java.text.ParseException;
@@ -39,15 +39,15 @@ public class NSQLTest {
         
         Assert.assertEquals(
                 "select * from table where name = ? and surname = ?[name, surname]", 
-                new NSQL("select * from table where name = :name and surname = :surname").toString());
+                new SQLNamed("select * from table where name = :name and surname = :surname").toString());
         Assert.assertEquals(
                 "select * from table where date > ? and date < ?[mydate, mydate]", 
-                new NSQL("select * from table where date > :mydate and date < :mydate").toString());
+                new SQLNamed("select * from table where date > :mydate and date < :mydate").toString());
         Assert.assertEquals(
                 "select * from table where date > ':mydate' and date < ?[mydate]", 
-                new NSQL("select * from table where date > ':mydate' and date < :mydate").toString());
+                new SQLNamed("select * from table where date > ':mydate' and date < :mydate").toString());
         try {
-            new NSQL("select * from table where date > :mydate and date < :").toString();
+            new SQLNamed("select * from table where date > :mydate and date < :").toString();
         } catch (ParseException e) {
            Assert.assertEquals(e.getMessage(), 53, e.getErrorOffset());
         }

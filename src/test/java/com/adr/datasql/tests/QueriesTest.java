@@ -18,7 +18,7 @@
 package com.adr.datasql.tests;
 
 import com.adr.datasql.Kind;
-import com.adr.datasql.NSQL;
+import com.adr.datasql.SQLNamed;
 import com.adr.datasql.StatementExec;
 import com.adr.datasql.StatementFind;
 import com.adr.datasql.QueryArray;
@@ -55,7 +55,7 @@ public class QueriesTest {
             parameters.put("id", "two");
             parameters.put("code", "two code");
             parameters.put("name", "two name");
-            session.exec(new QueryMap(new NSQL("insert into mytest(id, code, name) values (:id, :code, :name)")), parameters);
+            session.exec(new QueryMap(new SQLNamed("insert into mytest(id, code, name) values (:id, :code, :name)")), parameters);
 
             Object[] result = session.find(new QueryArray("select id, code, name from mytest where id = ?"), "two");
             Assert.assertEquals("[two, two code, two name]", Arrays.toString(result));

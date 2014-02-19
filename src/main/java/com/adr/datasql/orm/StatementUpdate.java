@@ -21,36 +21,25 @@ import com.adr.datasql.StatementExec;
 import com.adr.datasql.Query;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.UUID;
 
 /**
  *
  * @author adrian
  * @param <P>
  */
-public class SaveData<P> implements StatementExec<P> {
+public class StatementUpdate<P> implements StatementExec<P> {
         
-    private final Query<Void, P> queryinsert;
     private final Query<Void, P> queryupdate;
-    private final Data<P> data;
     
-    public SaveData(Data<P> data) {
+    public StatementUpdate(Data<P> data) {
         
-        this.data = data;   
-        queryinsert = new Query<Void, P>(data.getDefinition().getStatementInsert())
-                .setParameters(data);       
         queryupdate = new Query<Void, P>(data.getDefinition().getStatementUpdate())
                 .setParameters(data);
     }
 
     @Override
     public int exec(Connection c, P params) throws SQLException {
-        
-        if (data.getKey(params) == null) {
-            data.setKey(params, UUID.randomUUID().toString());
-            return queryinsert.exec(c, params);
-        } else {       
-            return queryupdate.exec(c, params);
-        }
-    }   
+        return queryupdate.exec(c, params);
+    }
+    
 }

@@ -20,12 +20,12 @@ package com.adr.datasql.tests;
 import com.adr.datasql.Kind;
 import com.adr.datasql.StatementExec;
 import com.adr.datasql.StatementFind;
-import com.adr.datasql.StatementList;
+import com.adr.datasql.StatementQuery;
 import com.adr.datasql.QueryArray;
 import com.adr.datasql.Session;
 import com.adr.datasql.derby.DataTestSuite;
-import com.adr.datasql.orm.GetData;
-import com.adr.datasql.orm.ListData;
+import com.adr.datasql.orm.StatementGet;
+import com.adr.datasql.orm.StatementList;
 import com.adr.datasql.orm.ORMSession;
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -76,7 +76,7 @@ public class ORMTest {
         
         try (Session session = DataTestSuite.newSession()) {        
             
-            StatementFind<SamplePojo, Object[]> findSamplePojo = new GetData<SamplePojo>(SamplePojo.DATA);
+            StatementFind<SamplePojo, Object[]> findSamplePojo = new StatementGet<SamplePojo>(SamplePojo.DATA);
 
             SamplePojo pojo = session.find(findSamplePojo, "pojoid");   
             
@@ -89,9 +89,9 @@ public class ORMTest {
 
         try (Session session = DataTestSuite.newSession()) { 
             
-            StatementList<SamplePojo, Map<String, Object>> listSamplePojo = new ListData<SamplePojo>(SamplePojo.DATA);
+            StatementQuery<SamplePojo, Map<String, Object>> listSamplePojo = new StatementList<SamplePojo>(SamplePojo.DATA);
                              
-            List<SamplePojo> pojos = session.list(listSamplePojo);   
+            List<SamplePojo> pojos = session.query(listSamplePojo);   
             
             System.out.println(pojos);              
         }        
@@ -102,12 +102,12 @@ public class ORMTest {
         
         try (Session session = DataTestSuite.newSession()) { 
             
-            StatementList<SamplePojo, Map<String, Object>> listSamplePojo = new ListData<SamplePojo>(SamplePojo.DATA);
+            StatementQuery<SamplePojo, Map<String, Object>> listSamplePojo = new StatementList<SamplePojo>(SamplePojo.DATA);
                              
             Map<String, Object> filter = new HashMap<String, Object>();
             filter.put("code", "code x");
             
-            List<SamplePojo> pojos = session.list(listSamplePojo, filter);   
+            List<SamplePojo> pojos = session.query(listSamplePojo, filter);   
             
             System.out.println(pojos);              
         }               

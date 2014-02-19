@@ -25,7 +25,7 @@ import java.util.List;
  *
  * @author adrian
  */
-public class NSQL extends SQL {
+public class SQLNamed extends SQL {
     
     private static final char CHAR_ETX = '\u0003';
     
@@ -35,7 +35,7 @@ public class NSQL extends SQL {
     private static final int STATE_PARAMETERSTART = 3;
     private static final int STATE_PARAMETERPART = 4;
 
-    public NSQL(String sql) throws ParseException {
+    public SQLNamed(String sql) throws ParseException {
         
         StringBuilder parsedsql = new StringBuilder();
         StringBuilder parametername = new StringBuilder();

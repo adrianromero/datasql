@@ -27,19 +27,19 @@ import java.sql.SQLException;
  * @author adrian
  * @param <P>
  */
-public class InsertData<P> implements StatementExec<P> {
+public class StatementDelete<P> implements StatementExec<P> {
         
-    private final Query<Void, P> queryinsert;
+    private final Query<Void, P> querydelete;
     
-    public InsertData(Data<P> data) {
+    public StatementDelete(Data<P> data) {
         
-        queryinsert = new Query<Void, P>(data.getDefinition().getStatementInsert())
+        querydelete = new Query<Void,P>(data.getDefinition().getStatementDelete())
                 .setParameters(data);
     }
 
     @Override
     public int exec(Connection c, P params) throws SQLException {
-        return queryinsert.exec(c, params);
+        return querydelete.exec(c, params);
     }
     
 }

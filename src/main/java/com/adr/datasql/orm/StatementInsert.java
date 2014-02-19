@@ -15,18 +15,31 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql;
+package com.adr.datasql.orm;
 
+import com.adr.datasql.StatementExec;
+import com.adr.datasql.Query;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
 
 /**
  *
  * @author adrian
- * @param <R>
  * @param <P>
  */
-public interface StatementList<R, P> {
-    public List<R> list(Connection c, P params) throws SQLException;
+public class StatementInsert<P> implements StatementExec<P> {
+        
+    private final Query<Void, P> queryinsert;
+    
+    public StatementInsert(Data<P> data) {
+        
+        queryinsert = new Query<Void, P>(data.getDefinition().getStatementInsert())
+                .setParameters(data);
+    }
+
+    @Override
+    public int exec(Connection c, P params) throws SQLException {
+        return queryinsert.exec(c, params);
+    }
+    
 }

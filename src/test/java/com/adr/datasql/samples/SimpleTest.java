@@ -54,7 +54,7 @@ public class SimpleTest {
             // Find a record
             Object[] record = session.find(new QueryArray("select id, name, line, amount from testtable where name = ?"), "name one");
             // List records
-            List<Object[]> records = session.list(new QueryArray("select id, name, line, amount from testtable"));
+            List<Object[]> records = session.query(new QueryArray("select id, name, line, amount from testtable"));
         }    
     }
 

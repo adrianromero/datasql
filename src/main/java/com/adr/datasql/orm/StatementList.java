@@ -17,7 +17,7 @@
 
 package com.adr.datasql.orm;
 
-import com.adr.datasql.StatementList;
+import com.adr.datasql.StatementQuery;
 import com.adr.datasql.Query;
 import com.adr.datasql.data.ParametersMap;
 import java.sql.Connection;
@@ -30,16 +30,16 @@ import java.util.Map;
  * @author adrian
  * @param <R>
  */
-public class ListData<R> implements StatementList<R, Map<String, Object>> {
+public class StatementList<R> implements StatementQuery<R, Map<String, Object>> {
         
     private final Data<R> data;
     
-    public ListData(Data<R> data) {        
+    public StatementList(Data<R> data) {        
         this.data = data;
     }
 
     @Override
-    public List<R> list(Connection c, Map<String, Object> params) throws SQLException {
+    public List<R> query(Connection c, Map<String, Object> params) throws SQLException {
             
         Field[] fieldsparams;
         if (params == null) {
@@ -52,6 +52,6 @@ public class ListData<R> implements StatementList<R, Map<String, Object>> {
                 .setResults(data)
                 .setParameters(new ParametersMap(fieldsparams));
         
-        return querylist.list(c, params);
+        return querylist.query(c, params);
     }
 }

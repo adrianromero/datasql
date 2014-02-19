@@ -66,111 +66,111 @@ public class Session implements AutoCloseable {
     
     /**
      *
-     * @param proc The 
+     * @param statement The 
      * @return Either the row count for update statements or 0 for statements
      * that return nothing
      * @throws SQLException
      */
-    public final int exec(StatementExec<?> proc) throws SQLException {
-        return proc.exec(c, null);
+    public final int exec(StatementExec<?> statement) throws SQLException {
+        return statement.exec(c, null);
     }
     
     /**
      *
      * @param <P>
-     * @param proc
+     * @param statement
      * @param params
      * @return
      * @throws SQLException
      */
-    public final <P> int exec(StatementExec<P[]> proc, P... params) throws SQLException {       
-        return proc.exec(c, params);
+    public final <P> int exec(StatementExec<P[]> statement, P... params) throws SQLException {       
+        return statement.exec(c, params);
     }
     
     /**
      *
      * @param <P>
-     * @param proc
+     * @param statement
      * @param params
      * @return
      * @throws SQLException
      */
-    public final <P> int exec(StatementExec<P> proc, P params) throws SQLException {
-        return proc.exec(c, params);
+    public final <P> int exec(StatementExec<P> statement, P params) throws SQLException {
+        return statement.exec(c, params);
     }
     
     /**
      *
      * @param <R>
-     * @param proc
+     * @param statement
      * @return
      * @throws SQLException
      */
-    public final <R> R find(StatementFind<R, ?> proc) throws SQLException {
-        return proc.find(c, null);
-    }
-    
-    /**
-     *
-     * @param <R>
-     * @param <P>
-     * @param proc
-     * @param params
-     * @return
-     * @throws SQLException
-     */
-    public final <R, P> R find(StatementFind<R, P[]> proc, P... params) throws SQLException {
-        return proc.find(c, params);
+    public final <R> R find(StatementFind<R, ?> statement) throws SQLException {
+        return statement.find(c, null);
     }
     
     /**
      *
      * @param <R>
      * @param <P>
-     * @param proc
+     * @param statement
      * @param params
      * @return
      * @throws SQLException
      */
-    public final <R, P> R find(StatementFind<R, P> proc, P params) throws SQLException {
-        return proc.find(c, params);
+    public final <R, P> R find(StatementFind<R, P[]> statement, P... params) throws SQLException {
+        return statement.find(c, params);
+    }
+    
+    /**
+     *
+     * @param <R>
+     * @param <P>
+     * @param statement
+     * @param params
+     * @return
+     * @throws SQLException
+     */
+    public final <R, P> R find(StatementFind<R, P> statement, P params) throws SQLException {
+        return statement.find(c, params);
     }
 
     /**
      *
      * @param <R>
-     * @param proc
+     * @param statement
      * @return
      * @throws SQLException
      */
-    public final <R> List<R> list(StatementList<R, ?> proc) throws SQLException {
-        return proc.list(c, null);
+    public final <R> List<R> query(StatementQuery<R, ?> statement) throws SQLException {
+        return statement.query(c, null);
     }
     
     /**
      *
      * @param <R>
      * @param <P>
-     * @param proc
+     * @param statement
      * @param params
      * @return
      * @throws SQLException
      */
-    public final <R, P> List<R> list(StatementList<R, P[]> proc, P... params) throws SQLException {
-        return proc.list(c, params);
+    public final <R, P> List<R> query(StatementQuery<R, P[]> statement, P... params) throws SQLException {
+        return statement.query(c, params);
     }
     
     /**
      *
      * @param <R>
      * @param <P>
-     * @param proc
+     * @param statement
      * @param params
      * @return
      * @throws SQLException
      */
-    public final <R, P> List<R> list(StatementList<R, P> proc, P params) throws SQLException {
-        return proc.list(c, params);
+    public final <R, P> List<R> query(StatementQuery<R, P> statement, P params) throws SQLException {
+        return statement.query(c, params);
     }
 
     @Override

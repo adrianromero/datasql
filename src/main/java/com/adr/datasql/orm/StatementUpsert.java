@@ -27,12 +27,12 @@ import java.sql.SQLException;
  * @author adrian
  * @param <P>
  */
-public class UpsertData<P> implements StatementExec<P> {
+public class StatementUpsert<P> implements StatementExec<P> {
         
     private final Query<Void, P> queryinsert;
     private final Query<Void, P> queryupdate;
     
-    public UpsertData(Data<P> data) {
+    public StatementUpsert(Data<P> data) {
         
         queryinsert = new Query<Void, P>(data.getDefinition().getStatementInsert())
                 .setParameters(data);       

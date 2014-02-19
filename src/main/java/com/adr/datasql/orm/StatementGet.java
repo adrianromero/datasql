@@ -17,11 +17,11 @@ import java.sql.SQLException;
  * @author adrian
  * @param <R>
  */
-public class GetData<R> implements StatementFind<R, Object[]> {
+public class StatementGet<R> implements StatementFind<R, Object[]> {
         
     private final Query<R, Object[]> queryfind;
     
-    public GetData(Data<R> data) {
+    public StatementGet(Data<R> data) {
         
         Field[] fieldskey = data.getDefinition().getFieldsKey();
         

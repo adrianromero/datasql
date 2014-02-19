@@ -32,7 +32,7 @@ import java.util.logging.Logger;
  * @param <R>
  * @param <P>
  */
-public class Query<R, P> implements StatementExec<P>, StatementFind<R, P>, StatementList<R, P> {
+public class Query<R, P> implements StatementExec<P>, StatementFind<R, P>, StatementQuery<R, P> {
     
     private static final Logger logger = Logger.getLogger(Query.class.getName()); 
 
@@ -87,7 +87,7 @@ public class Query<R, P> implements StatementExec<P>, StatementFind<R, P>, State
     }
     
     @Override
-    public List<R> list(Connection c, P params) throws SQLException {
+    public List<R> query(Connection c, P params) throws SQLException {
         logger.log(Level.INFO, "Executing prepared SQL: {0}", sql);
 
         try (PreparedStatement stmt = c.prepareStatement(sql.getSQL())) {
