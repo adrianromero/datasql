@@ -20,59 +20,156 @@ package com.adr.datasql;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
+ * A Session with a specific database. All functionality provided by Data SQL is
+ * provided by a Session instance. It wraps a database connection that must be 
+ * provided at the moment of creating a new Session object and follows the same 
+ * life cycle as the database connection wrapped.
+ * <p>
+ * The following code shows an example of how to create and use a new Session
+ * instance using a poolable DataSource. 
+ * <pre>
+ * try (Session session = new Session(getDataSource().getConnection())) {
+ *   // Here goes your database code
+ * }
+ * </pre>
  *
- * @author adrian
+ * @author adrianromero
+ * @see ORMSession
+ * @see Connection
+ * @see DataSource
+ * @since 1.0.0
  */
 public class Session implements AutoCloseable {
-    
-    private static final Logger logger = Logger.getLogger(Session.class.getName());   
-    
+
+    /**
+     * Database connection instance 
+     */
     protected final Connection c;
     
+    /**
+     *
+     * @param c
+     */
     public Session(Connection c) {
         this.c = c;
     }
     
+    /**
+     *
+     * @return The database connection
+     */
     public final Connection getConnection() {
         return c;
     }
     
-    public final int exec(ProcExec<?> proc) throws SQLException {
+    /**
+     *
+     * @param proc The 
+     * @return Either the row count for update statements or 0 for statements
+     * that return nothing
+     * @throws SQLException
+     */
+    public final int exec(StatementExec<?> proc) throws SQLException {
         return proc.exec(c, null);
     }
     
-    public final <P> int exec(ProcExec<P[]> proc, P... params) throws SQLException {       
+    /**
+     *
+     * @param <P>
+     * @param proc
+     * @param params
+     * @return
+     * @throws SQLException
+     */
+    public final <P> int exec(StatementExec<P[]> proc, P... params) throws SQLException {       
         return proc.exec(c, params);
     }
     
-    public final <P> int exec(ProcExec<P> proc, P params) throws SQLException {
+    /**
+     *
+     * @param <P>
+     * @param proc
+     * @param params
+     * @return
+     * @throws SQLException
+     */
+    public final <P> int exec(StatementExec<P> proc, P params) throws SQLException {
         return proc.exec(c, params);
     }
     
-    public final <R> R find(ProcFind<R, ?> proc) throws SQLException {
+    /**
+     *
+     * @param <R>
+     * @param proc
+     * @return
+     * @throws SQLException
+     */
+    public final <R> R find(StatementFind<R, ?> proc) throws SQLException {
         return proc.find(c, null);
     }
     
-    public final <R, P> R find(ProcFind<R, P[]> proc, P... params) throws SQLException {
+    /**
+     *
+     * @param <R>
+     * @param <P>
+     * @param proc
+     * @param params
+     * @return
+     * @throws SQLException
+     */
+    public final <R, P> R find(StatementFind<R, P[]> proc, P... params) throws SQLException {
         return proc.find(c, params);
     }
     
-    public final <R, P> R find(ProcFind<R, P> proc, P params) throws SQLException {
+    /**
+     *
+     * @param <R>
+     * @param <P>
+     * @param proc
+     * @param params
+     * @return
+     * @throws SQLException
+     */
+    public final <R, P> R find(StatementFind<R, P> proc, P params) throws SQLException {
         return proc.find(c, params);
     }
 
-    public final <R> List<R> list(ProcList<R, ?> proc) throws SQLException {
+    /**
+     *
+     * @param <R>
+     * @param proc
+     * @return
+     * @throws SQLException
+     */
+    public final <R> List<R> list(StatementList<R, ?> proc) throws SQLException {
         return proc.list(c, null);
     }
     
-    public final <R, P> List<R> list(ProcList<R, P[]> proc, P... params) throws SQLException {
+    /**
+     *
+     * @param <R>
+     * @param <P>
+     * @param proc
+     * @param params
+     * @return
+     * @throws SQLException
+     */
+    public final <R, P> List<R> list(StatementList<R, P[]> proc, P... params) throws SQLException {
         return proc.list(c, params);
     }
     
-    public final <R, P> List<R> list(ProcList<R, P> proc, P params) throws SQLException {
+    /**
+     *
+     * @param <R>
+     * @param <P>
+     * @param proc
+     * @param params
+     * @return
+     * @throws SQLException
+     */
+    public final <R, P> List<R> list(StatementList<R, P> proc, P params) throws SQLException {
         return proc.list(c, params);
     }
 

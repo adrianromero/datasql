@@ -19,7 +19,6 @@ package com.adr.datasql.samples;
 
 import com.adr.datasql.derby.DataTestSuite;
 import com.adr.datasql.QueryArray;
-import com.adr.datasql.Session;
 import com.adr.datasql.orm.ORMSession;
 import java.sql.SQLException;
 import javax.sql.DataSource;

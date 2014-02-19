@@ -17,7 +17,7 @@
 
 package com.adr.datasql.orm;
 
-import com.adr.datasql.ProcExec;
+import com.adr.datasql.StatementExec;
 import com.adr.datasql.Query;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -27,7 +27,7 @@ import java.sql.SQLException;
  * @author adrian
  * @param <P>
  */
-public class DeleteData<P> implements ProcExec<P> {
+public class DeleteData<P> implements StatementExec<P> {
         
     private final Query<Void, P> querydelete;
     

@@ -17,7 +17,7 @@
 
 package com.adr.datasql.orm;
 
-import com.adr.datasql.ProcList;
+import com.adr.datasql.StatementList;
 import com.adr.datasql.Query;
 import com.adr.datasql.data.ParametersMap;
 import java.sql.Connection;
@@ -30,7 +30,7 @@ import java.util.Map;
  * @author adrian
  * @param <R>
  */
-public class ListData<R> implements ProcList<R, Map<String, Object>> {
+public class ListData<R> implements StatementList<R, Map<String, Object>> {
         
     private final Data<R> data;
     

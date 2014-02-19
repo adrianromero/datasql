@@ -6,7 +6,7 @@
 
 package com.adr.datasql.orm;
 
-import com.adr.datasql.ProcFind;
+import com.adr.datasql.StatementFind;
 import com.adr.datasql.Query;
 import com.adr.datasql.data.ParametersArray;
 import java.sql.Connection;
@@ -17,7 +17,7 @@ import java.sql.SQLException;
  * @author adrian
  * @param <R>
  */
-public class GetData<R> implements ProcFind<R, Object[]> {
+public class GetData<R> implements StatementFind<R, Object[]> {
         
     private final Query<R, Object[]> queryfind;
     

@@ -19,7 +19,7 @@ package com.adr.datasql.samples;
 
 import com.adr.datasql.derby.DataTestSuite;
 import com.adr.datasql.Kind;
-import com.adr.datasql.ProcFind;
+import com.adr.datasql.StatementFind;
 import com.adr.datasql.Query;
 import com.adr.datasql.QueryArray;
 import com.adr.datasql.Session;
@@ -63,7 +63,7 @@ public class SimpleTest {
         
         try (Session session = new Session(getDataSource().getConnection())) {
             // Find a record specifying types
-            ProcFind<Object[], Object[]> selectTestTable = new QueryArray(
+            StatementFind<Object[], Object[]> selectTestTable = new QueryArray(
                 "select id, name, line, amount from testtable where name = ?")
                 .setParameters(Kind.STRING)
                 .setResults(Kind.STRING, Kind.STRING, Kind.INT, Kind.DOUBLE);       
@@ -76,7 +76,7 @@ public class SimpleTest {
         
         try (Session session = new Session(getDataSource().getConnection())) {
             // Count records
-            ProcFind<Number, Number> countTestTable = new Query(
+            StatementFind<Number, Number> countTestTable = new Query(
                 "select count(*) from testtable where amount > ?")
                 .setParameters(ParametersDouble.INSTANCE)
                 .setResults(ResultsInteger.INSTANCE);       

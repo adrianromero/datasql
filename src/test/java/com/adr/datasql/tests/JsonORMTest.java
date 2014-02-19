@@ -18,7 +18,7 @@
 package com.adr.datasql.tests;
 
 import com.adr.datasql.Kind;
-import com.adr.datasql.ProcExec;
+import com.adr.datasql.StatementExec;
 import com.adr.datasql.QueryArray;
 import com.adr.datasql.Session;
 import com.adr.datasql.derby.DataTestSuite;
@@ -108,7 +108,7 @@ public class JsonORMTest {
                     + "valdecimal decimal(10,2), "
                     + "valinteger integer, "
                     + "valboolean smallint)"));    
-            ProcExec<Object[]> insertMyTest = new QueryArray("insert into samplejson(id, code, name, valdate, valdouble, valdecimal, valinteger, valboolean) values (?, ?, ?, ?, ?, ?, ?, ?)")
+            StatementExec<Object[]> insertMyTest = new QueryArray("insert into samplejson(id, code, name, valdate, valdouble, valdecimal, valinteger, valboolean) values (?, ?, ?, ?, ?, ?, ?, ?)")
                     .setParameters(Kind.STRING, Kind.STRING, Kind.STRING, Kind.TIMESTAMP, Kind.DOUBLE, Kind.DECIMAL, Kind.INT, Kind.BOOLEAN);
             
             session.exec(insertMyTest, "a", "code 1", "name a", DateTime.parse("2014-01-01T18:00:32.212+00:00").toDate(), 12.23d, new BigDecimal("12.12"), 1234, true);

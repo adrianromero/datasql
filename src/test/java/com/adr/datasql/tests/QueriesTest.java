@@ -19,8 +19,8 @@ package com.adr.datasql.tests;
 
 import com.adr.datasql.Kind;
 import com.adr.datasql.NSQL;
-import com.adr.datasql.ProcExec;
-import com.adr.datasql.ProcFind;
+import com.adr.datasql.StatementExec;
+import com.adr.datasql.StatementFind;
 import com.adr.datasql.QueryArray;
 import com.adr.datasql.QueryMap;
 import com.adr.datasql.Session;
@@ -65,7 +65,7 @@ public class QueriesTest {
     @Test
     public void query2Test() throws SQLException, ParseException {   
         try (Session session = DataTestSuite.newSession()) {
-            ProcExec<Object[]> insertMYTEST = new QueryArray("insert into mytest(id, code, name) values (?, ?, ?)")
+            StatementExec<Object[]> insertMYTEST = new QueryArray("insert into mytest(id, code, name) values (?, ?, ?)")
                     .setParameters(Kind.STRING, Kind.STRING, Kind.STRING);
             session.exec(insertMYTEST, "one", "code one", "name one");
         }
@@ -74,7 +74,7 @@ public class QueriesTest {
     @Test
     public void querySelectWithKinds() throws SQLException, ParseException {   
         try (Session session = DataTestSuite.newSession()) {         
-           ProcFind<Object[], Object[]> selectMyTest = new QueryArray(
+           StatementFind<Object[], Object[]> selectMyTest = new QueryArray(
                    "select id, code, name, valdate, valdouble, valdecimal, valinteger, valboolean from mytest where code = ?")
                    .setParameters(Kind.STRING)
                    .setResults(Kind.STRING, Kind.STRING, Kind.STRING, Kind.ISODATETIME, Kind.DOUBLE, Kind.DECIMAL, Kind.INT, Kind.BOOLEAN);       
@@ -86,7 +86,7 @@ public class QueriesTest {
     @Test
     public void querySelectMetadata() throws SQLException, ParseException {   
         try (Session session = DataTestSuite.newSession()) {
-           ProcFind<Object[], Object[]> selectMyTest = new QueryArray(
+           StatementFind<Object[], Object[]> selectMyTest = new QueryArray(
                    "select id, code, name, valdate, valdouble, valdecimal, valinteger, valboolean from mytest where code = ?");
            Object[] result = session.find(selectMyTest, "code 1");
            System.out.println(Arrays.toString(result)); // [a, code 1, name a, Tue Feb 11 18:37:52 CET 2014, 12.23, 12.12, 1234, 1]
@@ -107,7 +107,7 @@ public class QueriesTest {
                     + "valdecimal decimal(10,2), "
                     + "valinteger integer, "
                     + "valboolean smallint)"));    
-            ProcExec<Object[]> insertMyTest = new QueryArray("insert into mytest(id, code, name, valdate, valdouble, valdecimal, valinteger, valboolean) values (?, ?, ?, ?, ?, ?, ?, ?)")
+            StatementExec<Object[]> insertMyTest = new QueryArray("insert into mytest(id, code, name, valdate, valdouble, valdecimal, valinteger, valboolean) values (?, ?, ?, ?, ?, ?, ?, ?)")
                     .setParameters(Kind.STRING, Kind.STRING, Kind.STRING, Kind.TIMESTAMP, Kind.DOUBLE, Kind.DECIMAL, Kind.INT, Kind.BOOLEAN);
             
             session.exec(insertMyTest, "a", "code 1", "name a", Instant.parse("2014-01-01T18:00:32.212").toDate(), 12.23d, new BigDecimal("12.12"), 1234, true);

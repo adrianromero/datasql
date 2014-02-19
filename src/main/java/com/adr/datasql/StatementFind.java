@@ -23,8 +23,9 @@ import java.sql.SQLException;
 /**
  *
  * @author adrian
+ * @param <R>
  * @param <P>
  */
-public interface ProcExec<P> {
-    public int exec(Connection c, P params) throws SQLException; 
+public interface StatementFind<R, P> {
+    public R find(Connection c, P params) throws SQLException;  
 }

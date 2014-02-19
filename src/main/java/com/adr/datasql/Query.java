@@ -32,7 +32,7 @@ import java.util.logging.Logger;
  * @param <R>
  * @param <P>
  */
-public class Query<R, P> implements ProcExec<P>, ProcFind<R, P>, ProcList<R, P> {
+public class Query<R, P> implements StatementExec<P>, StatementFind<R, P>, StatementList<R, P> {
     
     private static final Logger logger = Logger.getLogger(Query.class.getName()); 
 

@@ -19,6 +19,7 @@ package com.adr.datasql;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  *
@@ -26,6 +27,6 @@ import java.sql.SQLException;
  * @param <R>
  * @param <P>
  */
-public interface ProcFind<R, P> {
-    public R find(Connection c, P params) throws SQLException;  
+public interface StatementList<R, P> {
+    public List<R> list(Connection c, P params) throws SQLException;
 }

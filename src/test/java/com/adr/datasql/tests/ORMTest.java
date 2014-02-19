@@ -18,9 +18,9 @@
 package com.adr.datasql.tests;
 
 import com.adr.datasql.Kind;
-import com.adr.datasql.ProcExec;
-import com.adr.datasql.ProcFind;
-import com.adr.datasql.ProcList;
+import com.adr.datasql.StatementExec;
+import com.adr.datasql.StatementFind;
+import com.adr.datasql.StatementList;
 import com.adr.datasql.QueryArray;
 import com.adr.datasql.Session;
 import com.adr.datasql.derby.DataTestSuite;
@@ -76,7 +76,7 @@ public class ORMTest {
         
         try (Session session = DataTestSuite.newSession()) {        
             
-            ProcFind<SamplePojo, Object[]> findSamplePojo = new GetData<SamplePojo>(SamplePojo.DATA);
+            StatementFind<SamplePojo, Object[]> findSamplePojo = new GetData<SamplePojo>(SamplePojo.DATA);
 
             SamplePojo pojo = session.find(findSamplePojo, "pojoid");   
             
@@ -89,7 +89,7 @@ public class ORMTest {
 
         try (Session session = DataTestSuite.newSession()) { 
             
-            ProcList<SamplePojo, Map<String, Object>> listSamplePojo = new ListData<SamplePojo>(SamplePojo.DATA);
+            StatementList<SamplePojo, Map<String, Object>> listSamplePojo = new ListData<SamplePojo>(SamplePojo.DATA);
                              
             List<SamplePojo> pojos = session.list(listSamplePojo);   
             
@@ -102,7 +102,7 @@ public class ORMTest {
         
         try (Session session = DataTestSuite.newSession()) { 
             
-            ProcList<SamplePojo, Map<String, Object>> listSamplePojo = new ListData<SamplePojo>(SamplePojo.DATA);
+            StatementList<SamplePojo, Map<String, Object>> listSamplePojo = new ListData<SamplePojo>(SamplePojo.DATA);
                              
             Map<String, Object> filter = new HashMap<String, Object>();
             filter.put("code", "code x");
@@ -126,7 +126,7 @@ public class ORMTest {
                     + "valdecimal decimal(10,2), "
                     + "valinteger integer, "
                     + "valboolean smallint)"));    
-            ProcExec<Object[]> insertMyTest = new QueryArray("insert into com_adr_datasql_tests_SamplePojo(id, code, name, valdate, valdouble, valdecimal, valinteger, valboolean) values (?, ?, ?, ?, ?, ?, ?, ?)")
+            StatementExec<Object[]> insertMyTest = new QueryArray("insert into com_adr_datasql_tests_SamplePojo(id, code, name, valdate, valdouble, valdecimal, valinteger, valboolean) values (?, ?, ?, ?, ?, ?, ?, ?)")
                     .setParameters(Kind.STRING, Kind.STRING, Kind.STRING, Kind.TIMESTAMP, Kind.DOUBLE, Kind.DECIMAL, Kind.INT, Kind.BOOLEAN);
             
             session.exec(insertMyTest, "a", "code 1", "name a", DateTime.parse("2014-01-01T18:00:32.212+01:00").toDate(), 12.23d, new BigDecimal("12.12"), 1234, true);

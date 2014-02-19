@@ -17,9 +17,9 @@
 
 package com.adr.datasql.orm;
 
-import com.adr.datasql.ProcExec;
-import com.adr.datasql.ProcFind;
-import com.adr.datasql.ProcList;
+import com.adr.datasql.StatementExec;
+import com.adr.datasql.StatementFind;
+import com.adr.datasql.StatementList;
 import com.adr.datasql.Session;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -79,37 +79,37 @@ public class ORMSession extends Session {
     }  
     
     public <P> int insert(Data<P> data, P value) throws SQLException {      
-        ProcExec<P> insert = new InsertData<P>(data); 
+        StatementExec<P> insert = new InsertData<P>(data); 
         return insert.exec(c, value);
     }
     
     public <P> int delete(Data<P> data, P value) throws SQLException {
-        ProcExec<P> delete = new DeleteData<P>(data); 
+        StatementExec<P> delete = new DeleteData<P>(data); 
         return delete.exec(c, value);
     }
     
     public <P> int save(Data<P> data, P value) throws SQLException {
-        ProcExec<P> save = new SaveData<P>(data); 
+        StatementExec<P> save = new SaveData<P>(data); 
         return save.exec(c, value);
     }
     
     public <P> int upsert(Data<P> data, P value) throws SQLException {
-        ProcExec<P> upsert = new UpsertData<P>(data); 
+        StatementExec<P> upsert = new UpsertData<P>(data); 
         return upsert.exec(c, value);
     }
     
     public <P> int update(Data<P> data, P value) throws SQLException {
-        ProcExec<P> update = new UpdateData<P>(data); 
+        StatementExec<P> update = new UpdateData<P>(data); 
         return update.exec(c, value);
     }
     
     public <P> P get(Data<P> data, Object... key) throws SQLException {       
-        ProcFind<P, Object[]> get = new GetData<P>(data);
+        StatementFind<P, Object[]> get = new GetData<P>(data);
         return get.find(c, key);
     }
     
     public <P> List<P> list(Data<P> data, Map<String, Object> filter) throws SQLException {
-        ProcList<P, Map<String, Object>> list = new ListData<P>(data);
+        StatementList<P, Map<String, Object>> list = new ListData<P>(data);
         return list.list(c, filter);
     }  
 }

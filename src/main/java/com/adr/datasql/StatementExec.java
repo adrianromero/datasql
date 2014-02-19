@@ -19,14 +19,12 @@ package com.adr.datasql;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
 
 /**
  *
  * @author adrian
- * @param <R>
  * @param <P>
  */
-public interface ProcList<R, P> {
-    public List<R> list(Connection c, P params) throws SQLException;
+public interface StatementExec<P> {
+    public int exec(Connection c, P params) throws SQLException; 
 }

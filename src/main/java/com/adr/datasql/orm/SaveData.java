@@ -17,7 +17,7 @@
 
 package com.adr.datasql.orm;
 
-import com.adr.datasql.ProcExec;
+import com.adr.datasql.StatementExec;
 import com.adr.datasql.Query;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -28,7 +28,7 @@ import java.util.UUID;
  * @author adrian
  * @param <P>
  */
-public class SaveData<P> implements ProcExec<P> {
+public class SaveData<P> implements StatementExec<P> {
         
     private final Query<Void, P> queryinsert;
     private final Query<Void, P> queryupdate;
