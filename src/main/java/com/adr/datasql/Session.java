@@ -48,6 +48,8 @@ public class Session implements AutoCloseable {
      */
     protected final Connection c;
     
+    protected int maxfetch = 500;
+    
     /**
      *
      * @param c
@@ -62,6 +64,14 @@ public class Session implements AutoCloseable {
      */
     public final Connection getConnection() {
         return c;
+    }
+    
+    public final int getMaxFetch() {
+        return maxfetch;
+    }
+    
+    public final void setMaxFetch(int maxfetch) {
+        this.maxfetch = maxfetch;
     }
     
     /**
