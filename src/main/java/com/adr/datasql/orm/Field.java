@@ -25,23 +25,9 @@ import com.adr.datasql.MetaData;
  * @author adrian
  */
 public class Field extends MetaData {
-
-    private final String getterName;
-    private final String setterName;
     
     public Field(String name, Kind kind) {
         super(name, kind);
-        
-        this.getterName = (Kind.BOOLEAN == kind ? "is" : "get") + Character.toUpperCase(name.charAt(0)) + name.substring(1);
-        this.setterName = "set" + Character.toUpperCase(name.charAt(0)) + name.substring(1);
-    }
-
-    public final String getGetterName() {
-        return getterName;
-    }
-     
-    public final String getSetterName() {
-        return setterName;
     }
 
     public boolean isKey() {

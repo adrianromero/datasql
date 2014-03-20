@@ -38,10 +38,6 @@ public class Definition {
     public String getTableName() {
         return tablename;
     }
-    
-    public String getClassName() {
-        return tablename.replaceAll("_", ".");
-    }
  
     public Field[] getFields() {
         return fields;

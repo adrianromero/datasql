@@ -17,6 +17,7 @@
 
 package com.adr.datasql.orm;
 
+import com.adr.datasql.Kind;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
@@ -37,18 +38,18 @@ public class DataPojo<P> extends Data<P> {
     public DataPojo(Definition definition) {
         super(definition);
         try {
-            clazz = (Class<P>) Class.forName(definition.getClassName());
+            clazz = (Class<P>) Class.forName(getClassName(definition));
             
             setters = new HashMap<String, Method>();
             getters = new HashMap<String, Method>();
             Method[] methods = clazz.getMethods();
             for (Field f: definition.getFields()) {
                 for (Method m: methods) {
-                    if (m.getParameterTypes().length == 1 && m.getName().equals(f.getSetterName())) {
-                        setters.put(f.getSetterName(), m);
+                    if (m.getParameterTypes().length == 1 && m.getName().equals(getSetterName(f))) {
+                        setters.put(f.getName(), m);
                     }
-                    if (m.getParameterTypes().length == 0 && m.getName().equals(f.getGetterName())) {
-                        getters.put(f.getGetterName(), m);
+                    if (m.getParameterTypes().length == 0 && m.getName().equals(getGetterName(f))) {
+                        getters.put(f.getName(), m);
                     }
                 }
             }
@@ -62,9 +63,9 @@ public class DataPojo<P> extends Data<P> {
     protected Object getValue(Field f, P param) throws SQLException {
         
         try {          
-            Method m = getters.get(f.getGetterName()); 
+            Method m = getters.get(f.getName()); 
             if (m == null) {
-              throw new SQLException ("Getter not found: " + f.getGetterName() + "().");  
+              throw new SQLException ("Getter not found for field: " + f.getName() + ".");  
             }
             return m.invoke(param);              
         } catch (IllegalAccessException 
@@ -78,9 +79,9 @@ public class DataPojo<P> extends Data<P> {
     @Override
     protected void setValue(Field f, P param, Object value) throws SQLException {
         try {          
-            Method m = setters.get(f.getSetterName());    
+            Method m = setters.get(f.getName());    
             if (m == null) {
-              throw new SQLException ("Setter not found: " + f.getSetterName() + "(?).");  
+              throw new SQLException ("Setter not found for field: " + f.getName() + ".");  
             }            
             Class<?>[] types = m.getParameterTypes();
             
@@ -100,10 +101,22 @@ public class DataPojo<P> extends Data<P> {
     @Override
     protected P create() throws SQLException {
         try {
-            return (P) clazz.newInstance();
+            return clazz.newInstance();
         } catch (InstantiationException 
                 | IllegalAccessException ex) {
             throw new SQLException (ex);
         }
+    }
+    
+    private String getClassName(Definition definition) {
+        return definition.getTableName().replaceAll("_", ".");
+    }
+    
+    private String getSetterName(Field f) {
+        return "set" + Character.toUpperCase(f.getName().charAt(0)) + f.getName().substring(1);
+    }
+    
+    private String getGetterName(Field f) {
+        return (Kind.BOOLEAN == f.getKind() ? "is" : "get") + Character.toUpperCase(f.getName().charAt(0)) + f.getName().substring(1);
     }
 }
