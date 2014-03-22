@@ -17,9 +17,11 @@
 
 package com.adr.datasql;
 
+import com.adr.datasql.orm.ORMSession;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import javax.sql.DataSource;
 
 /**
  * A Session with a specific database. All functionality provided by Data SQL is
@@ -54,6 +56,15 @@ public class Session implements AutoCloseable {
      */
     public Session(Connection c) {
         this.c = c;
+    }
+    
+    /**
+     *
+     * @param ds
+     * @throws java.sql.SQLException
+     */
+    public Session(DataSource ds) throws SQLException {
+        this.c = ds.getConnection();
     }
     
     /**

@@ -26,6 +26,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import javax.sql.DataSource;
 
 /**
  *
@@ -37,6 +38,10 @@ public class ORMSession extends Session {
     
     public ORMSession(Connection c) {
         super(c);
+    }
+
+    public ORMSession(DataSource ds) throws SQLException {
+        super(ds);
     }
     
     private <P> Data<P> getData(Class<? extends P> clazz) throws SQLException {
