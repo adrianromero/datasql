@@ -46,7 +46,7 @@ public class Entity {
     
     @Override
     public String toString() {
-        return "Definition {tableName: " + name + ", fields: " + Arrays.toString(fields) + "}";
+        return "Definition {name: " + name + ", fields: " + Arrays.toString(fields) + "}";
     }
     
     public Field[] getFieldsKey() {
