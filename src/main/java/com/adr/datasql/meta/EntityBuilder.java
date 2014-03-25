@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class EntityBuilder {
     
-    protected String tablename;
+    protected String name;
     protected List<Field> fields = new ArrayList<Field>();
     
     public static EntityBuilder create() {
@@ -34,11 +34,11 @@ public class EntityBuilder {
     }
     
     public Entity build() {
-        return new Entity(tablename, fields.toArray(new Field[fields.size()]));
+        return new Entity(name, fields.toArray(new Field[fields.size()]));
     }  
     
-    public EntityBuilder tableName(String tablename) {
-        this.tablename = tablename;
+    public EntityBuilder name(String name) {
+        this.name = name;
         return this;
     }
     

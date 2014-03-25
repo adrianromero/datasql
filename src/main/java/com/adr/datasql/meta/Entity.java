@@ -28,16 +28,16 @@ import java.util.Set;
  */
 public class Entity {
     
-    private final String tablename;
+    private final String name;
     private final Field[] fields;
        
-    public Entity(String tablename, Field... fields) {
-        this.tablename = tablename;
+    public Entity(String name, Field... fields) {
+        this.name = name;
         this.fields = fields;
     }
 
-    public String getTableName() {
-        return tablename;
+    public String getName() {
+        return name;
     }
  
     public Field[] getFields() {
@@ -46,7 +46,7 @@ public class Entity {
     
     @Override
     public String toString() {
-        return "Definition {tableName: " + tablename + ", fields: " + Arrays.toString(fields) + "}";
+        return "Definition {tableName: " + name + ", fields: " + Arrays.toString(fields) + "}";
     }
     
     public Field[] getFieldsKey() {
@@ -76,7 +76,7 @@ public class Entity {
         ArrayList<String> fieldslist = new ArrayList<String>();
         
         sql.append("INSERT INTO ");
-        sql.append(getTableName());
+        sql.append(getName());
         sql.append("(");
                
         boolean filter = false;
@@ -103,7 +103,7 @@ public class Entity {
         ArrayList<String> fieldslist = new ArrayList<String>();
         
         sql.append("UPDATE ");
-        sql.append(getTableName());
+        sql.append(getName());
                
         boolean filter = false;
         for (Field f: fields) {
@@ -135,7 +135,7 @@ public class Entity {
         ArrayList<String> fieldslist = new ArrayList<String>();
         
         sql.append("DELETE FROM ");
-        sql.append(getTableName());
+        sql.append(getName());
         
         for (Field f: fields) {
             if (f.isKey()) {
@@ -167,7 +167,7 @@ public class Entity {
         }    
         
         sql.append(" FROM ");       
-        sql.append(getTableName());
+        sql.append(getName());
         
         comma = false;
         for (Field f: filterfields) {
@@ -202,7 +202,7 @@ public class Entity {
         }    
         
         sql.append(" FROM ");       
-        sql.append(getTableName());
+        sql.append(getName());
         
 //        // WHERE CLAUSE
 //        comma = false;

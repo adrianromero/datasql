@@ -111,7 +111,7 @@ public class DataPojo<P> extends Data<P> {
     }
     
     private String getClassName(Entity definition) {
-        return definition.getTableName().replaceAll("_", ".");
+        return definition.getName().replaceAll("_", ".");
     }
     
     private String getSetterName(Field f) {
