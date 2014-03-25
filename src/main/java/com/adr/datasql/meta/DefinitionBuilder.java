@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2014 Adrián Romero Corchado.
+//    Copyright (C) 2012-2014 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -15,22 +15,35 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql.orm;
+package com.adr.datasql.meta;
 
-import com.adr.datasql.Kind;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author adrian
  */
-public class FieldKey extends Field {
+public class DefinitionBuilder {
     
-    public FieldKey(String name, Kind kind) {
-        super(name, kind);
+    protected String tablename;
+    protected List<Field> fields = new ArrayList<Field>();
+    
+    public static DefinitionBuilder create() {
+        return new DefinitionBuilder();
     }
     
-    @Override
-    public boolean isKey() {
-        return true;
+    public Definition build() {
+        return new Definition(tablename, fields.toArray(new Field[fields.size()]));
+    }  
+    
+    public DefinitionBuilder tableName(String tablename) {
+        this.tablename = tablename;
+        return this;
+    }
+    
+    public DefinitionBuilder fields(Field field) {
+        this.fields.add(field);
+        return this;
     }
 }

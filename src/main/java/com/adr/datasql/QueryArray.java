@@ -17,6 +17,7 @@
 
 package com.adr.datasql;
 
+import com.adr.datasql.meta.MetaData;
 import com.adr.datasql.data.ParametersArray;
 import com.adr.datasql.data.ParametersArrayMeta;
 import com.adr.datasql.data.ResultsArray;

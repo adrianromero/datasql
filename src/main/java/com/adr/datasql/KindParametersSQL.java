@@ -17,6 +17,7 @@
 
 package com.adr.datasql;
 
+import com.adr.datasql.meta.MetaData;
 import java.math.BigDecimal;
 import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;

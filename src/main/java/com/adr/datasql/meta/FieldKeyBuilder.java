@@ -13,42 +13,22 @@
 //     distributed under the License is distributed on an "AS IS" BASIS,
 //     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //     See the License for the specific language governing permissions and
-//     limitations under the License.
+//     limitations under the License./
 
-package com.adr.datasql;
+package com.adr.datasql.meta;
 
 /**
  *
  * @author adrian
  */
-public class MetaData {
+public class FieldKeyBuilder extends FieldBuilder {
     
-    private final Kind kind;
-    private final String name;
-    
-    public MetaData(Kind kind) {
-        this.name = null;
-        this.kind = kind;
+    public static FieldKeyBuilder create() {
+        return new FieldKeyBuilder();
     }
     
-    public MetaData(String name, Kind kind) {
-        this.name = name;
-        this.kind = kind;
-    }  
-    
-    public final String getName() {
-        return name;
-    }
-    
-    public final Kind getKind() {
-        return kind;
+    @Override
+    public FieldKey build() {
+        return new FieldKey(name, kind);
     }    
-    
-    public static MetaData[] fromKinds(Kind[] kinds) {
-        MetaData[] metadatas = new MetaData[kinds.length];
-        for (int i = 0; i < kinds.length; i++) {
-            metadatas[i] = new MetaData(kinds[i]);
-        }
-        return metadatas;
-    }
 }

@@ -17,6 +17,8 @@
 
 package com.adr.datasql.orm;
 
+import com.adr.datasql.meta.Field;
+import com.adr.datasql.meta.Definition;
 import com.adr.datasql.Kind;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

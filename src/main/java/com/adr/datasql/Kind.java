@@ -56,6 +56,40 @@ public abstract class Kind<T> {
     public abstract T get(KindResults read, int index) throws SQLException;
     public abstract void set(KindParameters write, String name, T value) throws SQLException;
     public abstract void set(KindParameters write, int index, T value) throws SQLException;
+    
+    public static final Kind<?> valueOf(String kind) {
+        if ("INT".equals(kind)) {
+            return Kind.INT;
+        } else if ("STRING".equals(kind)) {
+            return Kind.STRING;
+        } else if ("DOUBLE".equals(kind)) {
+            return Kind.DOUBLE;
+        } else if ("DECIMAL".equals(kind)) {
+            return Kind.DECIMAL;
+        } else if ("BOOLEAN".equals(kind)) {
+            return Kind.BOOLEAN;
+        } else if ("TIMESTAMP".equals(kind)) {
+            return Kind.TIMESTAMP;
+        } else if ("DATE".equals(kind)) {
+            return Kind.DATE;
+        } else if ("ISODATETIME".equals(kind)) {
+            return Kind.ISODATETIME;
+        } else if ("ISODATE".equals(kind)) {
+            return Kind.ISODATE;
+        } else if ("ISOTIME".equals(kind)) {
+            return Kind.ISOTIME;
+        } else if ("BYTEA".equals(kind)) {
+            return Kind.BYTEA;
+        } else if ("BASE64".equals(kind)) {
+            return Kind.BASE64;
+        } else if ("IMAGE".equals(kind)) {
+            return Kind.IMAGE;
+        } else if ("OBJECT".equals(kind)) {
+            return Kind.OBJECT;            
+        } else {
+            throw new RuntimeException("Cannot get Kind for value " + kind);
+        }
+    }
 
     public static final Kind<?> getKind(int type) {
         switch (type) {
@@ -117,6 +151,10 @@ public abstract class Kind<T> {
         public void set(KindParameters write, int index, Number value) throws SQLException {
             write.setInt(index, value == null ? null : value.intValue());
         }
+        @Override
+        public String toString() {
+            return "Kind.INT";
+        }       
     }
 
     private static final class KindSTRING extends Kind<String> {
@@ -136,6 +174,10 @@ public abstract class Kind<T> {
         public void set(KindParameters write, int index, String value) throws SQLException {
             write.setString(index, value);
         }
+        @Override
+        public String toString() {
+            return "Kind.STRING";
+        }          
     }
 
     private static final class KindDOUBLE extends Kind<Number> {
@@ -155,6 +197,10 @@ public abstract class Kind<T> {
         public void set(KindParameters write, int index, Number value) throws SQLException {
             write.setDouble(index, value == null ? null : value.doubleValue());
         }
+        @Override
+        public String toString() {
+            return "Kind.DOUBLE";
+        }          
     }
 
     private static final class KindDECIMAL extends Kind<BigDecimal> {
@@ -174,6 +220,10 @@ public abstract class Kind<T> {
         public void set(KindParameters write, int index, BigDecimal value) throws SQLException {
             write.setBigDecimal(index, value);
         }
+        @Override
+        public String toString() {
+            return "Kind.DECIMAL";
+        }          
     }
 
     private static final class KindBOOLEAN extends Kind<Boolean> {
@@ -193,6 +243,10 @@ public abstract class Kind<T> {
          public void set(KindParameters write, int index, Boolean value) throws SQLException {
             write.setBoolean(index, value);
         }
+        @Override
+        public String toString() {
+            return "Kind.BOOLEAN";
+        }           
     }
 
     private static final class KindTIMESTAMP extends Kind<Date> {
@@ -212,6 +266,10 @@ public abstract class Kind<T> {
         public void set(KindParameters write, int index, Date value) throws SQLException {
             write.setTimestamp(index, value);
         }
+        @Override
+        public String toString() {
+            return "Kind.TIMESTAMP";
+        }        
     }
     
     private static final class KindISODATETIME extends Kind<String> {
@@ -254,6 +312,10 @@ public abstract class Kind<T> {
                 throw new SQLException(ex);
             }
         }
+        @Override
+        public String toString() {
+            return "Kind.ISODATETIME";
+        }          
     }
     
     private static final class KindISODATE extends Kind<String> {
@@ -292,6 +354,10 @@ public abstract class Kind<T> {
                 throw new SQLException(ex);
             }
         }
+        @Override
+        public String toString() {
+            return "Kind.ISODATE";
+        }          
     }    
     
     private static final class KindISOTIME extends Kind<String> {
@@ -330,6 +396,10 @@ public abstract class Kind<T> {
                 throw new SQLException(ex);
             }
         }
+        @Override
+        public String toString() {
+            return "Kind.ISOTIME";
+        }          
     }    
     
     private static final class KindDATE extends Kind<Date> {
@@ -349,6 +419,10 @@ public abstract class Kind<T> {
         public void set(KindParameters write, int index, Date value) throws SQLException {
             write.setDate(index, value);
         }
+        @Override
+        public String toString() {
+            return "Kind.DATE";
+        }          
     }
 
     private static final class KindBYTEA extends Kind<byte[]> {
@@ -368,6 +442,10 @@ public abstract class Kind<T> {
         public void set(KindParameters write, int index, byte[] value) throws SQLException {
             write.setBytes(index, value);
         }
+        @Override
+        public String toString() {
+            return "Kind.BYTEA";
+        }          
     }
 
     private static final class KindBASE64 extends Kind<String> {
@@ -387,6 +465,10 @@ public abstract class Kind<T> {
         public void set(KindParameters write, int index, String value) throws SQLException {
             write.setBytes(index, EncodeUtils.decode(value));
         }
+        @Override
+        public String toString() {
+            return "Kind.BASE64";
+        }          
     }    
     
     private static final class KindIMAGE extends Kind<BufferedImage> {
@@ -441,6 +523,10 @@ public abstract class Kind<T> {
                 }
             }
         }        
+        @Override
+        public String toString() {
+            return "Kind.IMAGE";
+        }          
     }
 
     private static final class KindOBJECT extends Kind<Object> {
@@ -460,5 +546,9 @@ public abstract class Kind<T> {
         public void set(KindParameters write, int index, Object value) throws SQLException {
             write.setObject(index, value);
         }
+        @Override
+        public String toString() {
+            return "Kind.OBJECT";
+        }          
     }        
 }

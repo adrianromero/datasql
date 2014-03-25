@@ -15,22 +15,27 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql.orm;
+package com.adr.datasql.meta;
 
 import com.adr.datasql.Kind;
-import com.adr.datasql.MetaData;
 
 /**
  *
  * @author adrian
  */
-public class Field extends MetaData {
+public class FieldKey extends Field {
     
-    public Field(String name, Kind kind) {
+    public FieldKey(String name, Kind kind) {
         super(name, kind);
     }
-
+    
+    @Override
     public boolean isKey() {
-        return false;
+        return true;
     }
+    
+    @Override
+    public String toString() {
+        return "FieldKey {name: " + getName() + ", kind: " + getKind().toString() + "}";
+    }    
 }

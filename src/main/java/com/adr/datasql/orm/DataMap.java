@@ -17,6 +17,8 @@
 
 package com.adr.datasql.orm;
 
+import com.adr.datasql.meta.Field;
+import com.adr.datasql.meta.Definition;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;

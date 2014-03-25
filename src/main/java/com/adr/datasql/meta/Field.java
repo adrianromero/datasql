@@ -15,35 +15,26 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql.orm;
+package com.adr.datasql.meta;
 
-import com.adr.datasql.meta.Field;
-import com.adr.datasql.meta.Definition;
-import com.google.gson.JsonObject;
-import java.sql.SQLException;
+import com.adr.datasql.Kind;
 
 /**
  *
  * @author adrian
  */
-public class DataJson extends Data<JsonObject> {
+public class Field extends MetaData {
     
-    public DataJson(Definition definition) {
-        super(definition);
+    public Field(String name, Kind kind) {
+        super(name, kind);
     }
 
-    @Override
-    protected Object getValue(Field f, JsonObject param) throws SQLException {
-        return f.getKind().get(new KindResultsJson(param), f.getName());  
-    }        
-
-    @Override
-    protected void setValue(Field f, JsonObject param, Object value) throws SQLException {
-        f.getKind().set(new KindParametersJson(param), f.getName(), value);
+    public boolean isKey() {
+        return false;
     }
-
+    
     @Override
-    protected JsonObject create() throws SQLException {
-        return new JsonObject();
+    public String toString() {
+        return "Field {name: " + getName() + ", kind: " + getKind().toString() + "}";
     }
 }

@@ -15,10 +15,11 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql.orm;
+package com.adr.datasql.meta;
 
 import com.adr.datasql.SQL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Set;
 
 /**
@@ -29,12 +30,12 @@ public class Definition {
     
     private final String tablename;
     private final Field[] fields;
-    
+       
     public Definition(String tablename, Field... fields) {
         this.tablename = tablename;
         this.fields = fields;
     }
-    
+
     public String getTableName() {
         return tablename;
     }
@@ -42,7 +43,12 @@ public class Definition {
     public Field[] getFields() {
         return fields;
     }
- 
+    
+    @Override
+    public String toString() {
+        return "Definition {tableName: " + tablename + ", fields: " + Arrays.toString(fields) + "}";
+    }
+    
     public Field[] getFieldsKey() {
         ArrayList<Field> keys = new ArrayList<Field>();
         for (Field f: fields) {
@@ -178,4 +184,117 @@ public class Definition {
 
         return new SQL(sql.toString(), fieldslist.toArray(new String[fieldslist.size()]));            
     }
+    
+    public SQL getStatementFilter(FilterField[] filterfields, SortField[] sortfields) {
+        
+        StringBuilder sql = new StringBuilder();
+        ArrayList<String> fieldslist = new ArrayList<String>();
+        
+        sql.append("SELECT ");
+        boolean comma = false;
+        for (Field f: fields) {
+            if (comma) {
+                sql.append(", ");
+            } else {
+                comma = true;       
+            }
+            sql.append(f.getName()); 
+        }    
+        
+        sql.append(" FROM ");       
+        sql.append(getTableName());
+        
+//        // WHERE CLAUSE
+//        comma = false;
+//        for (FilterField f: filterfields) {
+//            if (comma) {
+//                sql.append(" AND ");
+//            } else {
+//                sql.append(" WHERE ");
+//                comma = true;
+//            }           
+//            sql.append(f.getName());
+//            sql.append(" = ?");
+//            fieldslist.add(f.getName());            
+//        }
+        
+        // ORDER BY CLAUSE
+        comma = false;
+        for (SortField s: sortfields) {
+            if (comma) {
+                sql.append(", ");
+            } else {
+                sql.append(" ORDER BY ");
+                comma = true;
+            }           
+            sql.append(s.getField().getName());
+            sql.append(s.getSort().toString());               
+        }
+
+        return new SQL(sql.toString(), fieldslist.toArray(new String[fieldslist.size()]));            
+    }
+    public static enum Filter {
+        NONE,
+        NULL,
+        NOTNULL,
+        EQUAL,
+        GREATER,
+        LESS,
+        GREATEROREQUAL,
+        LESSOREQUEAL
+    }
+    
+    public static class FilterField {
+        private final Field field;
+        private final Filter filter;
+        public FilterField(Field field, Filter filter) {
+            this.field = field;
+            this.filter = filter;
+        }
+        public Field getField() {
+            return field;
+        }
+        public Filter getFilter() {
+            return filter;
+        }
+    }
+     
+    public static enum Sort {
+        ASC("ASC"),
+        DESC("DESC");
+        
+        private final String sql;
+        Sort(String sql) {
+            this.sql = sql;
+        }
+        @Override
+        public String toString() {
+            return " " + sql;
+        }       
+    }
+    
+    public static class SortField {
+        private final Field field;
+        private final Sort sort;
+        public SortField(Field field, Sort sort) {
+            this.field = field;
+            this.sort = sort;
+        }
+        public Field getField() {
+            return field;
+        }
+        public Sort getSort() {
+            return sort;
+        }
+    }
+    
+//    
+//    public SQL getStatementCreateTable(Database db) {
+//        
+//    }
+//    
+//    public SQL getStatementDropTable(Database db) {
+//        
+//    }
 }
+

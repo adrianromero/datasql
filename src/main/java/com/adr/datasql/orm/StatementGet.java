@@ -6,6 +6,7 @@
 
 package com.adr.datasql.orm;
 
+import com.adr.datasql.meta.Field;
 import com.adr.datasql.StatementFind;
 import com.adr.datasql.Query;
 import com.adr.datasql.data.ParametersArray;

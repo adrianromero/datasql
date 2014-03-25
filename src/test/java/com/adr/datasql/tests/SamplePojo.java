@@ -20,9 +20,9 @@ package com.adr.datasql.tests;
 import com.adr.datasql.Kind;
 import com.adr.datasql.orm.Data;
 import com.adr.datasql.orm.DataPojo;
-import com.adr.datasql.orm.Definition;
-import com.adr.datasql.orm.Field;
-import com.adr.datasql.orm.FieldKey;
+import com.adr.datasql.meta.Definition;
+import com.adr.datasql.meta.Field;
+import com.adr.datasql.meta.FieldKey;
 import java.math.BigDecimal;
 import java.util.Date;
 

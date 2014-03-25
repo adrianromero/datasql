@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2014 Adrián Romero Corchado.
+//    Copyright (C) 2012-2014 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -15,30 +15,20 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql.data;
-
-import com.adr.datasql.KindParameters;
-import com.adr.datasql.meta.MetaData;
-import com.adr.datasql.Parameters;
-import java.sql.SQLException;
-import java.util.Map;
+package com.adr.datasql.meta;
 
 /**
  *
  * @author adrian
  */
-public class ParametersMap implements Parameters<Map<String, Object>> {
+public class FieldBuilder extends MetaDataBuilder {
     
-    private final MetaData[] metadatas;
-    
-    public ParametersMap(MetaData... metadatas) {
-        this.metadatas = metadatas;
+    public static FieldBuilder create() {
+        return new FieldBuilder();
     }
     
     @Override
-    public void write(KindParameters dp, Map<String, Object> param) throws SQLException {
-        for(int i = 0; i < metadatas.length; i++) {
-            metadatas[i].getKind().set(dp, metadatas[i].getName(), param.get(metadatas[i].getName()));
-        }
-    } 
+    public Field build() {
+        return new Field(name, kind);
+    }  
 }
