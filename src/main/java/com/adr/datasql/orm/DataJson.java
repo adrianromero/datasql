@@ -18,7 +18,7 @@
 package com.adr.datasql.orm;
 
 import com.adr.datasql.meta.Field;
-import com.adr.datasql.meta.Definition;
+import com.adr.datasql.meta.Entity;
 import com.google.gson.JsonObject;
 import java.sql.SQLException;
 
@@ -28,7 +28,7 @@ import java.sql.SQLException;
  */
 public class DataJson extends Data<JsonObject> {
     
-    public DataJson(Definition definition) {
+    public DataJson(Entity definition) {
         super(definition);
     }
 

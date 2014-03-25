@@ -24,7 +24,7 @@ import com.adr.datasql.Session;
 import com.adr.datasql.derby.DataTestSuite;
 import com.adr.datasql.orm.Data;
 import com.adr.datasql.orm.DataJson;
-import com.adr.datasql.meta.Definition;
+import com.adr.datasql.meta.Entity;
 import com.adr.datasql.meta.Field;
 import com.adr.datasql.meta.FieldKey;
 import com.adr.datasql.orm.ORMSession;
@@ -48,7 +48,7 @@ import org.junit.Test;
  */
 public class JsonORMTest {
     
-    public final static Data<JsonObject> DATAJSON = new DataJson(new Definition(
+    public final static Data<JsonObject> DATAJSON = new DataJson(new Entity(
             "samplejson",
             new FieldKey("id", Kind.STRING),
             new Field("code", Kind.STRING),

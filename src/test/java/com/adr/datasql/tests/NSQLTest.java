@@ -19,7 +19,7 @@ package com.adr.datasql.tests;
 
 import com.adr.datasql.SQLNamed;
 import com.adr.datasql.SQLFilter;
-import com.adr.datasql.meta.Definition;
+import com.adr.datasql.meta.Entity;
 import java.text.ParseException;
 import java.util.Collections;
 import org.junit.Assert;
@@ -66,7 +66,7 @@ public class NSQLTest {
     @Test
     public void testDefinitionsSQL() throws ParseException {
 
-        Definition def = SamplePojo.DATA.getDefinition();
+        Entity def = SamplePojo.DATA.getDefinition();
         
         Assert.assertEquals("UPDATE com_adr_datasql_tests_SamplePojo SET id = ?, code = ?, name = ?, valdate = ?, valdouble = ?, valdecimal = ?, valinteger = ?, valboolean = ? WHERE id = ?[id, code, name, valdate, valdouble, valdecimal, valinteger, valboolean, id]",
                 def.getStatementUpdate().toString());

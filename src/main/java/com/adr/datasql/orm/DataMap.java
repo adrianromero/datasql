@@ -18,7 +18,7 @@
 package com.adr.datasql.orm;
 
 import com.adr.datasql.meta.Field;
-import com.adr.datasql.meta.Definition;
+import com.adr.datasql.meta.Entity;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +29,7 @@ import java.util.Map;
  */
 public class DataMap extends Data<Map<String, Object>> {
     
-    public DataMap(Definition definition) {
+    public DataMap(Entity definition) {
         super(definition);
     }
 

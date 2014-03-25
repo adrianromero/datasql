@@ -18,7 +18,7 @@
 package com.adr.datasql.orm;
 
 import com.adr.datasql.meta.Field;
-import com.adr.datasql.meta.Definition;
+import com.adr.datasql.meta.Entity;
 import com.adr.datasql.KindParameters;
 import com.adr.datasql.KindResults;
 import com.adr.datasql.Parameters;
@@ -32,13 +32,13 @@ import java.sql.SQLException;
  */
 public abstract class Data<P> implements Parameters<P>, Results<P> {
     
-    private final Definition definition;
+    private final Entity definition;
     
-    public Data(Definition definition) {
+    public Data(Entity definition) {
         this.definition = definition;
     }
     
-    public Definition getDefinition() {
+    public Entity getDefinition() {
         return definition;
     }
     

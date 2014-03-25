@@ -24,25 +24,25 @@ import java.util.List;
  *
  * @author adrian
  */
-public class DefinitionBuilder {
+public class EntityBuilder {
     
     protected String tablename;
     protected List<Field> fields = new ArrayList<Field>();
     
-    public static DefinitionBuilder create() {
-        return new DefinitionBuilder();
+    public static EntityBuilder create() {
+        return new EntityBuilder();
     }
     
-    public Definition build() {
-        return new Definition(tablename, fields.toArray(new Field[fields.size()]));
+    public Entity build() {
+        return new Entity(tablename, fields.toArray(new Field[fields.size()]));
     }  
     
-    public DefinitionBuilder tableName(String tablename) {
+    public EntityBuilder tableName(String tablename) {
         this.tablename = tablename;
         return this;
     }
     
-    public DefinitionBuilder fields(Field field) {
+    public EntityBuilder fields(Field field) {
         this.fields.add(field);
         return this;
     }

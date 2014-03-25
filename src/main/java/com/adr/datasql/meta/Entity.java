@@ -26,12 +26,12 @@ import java.util.Set;
  *
  * @author adrian
  */
-public class Definition {
+public class Entity {
     
     private final String tablename;
     private final Field[] fields;
        
-    public Definition(String tablename, Field... fields) {
+    public Entity(String tablename, Field... fields) {
         this.tablename = tablename;
         this.fields = fields;
     }

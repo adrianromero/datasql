@@ -18,7 +18,7 @@
 package com.adr.datasql.orm;
 
 import com.adr.datasql.meta.Field;
-import com.adr.datasql.meta.Definition;
+import com.adr.datasql.meta.Entity;
 import com.adr.datasql.Kind;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -37,7 +37,7 @@ public class DataPojo<P> extends Data<P> {
     private Map<String, Method> setters;
     private Map<String, Method> getters;
     
-    public DataPojo(Definition definition) {
+    public DataPojo(Entity definition) {
         super(definition);
         try {
             clazz = (Class<P>) Class.forName(getClassName(definition));
@@ -110,7 +110,7 @@ public class DataPojo<P> extends Data<P> {
         }
     }
     
-    private String getClassName(Definition definition) {
+    private String getClassName(Entity definition) {
         return definition.getTableName().replaceAll("_", ".");
     }
     

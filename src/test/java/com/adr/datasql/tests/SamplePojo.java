@@ -20,7 +20,7 @@ package com.adr.datasql.tests;
 import com.adr.datasql.Kind;
 import com.adr.datasql.orm.Data;
 import com.adr.datasql.orm.DataPojo;
-import com.adr.datasql.meta.Definition;
+import com.adr.datasql.meta.Entity;
 import com.adr.datasql.meta.Field;
 import com.adr.datasql.meta.FieldKey;
 import java.math.BigDecimal;
@@ -40,7 +40,7 @@ public class SamplePojo {
     private Integer valinteger;
     private Boolean valboolean;
     
-    public final static Data<SamplePojo> DATA = new DataPojo(new Definition(
+    public final static Data<SamplePojo> DATA = new DataPojo(new Entity(
             "com_adr_datasql_tests_SamplePojo",
             new FieldKey("id", Kind.STRING),
             new Field("code", Kind.STRING),
