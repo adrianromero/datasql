@@ -185,7 +185,7 @@ public class Entity {
         return new SQL(sql.toString(), fieldslist.toArray(new String[fieldslist.size()]));            
     }
     
-    public SQL getStatementFilter(FilterField[] filterfields, SortField[] sortfields) {
+    public SQL getStatementFilter(FieldOrder[] order) {
         
         StringBuilder sql = new StringBuilder();
         ArrayList<String> fieldslist = new ArrayList<String>();
@@ -220,74 +220,46 @@ public class Entity {
         
         // ORDER BY CLAUSE
         comma = false;
-        for (SortField s: sortfields) {
+        for (FieldOrder o: order) {
             if (comma) {
                 sql.append(", ");
             } else {
                 sql.append(" ORDER BY ");
                 comma = true;
             }           
-            sql.append(s.getField().getName());
-            sql.append(s.getSort().toString());               
+            sql.append(o.getField().getName());
+            sql.append(o.getSort().toSQL());               
         }
 
         return new SQL(sql.toString(), fieldslist.toArray(new String[fieldslist.size()]));            
     }
-    public static enum Filter {
-        NONE,
-        NULL,
-        NOTNULL,
-        EQUAL,
-        GREATER,
-        LESS,
-        GREATEROREQUAL,
-        LESSOREQUEAL
-    }
     
-    public static class FilterField {
-        private final Field field;
-        private final Filter filter;
-        public FilterField(Field field, Filter filter) {
-            this.field = field;
-            this.filter = filter;
-        }
-        public Field getField() {
-            return field;
-        }
-        public Filter getFilter() {
-            return filter;
-        }
-    }
+//    public static enum Filter {
+//        NONE,
+//        NULL,
+//        NOTNULL,
+//        EQUAL,
+//        GREATER,
+//        LESS,
+//        GREATEROREQUAL,
+//        LESSOREQUEAL
+//    }
+//    
+//    public static class FilterField {
+//        private final Field field;
+//        private final Filter filter;
+//        public FilterField(Field field, Filter filter) {
+//            this.field = field;
+//            this.filter = filter;
+//        }
+//        public Field getField() {
+//            return field;
+//        }
+//        public Filter getFilter() {
+//            return filter;
+//        }
+//    }
      
-    public static enum Sort {
-        ASC("ASC"),
-        DESC("DESC");
-        
-        private final String sql;
-        Sort(String sql) {
-            this.sql = sql;
-        }
-        @Override
-        public String toString() {
-            return " " + sql;
-        }       
-    }
-    
-    public static class SortField {
-        private final Field field;
-        private final Sort sort;
-        public SortField(Field field, Sort sort) {
-            this.field = field;
-            this.sort = sort;
-        }
-        public Field getField() {
-            return field;
-        }
-        public Sort getSort() {
-            return sort;
-        }
-    }
-    
 //    
 //    public SQL getStatementCreateTable(Database db) {
 //        
