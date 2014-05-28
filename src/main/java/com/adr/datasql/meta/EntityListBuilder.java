@@ -15,26 +15,35 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql.orm;
+package com.adr.datasql.meta;
 
-import com.adr.datasql.data.Record;
-import com.adr.datasql.meta.Entity;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author adrian
- * @param <P>
  */
-public abstract class Data<P> extends Record<P> {
+public class EntityListBuilder {
     
-    private final Entity entity;
+    protected String sentence;
+    protected List<MetaData> metadatas = new ArrayList<MetaData>();
     
-    public Data(Entity entity) {
-        super(entity.getMetaDatas());
-        this.entity = entity;
+    public static EntityListBuilder create() {
+        return new EntityListBuilder();
     }
     
-    public Entity getDefinition() {
-        return entity;
+    public EntityList build() {
+        return new EntityList(sentence, metadatas.toArray(new MetaData[metadatas.size()]));
+    }  
+    
+    public EntityListBuilder sentence(String sentence) {
+        this.sentence = sentence;
+        return this;
     }
+    
+    public EntityListBuilder metadatas(MetaData metadata) {
+        this.metadatas.add(metadata);
+        return this;
+    }    
 }

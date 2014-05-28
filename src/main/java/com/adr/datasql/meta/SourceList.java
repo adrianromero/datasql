@@ -15,26 +15,18 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql.orm;
+package com.adr.datasql.meta;
 
-import com.adr.datasql.data.Record;
-import com.adr.datasql.meta.Entity;
+import com.adr.datasql.Results;
+import com.adr.datasql.StatementQuery;
+
 
 /**
  *
  * @author adrian
- * @param <P>
  */
-public abstract class Data<P> extends Record<P> {
+public interface SourceList {
     
-    private final Entity entity;
-    
-    public Data(Entity entity) {
-        super(entity.getMetaDatas());
-        this.entity = entity;
-    }
-    
-    public Entity getDefinition() {
-        return entity;
-    }
+    public MetaData[] getMetaDatas();
+    public <R, P> StatementQuery<R, P> getStatementFilter(Results<R> results, StatementOrder[] order); 
 }

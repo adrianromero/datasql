@@ -56,7 +56,7 @@ public class StatementSave<P> implements StatementExec<P> {
     }   
     
     private Object getKey(P param) throws SQLException {
-        for (Field f : data.getDefinition().getFields()) {  
+        for (Field f : data.getDefinition().getMetaDatas()) {  
             if (f.isKey()) {
                 return data.getValue(f, param);
             }
@@ -65,7 +65,7 @@ public class StatementSave<P> implements StatementExec<P> {
     }
     
     private void setKey(P param, Object key) throws SQLException {
-        for (Field f : data.getDefinition().getFields()) {  
+        for (Field f : data.getDefinition().getMetaDatas()) {  
             if (f.isKey()) {
                 data.setValue(f, param, key);
             }

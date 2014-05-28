@@ -17,7 +17,6 @@
 
 package com.adr.datasql.orm;
 
-import com.adr.datasql.meta.Field;
 import com.adr.datasql.meta.Entity;
 import com.adr.datasql.Kind;
 import com.adr.datasql.meta.MetaData;
@@ -46,7 +45,7 @@ public class DataPojo<P> extends Data<P> {
         setters = new HashMap<String, Method>();
         getters = new HashMap<String, Method>();
         Method[] methods = clazz.getMethods();
-        for (Field f: definition.getFields()) {
+        for (MetaData f: definition.getMetaDatas()) {
             for (Method m: methods) {
                 if (m.getParameterTypes().length == 1 && m.getName().equals(getSetterName(f))) {
                     setters.put(f.getName(), m);
@@ -107,11 +106,11 @@ public class DataPojo<P> extends Data<P> {
         }
     }
     
-    private String getSetterName(Field f) {
-        return "set" + Character.toUpperCase(f.getName().charAt(0)) + f.getName().substring(1);
+    private String getSetterName(MetaData md) {
+        return "set" + Character.toUpperCase(md.getName().charAt(0)) + md.getName().substring(1);
     }
     
-    private String getGetterName(Field f) {
-        return (Kind.BOOLEAN == f.getKind() ? "is" : "get") + Character.toUpperCase(f.getName().charAt(0)) + f.getName().substring(1);
+    private String getGetterName(MetaData md) {
+        return (Kind.BOOLEAN == md.getKind() ? "is" : "get") + Character.toUpperCase(md.getName().charAt(0)) + md.getName().substring(1);
     }
 }

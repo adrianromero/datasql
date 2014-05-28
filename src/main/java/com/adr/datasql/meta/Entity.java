@@ -17,7 +17,10 @@
 
 package com.adr.datasql.meta;
 
+import com.adr.datasql.Query;
+import com.adr.datasql.Results;
 import com.adr.datasql.SQL;
+import com.adr.datasql.StatementQuery;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
@@ -26,7 +29,7 @@ import java.util.Set;
  *
  * @author adrian
  */
-public class Entity {
+public class Entity implements SourceList {
     
     private final String name;
     private final Field[] fields;
@@ -40,13 +43,14 @@ public class Entity {
         return name;
     }
  
-    public Field[] getFields() {
+    @Override
+    public Field[] getMetaDatas() {
         return fields;
     }
     
     @Override
     public String toString() {
-        return "Definition {name: " + name + ", fields: " + Arrays.toString(fields) + "}";
+        return "Entity {name: " + name + ", fields: " + Arrays.toString(fields) + "}";
     }
     
     public Field[] getFieldsKey() {
@@ -185,53 +189,56 @@ public class Entity {
         return new SQL(sql.toString(), fieldslist.toArray(new String[fieldslist.size()]));            
     }
     
-    public SQL getStatementFilter(FieldOrder[] order) {
+    @Override
+    public <R, P> StatementQuery<R, P> getStatementFilter(Results<R> results, StatementOrder[] order) {
         
-        StringBuilder sql = new StringBuilder();
+        StringBuilder sqlsent = new StringBuilder();
         ArrayList<String> fieldslist = new ArrayList<String>();
         
-        sql.append("SELECT ");
+        sqlsent.append("SELECT ");
         boolean comma = false;
         for (Field f: fields) {
             if (comma) {
-                sql.append(", ");
+                sqlsent.append(", ");
             } else {
                 comma = true;       
             }
-            sql.append(f.getName()); 
+            sqlsent.append(f.getName()); 
         }    
         
-        sql.append(" FROM ");       
-        sql.append(getName());
+        sqlsent.append(" FROM ");       
+        sqlsent.append(getName());
         
 //        // WHERE CLAUSE
 //        comma = false;
 //        for (FilterField f: filterfields) {
 //            if (comma) {
-//                sql.append(" AND ");
+//                sqlsent.append(" AND ");
 //            } else {
-//                sql.append(" WHERE ");
+//                sqlsent.append(" WHERE ");
 //                comma = true;
 //            }           
-//            sql.append(f.getName());
-//            sql.append(" = ?");
+//            sqlsent.append(f.getName());
+//            sqlsent.append(" = ?");
 //            fieldslist.add(f.getName());            
 //        }
         
         // ORDER BY CLAUSE
         comma = false;
-        for (FieldOrder o: order) {
+        for (StatementOrder o: order) {
             if (comma) {
-                sql.append(", ");
+                sqlsent.append(", ");
             } else {
-                sql.append(" ORDER BY ");
+                sqlsent.append(" ORDER BY ");
                 comma = true;
             }           
-            sql.append(o.getField().getName());
-            sql.append(o.getSort().toSQL());               
+            sqlsent.append(o.getName());
+            sqlsent.append(o.getSort().toSQL());               
         }
 
-        return new SQL(sql.toString(), fieldslist.toArray(new String[fieldslist.size()]));            
+        // build statement
+        SQL sql = new SQL(sqlsent.toString(), fieldslist.toArray(new String[fieldslist.size()]));     
+        return new Query<R, P>(sql).setResults(results).setParameters(null);
     }
     
 //    public static enum Filter {

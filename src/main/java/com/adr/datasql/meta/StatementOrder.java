@@ -15,26 +15,38 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql.orm;
-
-import com.adr.datasql.data.Record;
-import com.adr.datasql.meta.Entity;
+package com.adr.datasql.meta;
 
 /**
  *
  * @author adrian
- * @param <P>
  */
-public abstract class Data<P> extends Record<P> {
+public class StatementOrder {
     
-    private final Entity entity;
-    
-    public Data(Entity entity) {
-        super(entity.getMetaDatas());
-        this.entity = entity;
+    public static enum Sort {
+        ASC(" ASC"),
+        DESC(" DESC");
+        
+        private final String sql;
+        Sort(String sql) {
+            this.sql = sql;
+        }
+        public String toSQL() {
+            return sql;
+        }       
     }
     
-    public Entity getDefinition() {
-        return entity;
+    private final String name;
+    private final Sort sort;
+    
+    public StatementOrder(String name, Sort sort) {
+        this.name = name;
+        this.sort = sort;
     }
+    public String getName() {
+        return name;
+    }
+    public Sort getSort() {
+        return sort;
+    }    
 }
