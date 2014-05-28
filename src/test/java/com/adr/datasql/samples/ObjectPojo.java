@@ -30,12 +30,13 @@ import com.adr.datasql.meta.FieldKey;
  */
 public class ObjectPojo {
     // ObjectPojo Configuration   
-    public final static Data<ObjectPojo> DATA = new DataPojo(new Entity(
-        "com_adr_datasql_samples_ObjectPojo",
-        new FieldKey("id", Kind.STRING),
-        new Field("name", Kind.STRING),            
-        new Field("line", Kind.INT),
-        new Field("amount", Kind.DOUBLE)));
+    public final static Data<ObjectPojo> DATA = new DataPojo(ObjectPojo.class,
+        new Entity(
+            "com_adr_datasql_samples_ObjectPojo",
+            new FieldKey("id", Kind.STRING),
+            new Field("name", Kind.STRING),            
+            new Field("line", Kind.INT),
+            new Field("amount", Kind.DOUBLE)));
     // Fields    
     private String id;
     private String name;

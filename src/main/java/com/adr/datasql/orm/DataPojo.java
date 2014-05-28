@@ -34,31 +34,27 @@ import java.util.Map;
  */
 public class DataPojo<P> extends Data<P> {
     
-    private Class<P> clazz;
-    private Map<String, Method> setters;
-    private Map<String, Method> getters;
+    private final Class<? extends P> clazz;
+    private final Map<String, Method> setters;
+    private final Map<String, Method> getters;
     
-    public DataPojo(Entity definition) {
+    public DataPojo(Class<? extends P> clazz, Entity definition) {
         super(definition);
-        try {
-            clazz = (Class<P>) Class.forName(getClassName(definition));
-            
-            setters = new HashMap<String, Method>();
-            getters = new HashMap<String, Method>();
-            Method[] methods = clazz.getMethods();
-            for (Field f: definition.getFields()) {
-                for (Method m: methods) {
-                    if (m.getParameterTypes().length == 1 && m.getName().equals(getSetterName(f))) {
-                        setters.put(f.getName(), m);
-                    }
-                    if (m.getParameterTypes().length == 0 && m.getName().equals(getGetterName(f))) {
-                        getters.put(f.getName(), m);
-                    }
+
+        this.clazz = clazz;
+
+        setters = new HashMap<String, Method>();
+        getters = new HashMap<String, Method>();
+        Method[] methods = clazz.getMethods();
+        for (Field f: definition.getFields()) {
+            for (Method m: methods) {
+                if (m.getParameterTypes().length == 1 && m.getName().equals(getSetterName(f))) {
+                    setters.put(f.getName(), m);
+                }
+                if (m.getParameterTypes().length == 0 && m.getName().equals(getGetterName(f))) {
+                    getters.put(f.getName(), m);
                 }
             }
-            
-        } catch (ClassNotFoundException ex) {
-            throw new RuntimeException(ex);
         }
     }
 
@@ -109,10 +105,6 @@ public class DataPojo<P> extends Data<P> {
                 | IllegalAccessException ex) {
             throw new SQLException (ex);
         }
-    }
-    
-    private String getClassName(Entity definition) {
-        return definition.getName().replaceAll("_", ".");
     }
     
     private String getSetterName(Field f) {

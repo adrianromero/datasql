@@ -40,7 +40,8 @@ public class SamplePojo {
     private Integer valinteger;
     private Boolean valboolean;
     
-    public final static Data<SamplePojo> DATA = new DataPojo(new Entity(
+    public final static Data<SamplePojo> DATA = new DataPojo(SamplePojo.class,
+        new Entity(
             "com_adr_datasql_tests_SamplePojo",
             new FieldKey("id", Kind.STRING),
             new Field("code", Kind.STRING),
