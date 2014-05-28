@@ -17,8 +17,8 @@
 
 package com.adr.datasql.orm;
 
-import com.adr.datasql.meta.Field;
 import com.adr.datasql.meta.Entity;
+import com.adr.datasql.meta.MetaData;
 import com.google.gson.JsonObject;
 import java.sql.SQLException;
 
@@ -33,17 +33,17 @@ public class DataJson extends Data<JsonObject> {
     }
 
     @Override
-    protected Object getValue(Field f, JsonObject param) throws SQLException {
-        return f.getKind().get(new KindResultsJson(param), f.getName());  
+    public Object getValue(MetaData md, JsonObject param) throws SQLException {
+        return md.getKind().get(new KindResultsJson(param), md.getName());  
     }        
 
     @Override
-    protected void setValue(Field f, JsonObject param, Object value) throws SQLException {
-        f.getKind().set(new KindParametersJson(param), f.getName(), value);
+    public void setValue(MetaData md, JsonObject param, Object value) throws SQLException {
+        md.getKind().set(new KindParametersJson(param), md.getName(), value);
     }
 
     @Override
-    protected JsonObject create() throws SQLException {
+    public JsonObject create() throws SQLException {
         return new JsonObject();
     }
 }

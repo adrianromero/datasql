@@ -19,6 +19,7 @@ package com.adr.datasql.orm;
 
 import com.adr.datasql.StatementExec;
 import com.adr.datasql.Query;
+import com.adr.datasql.meta.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.UUID;
@@ -46,11 +47,28 @@ public class StatementSave<P> implements StatementExec<P> {
     @Override
     public int exec(Connection c, P params) throws SQLException {
         
-        if (data.getKey(params) == null) {
-            data.setKey(params, UUID.randomUUID().toString());
+        if (getKey(params) == null) {
+            setKey(params, UUID.randomUUID().toString());
             return queryinsert.exec(c, params);
         } else {       
             return queryupdate.exec(c, params);
         }
     }   
+    
+    private Object getKey(P param) throws SQLException {
+        for (Field f : data.getDefinition().getFields()) {  
+            if (f.isKey()) {
+                return data.getValue(f, param);
+            }
+        }     
+        return null;
+    }
+    
+    private void setKey(P param, Object key) throws SQLException {
+        for (Field f : data.getDefinition().getFields()) {  
+            if (f.isKey()) {
+                data.setValue(f, param, key);
+            }
+        }           
+    }
 }

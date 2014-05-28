@@ -17,12 +17,12 @@
 
 package com.adr.datasql.orm;
 
-import com.adr.datasql.meta.Field;
-import com.adr.datasql.meta.Entity;
 import com.adr.datasql.KindParameters;
 import com.adr.datasql.KindResults;
 import com.adr.datasql.Parameters;
 import com.adr.datasql.Results;
+import com.adr.datasql.meta.Entity;
+import com.adr.datasql.meta.MetaData;
 import java.sql.SQLException;
 
 /**
@@ -32,49 +32,32 @@ import java.sql.SQLException;
  */
 public abstract class Data<P> implements Parameters<P>, Results<P> {
     
-    private final Entity definition;
+    private final Entity entity;
     
-    public Data(Entity definition) {
-        this.definition = definition;
+    public Data(Entity entity) {
+        this.entity = entity;
     }
     
     public Entity getDefinition() {
-        return definition;
+        return entity;
     }
     
-    protected abstract Object getValue(Field f, P param) throws SQLException;
-    protected abstract void setValue(Field f, P param, Object value) throws SQLException;
-    protected abstract P create() throws SQLException;
-    
-    public Object getKey(P param) throws SQLException {
-        for (Field f : definition.getFields()) {  
-            if (f.isKey()) {
-                return getValue(f, param);
-            }
-        }     
-        return null;
-    }
-    
-    public void setKey(P param, Object key) throws SQLException {
-        for (Field f : definition.getFields()) {  
-            if (f.isKey()) {
-                setValue(f, param, key);
-            }
-        }           
-    }
+    public abstract Object getValue(MetaData f, P param) throws SQLException;
+    public abstract void setValue(MetaData f, P param, Object value) throws SQLException;
+    public abstract P create() throws SQLException;
 
     @Override
     public void write(KindParameters dp, P param) throws SQLException {
-        for (Field f : definition.getFields()) {           
-            f.getKind().set(dp, f.getName(), getValue(f, param));              
+        for (MetaData md : entity.getFields()) {           
+            md.getKind().set(dp, md.getName(), getValue(md, param));              
         }
     }     
 
     @Override
     public P read(KindResults dp) throws SQLException {
         P param = create();
-        for (Field f : definition.getFields()) {           
-            setValue(f, param, f.getKind().get(dp, f.getName()));              
+        for (MetaData md : entity.getFields()) {    
+            setValue(md, param, md.getKind().get(dp, md.getName()));              
         }
         return param;
     }

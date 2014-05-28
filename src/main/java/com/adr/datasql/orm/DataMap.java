@@ -17,8 +17,8 @@
 
 package com.adr.datasql.orm;
 
-import com.adr.datasql.meta.Field;
 import com.adr.datasql.meta.Entity;
+import com.adr.datasql.meta.MetaData;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,17 +34,17 @@ public class DataMap extends Data<Map<String, Object>> {
     }
 
     @Override
-    protected Object getValue(Field f, Map<String, Object> param) throws SQLException {
-        return param.get(f.getName());      
+    public Object getValue(MetaData md, Map<String, Object> param) throws SQLException {
+        return param.get(md.getName());      
     }        
 
     @Override
-    protected void setValue(Field f, Map<String, Object> param, Object value) throws SQLException {
-        param.put(f.getName(), value);
+    public void setValue(MetaData md, Map<String, Object> param, Object value) throws SQLException {
+        param.put(md.getName(), value);
     }
 
     @Override
-    protected Map<String, Object> create() throws SQLException {
+    public Map<String, Object> create() throws SQLException {
         return new HashMap<String, Object>();
     }
 }

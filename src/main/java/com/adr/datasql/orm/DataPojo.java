@@ -20,6 +20,7 @@ package com.adr.datasql.orm;
 import com.adr.datasql.meta.Field;
 import com.adr.datasql.meta.Entity;
 import com.adr.datasql.Kind;
+import com.adr.datasql.meta.MetaData;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
@@ -62,12 +63,12 @@ public class DataPojo<P> extends Data<P> {
     }
 
     @Override
-    protected Object getValue(Field f, P param) throws SQLException {
+    public Object getValue(MetaData md, P param) throws SQLException {
         
         try {          
-            Method m = getters.get(f.getName()); 
+            Method m = getters.get(md.getName()); 
             if (m == null) {
-              throw new SQLException ("Getter not found for field: " + f.getName() + ".");  
+              throw new SQLException ("Getter not found for field: " + md.getName() + ".");  
             }
             return m.invoke(param);              
         } catch (IllegalAccessException 
@@ -79,11 +80,11 @@ public class DataPojo<P> extends Data<P> {
     } 
     
     @Override
-    protected void setValue(Field f, P param, Object value) throws SQLException {
+    public void setValue(MetaData md, P param, Object value) throws SQLException {
         try {          
-            Method m = setters.get(f.getName());    
+            Method m = setters.get(md.getName());    
             if (m == null) {
-              throw new SQLException ("Setter not found for field: " + f.getName() + ".");  
+              throw new SQLException ("Setter not found for field: " + md.getName() + ".");  
             }            
             Class<?>[] types = m.getParameterTypes();
             
@@ -101,7 +102,7 @@ public class DataPojo<P> extends Data<P> {
     }  
 
     @Override
-    protected P create() throws SQLException {
+    public P create() throws SQLException {
         try {
             return clazz.newInstance();
         } catch (InstantiationException 
