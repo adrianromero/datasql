@@ -33,7 +33,11 @@ public class StatementOrder {
         }
         public String toSQL() {
             return sql;
-        }       
+        }
+        @Override
+        public String toString() {
+            return sql;
+        }  
     }
     
     private final String name;
