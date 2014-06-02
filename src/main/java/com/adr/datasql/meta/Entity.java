@@ -233,7 +233,7 @@ public class Entity implements SourceList {
                 comma = true;
             }           
             sqlsent.append(o.getName());
-            sqlsent.append(o.getSort().toSQL());               
+            sqlsent.append(o.getOrder().toSQL());               
         }
 
         // build statement

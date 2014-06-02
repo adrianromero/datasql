@@ -23,12 +23,12 @@ package com.adr.datasql.meta;
  */
 public class StatementOrder {
     
-    public static enum Sort {
+    public static enum Order {
         ASC(" ASC"),
         DESC(" DESC");
         
         private final String sql;
-        Sort(String sql) {
+        Order(String sql) {
             this.sql = sql;
         }
         public String toSQL() {
@@ -41,16 +41,16 @@ public class StatementOrder {
     }
     
     private final String name;
-    private final Sort sort;
+    private final Order order;
     
-    public StatementOrder(String name, Sort sort) {
+    public StatementOrder(String name, Order order) {
         this.name = name;
-        this.sort = sort;
+        this.order = order;
     }
     public String getName() {
         return name;
     }
-    public Sort getSort() {
-        return sort;
+    public Order getOrder() {
+        return order;
     }    
 }
