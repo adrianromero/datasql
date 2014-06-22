@@ -18,7 +18,6 @@
 package com.adr.datasql.orm;
 
 import com.adr.datasql.StatementExec;
-import com.adr.datasql.Query;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -29,12 +28,11 @@ import java.sql.SQLException;
  */
 public class StatementUpdate<P> implements StatementExec<P> {
         
-    private final Query<Void, P> queryupdate;
+    private final StatementExec<P> queryupdate;
     
     public StatementUpdate(Data<P> data) {
         
-        queryupdate = new Query<Void, P>(data.getDefinition().getStatementUpdate())
-                .setParameters(data);
+        queryupdate = data.getDefinition().getStatementUpdate(data);
     }
 
     @Override

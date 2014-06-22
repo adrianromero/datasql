@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2012 Adrián Romero Corchado.
+//    Copyright (C) 2012-2014 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -17,9 +17,11 @@
 
 package com.adr.datasql.meta;
 
+import com.adr.datasql.Parameters;
 import com.adr.datasql.Query;
 import com.adr.datasql.Results;
 import com.adr.datasql.SQL;
+import com.adr.datasql.StatementExec;
 import com.adr.datasql.StatementQuery;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,88 +74,7 @@ public class Entity implements SourceList {
         }        
         return keys.toArray(new Field[keys.size()]);
     }
-    
-    public SQL getStatementInsert() {
-        
-        StringBuilder sql = new StringBuilder();
-        StringBuilder values = new StringBuilder();
-        ArrayList<String> fieldslist = new ArrayList<String>();
-        
-        sql.append("INSERT INTO ");
-        sql.append(getName());
-        sql.append("(");
-               
-        boolean filter = false;
-        for (Field f: fields) {
-            sql.append(filter ? ", " : "");
-            sql.append(f.getName());
 
-            values.append(filter ? ", ?": "?");
-            fieldslist.add(f.getName());
-
-            filter = true;
-        }  
-        
-        sql.append(") VALUES (");
-        sql.append(values);
-        sql.append(")");
-            
-        return new SQL(sql.toString(), fieldslist.toArray(new String[fieldslist.size()]));
-    } 
-    
-    public SQL getStatementUpdate() {
-        
-        StringBuilder sql = new StringBuilder();
-        ArrayList<String> fieldslist = new ArrayList<String>();
-        
-        sql.append("UPDATE ");
-        sql.append(getName());
-               
-        boolean filter = false;
-        for (Field f: fields) {
-            sql.append(filter ? ", " : " SET ");
-            sql.append(f.getName());
-            sql.append(" = ?");    
-            fieldslist.add(f.getName());
-            filter = true;
-        }  
-        
-        filter = false;
-        for (Field f: fields) {
-            if (f.isKey()) {
-                sql.append(filter ? " AND " : " WHERE ");
-                sql.append(f.getName());
-                sql.append(" = ?");
-                fieldslist.add(f.getName());
-                filter = true;
-            }
-        }  
-            
-        return new SQL(sql.toString(), fieldslist.toArray(new String[fieldslist.size()]));
-    }
-    
-    public SQL getStatementDelete() {
-        
-        StringBuilder sql = new StringBuilder();
-        StringBuilder sqlfilter = new StringBuilder();
-        ArrayList<String> fieldslist = new ArrayList<String>();
-        
-        sql.append("DELETE FROM ");
-        sql.append(getName());
-        
-        for (Field f: fields) {
-            if (f.isKey()) {
-                sqlfilter.append(sqlfilter.length() == 0 ? " WHERE " : " AND ");
-                sqlfilter.append(f.getName());
-                sqlfilter.append(" = ?");
-                fieldslist.add(f.getName());
-            }
-        }
-        sql.append(sqlfilter);
-            
-        return new SQL(sql.toString(), fieldslist.toArray(new String[fieldslist.size()]));
-    } 
-       
     public SQL getStatementSelect(Field... filterfields) {
         
         StringBuilder sql = new StringBuilder();
@@ -189,6 +110,90 @@ public class Entity implements SourceList {
         return new SQL(sql.toString(), fieldslist.toArray(new String[fieldslist.size()]));            
     }
     
+    public <P> StatementExec<P> getStatementDelete(Parameters<P> parameters) {
+        
+        StringBuilder sentence = new StringBuilder();
+        StringBuilder sentencefilter = new StringBuilder();
+        ArrayList<String> keyfields = new ArrayList<String>();
+        
+        sentence.append("DELETE FROM ");
+        sentence.append(getName());
+        
+        for (Field f: fields) {
+            if (f.isKey()) {
+                sentencefilter.append(sentencefilter.length() == 0 ? " WHERE " : " AND ");
+                sentencefilter.append(f.getName());
+                sentencefilter.append(" = ?");
+                keyfields.add(f.getName());
+            }
+        }
+        sentence.append(sentencefilter);
+            
+        SQL sql = new SQL(sentence.toString(), keyfields.toArray(new String[keyfields.size()]));  
+        return new Query<Void, P>(sql).setParameters(parameters);
+    }
+    
+    public <P> StatementExec<P> getStatementUpdate(Parameters<P> parameters) {
+        
+        StringBuilder sentence = new StringBuilder();
+        ArrayList<String> keyfields = new ArrayList<String>();
+        
+        sentence.append("UPDATE ");
+        sentence.append(getName());
+               
+        boolean filter = false;
+        for (Field f: fields) {
+            sentence.append(filter ? ", " : " SET ");
+            sentence.append(f.getName());
+            sentence.append(" = ?");    
+            keyfields.add(f.getName());
+            filter = true;
+        }  
+        
+        filter = false;
+        for (Field f: fields) {
+            if (f.isKey()) {
+                sentence.append(filter ? " AND " : " WHERE ");
+                sentence.append(f.getName());
+                sentence.append(" = ?");
+                keyfields.add(f.getName());
+                filter = true;
+            }
+        }  
+            
+        SQL sql =  new SQL(sentence.toString(), keyfields.toArray(new String[keyfields.size()]));   
+        return new Query<Void, P>(sql).setParameters(parameters);
+    }
+    
+    public <P> StatementExec<P> getStatementInsert(Parameters<P> parameters) {
+        
+        StringBuilder sentence = new StringBuilder();
+        StringBuilder values = new StringBuilder();
+        ArrayList<String> fieldslist = new ArrayList<String>();
+        
+        sentence.append("INSERT INTO ");
+        sentence.append(getName());
+        sentence.append("(");
+               
+        boolean filter = false;
+        for (Field f: fields) {
+            sentence.append(filter ? ", " : "");
+            sentence.append(f.getName());
+
+            values.append(filter ? ", ?": "?");
+            fieldslist.add(f.getName());
+
+            filter = true;
+        }  
+        
+        sentence.append(") VALUES (");
+        sentence.append(values);
+        sentence.append(")");
+            
+        SQL sql = new SQL(sentence.toString(), fieldslist.toArray(new String[fieldslist.size()]));     
+        return new Query<Void, P>(sql).setParameters(parameters);
+    }
+    
     @Override
     public <R, P> StatementQuery<R, P> getStatementFilter(Results<R> results, StatementOrder[] order) {
         
@@ -220,7 +225,7 @@ public class Entity implements SourceList {
 //            }           
 //            sqlsent.append(f.getName());
 //            sqlsent.append(" = ?");
-//            fieldslist.add(f.getName());            
+//            keyfields.add(f.getName());            
 //        }
         
         // ORDER BY CLAUSE

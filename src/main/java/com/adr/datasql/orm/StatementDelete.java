@@ -18,7 +18,6 @@
 package com.adr.datasql.orm;
 
 import com.adr.datasql.StatementExec;
-import com.adr.datasql.Query;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -29,12 +28,11 @@ import java.sql.SQLException;
  */
 public class StatementDelete<P> implements StatementExec<P> {
         
-    private final Query<Void, P> querydelete;
+    private final StatementExec<P> querydelete;
     
     public StatementDelete(Data<P> data) {
         
-        querydelete = new Query<Void,P>(data.getDefinition().getStatementDelete())
-                .setParameters(data);
+        querydelete = data.getDefinition().getStatementDelete(data);
     }
 
     @Override
