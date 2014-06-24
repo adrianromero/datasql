@@ -17,16 +17,18 @@
 
 package com.adr.datasql.orm;
 
-import com.adr.datasql.EncodeUtils;
 import com.adr.datasql.KindResults;
 import com.adr.datasql.meta.MetaData;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.util.Base64;
 import java.util.Date;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 
 /**
  *
@@ -35,10 +37,6 @@ import org.joda.time.format.ISODateTimeFormat;
 public final class KindResultsJson implements KindResults {
     
     private final JsonObject json;
-    
-    private static final DateTimeFormatter fmtisodatetime = ISODateTimeFormat.dateTime();
-    private static final DateTimeFormatter fmtisodate= ISODateTimeFormat.date();
-    private static final DateTimeFormatter fmtisotime=  ISODateTimeFormat.time();
     
     public KindResultsJson(JsonObject json) {
         this.json = json;
@@ -109,7 +107,7 @@ public final class KindResultsJson implements KindResults {
         JsonElement element = json.get(columnName);
         return element == null || element.isJsonNull() 
                 ? null 
-                : new Date(fmtisodatetime.parseMillis(element.getAsString()));
+                : new Date(Instant.parse(element.getAsString()).toEpochMilli());
     }
     @Override
     public java.util.Date getDate(int columnIndex) throws SQLException {
@@ -120,7 +118,7 @@ public final class KindResultsJson implements KindResults {
         JsonElement element = json.get(columnName);
         return element == null || element.isJsonNull() 
                 ? null 
-                : new Date(fmtisodate.parseMillis(element.getAsString()));
+                : new Date(LocalDate.parse(element.getAsString()).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
 
     }
     @Override
@@ -132,7 +130,7 @@ public final class KindResultsJson implements KindResults {
         JsonElement element = json.get(columnName);
         return element == null || element.isJsonNull() 
                 ? null 
-                : new Date(fmtisotime.parseMillis(element.getAsString()));
+                : new Date(LocalTime.parse(element.getAsString()).atDate(LocalDate.ofEpochDay(0L)).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
     }        
     @Override
     public byte[] getBytes(int columnIndex) throws SQLException {
@@ -143,7 +141,7 @@ public final class KindResultsJson implements KindResults {
         JsonElement element = json.get(columnName);
         return element == null || element.isJsonNull() 
                 ? null 
-                : EncodeUtils.decode(element.getAsString());
+                : Base64.getDecoder().decode(element.getAsString());
     }
     @Override
     public Object getObject(int columnIndex) throws SQLException {

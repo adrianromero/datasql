@@ -28,11 +28,12 @@ import com.adr.datasql.derby.DataTestSuite;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.time.Instant;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Assert;
-import org.joda.time.Instant;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -77,9 +78,9 @@ public class QueriesTest {
            StatementFind<Object[], Object[]> selectMyTest = new QueryArray(
                    "select id, code, name, valdate, valdouble, valdecimal, valinteger, valboolean from mytest where code = ?")
                    .setParameters(Kind.STRING)
-                   .setResults(Kind.STRING, Kind.STRING, Kind.STRING, Kind.ISODATETIME, Kind.DOUBLE, Kind.DECIMAL, Kind.INT, Kind.BOOLEAN);       
+                   .setResults(Kind.STRING, Kind.STRING, Kind.STRING, Kind.TIMESTAMP, Kind.DOUBLE, Kind.DECIMAL, Kind.INT, Kind.BOOLEAN);       
            Object[] result = session.find(selectMyTest, "code 1");         
-           Assert.assertEquals("[a, code 1, name a, 2014-01-01T18:00:32.212+01:00, 12.23, 12.12, 1234, true]", Arrays.toString(result));
+           Assert.assertEquals("[a, code 1, name a, Wed Jan 01 19:00:32 CET 2014, 12.23, 12.12, 1234, true]", Arrays.toString(result));
        }
     } 
     
@@ -110,11 +111,11 @@ public class QueriesTest {
             StatementExec<Object[]> insertMyTest = new QueryArray("insert into mytest(id, code, name, valdate, valdouble, valdecimal, valinteger, valboolean) values (?, ?, ?, ?, ?, ?, ?, ?)")
                     .setParameters(Kind.STRING, Kind.STRING, Kind.STRING, Kind.TIMESTAMP, Kind.DOUBLE, Kind.DECIMAL, Kind.INT, Kind.BOOLEAN);
             
-            session.exec(insertMyTest, "a", "code 1", "name a", Instant.parse("2014-01-01T18:00:32.212").toDate(), 12.23d, new BigDecimal("12.12"), 1234, true);
-            session.exec(insertMyTest, "b", "code x", "name b", Instant.parse("2014-01-01T18:00:32.212").toDate(), 12.23d, new BigDecimal("12.12"), 1234, true);
-            session.exec(insertMyTest, "c", "code x", "name c", Instant.parse("2014-01-01T18:00:32.212").toDate(), 12.23d, new BigDecimal("12.12"), 1234, true);
-            session.exec(insertMyTest, "d", "code x", "name d", Instant.parse("2014-01-01T18:00:32.212").toDate(), 12.23d, new BigDecimal("12.12"), 1234, true);
-            session.exec(insertMyTest, "e", "code x", "name e", Instant.parse("2014-01-01T18:00:32.212").toDate(), 12.23d, new BigDecimal("12.12"), 1234, true);            
+            session.exec(insertMyTest, "a", "code 1", "name a", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);
+            session.exec(insertMyTest, "b", "code x", "name b", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);
+            session.exec(insertMyTest, "c", "code x", "name c", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);
+            session.exec(insertMyTest, "d", "code x", "name d", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);
+            session.exec(insertMyTest, "e", "code x", "name e", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);            
         }
     }
     

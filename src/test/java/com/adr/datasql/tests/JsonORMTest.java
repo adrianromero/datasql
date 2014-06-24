@@ -31,11 +31,12 @@ import com.adr.datasql.orm.ORMSession;
 import com.google.gson.JsonObject;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.time.Instant;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.Assert;
-import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -68,7 +69,7 @@ public class JsonORMTest {
             value.addProperty("id", "John");
             value.addProperty("code", "Smith");
             value.addProperty("name", "pepeto");     
-            value.addProperty("valdate", "2014-01-01T18:00:32.212+00:00");
+            value.addProperty("valdate", "2014-01-01T18:00:32.212Z");
             value.addProperty("valdouble", 12.4D);
 
             
@@ -77,7 +78,7 @@ public class JsonORMTest {
             JsonObject returnvalue = session.get(DATAJSON, "John");
             
             Assert.assertEquals(
-                    "{\"id\":\"John\",\"code\":\"Smith\",\"name\":\"pepeto\",\"valdate\":\"2014-01-01T19:00:32.212+01:00\",\"valdouble\":12.4,\"valdecimal\":null,\"valinteger\":null,\"valboolean\":null}", 
+                    "{\"id\":\"John\",\"code\":\"Smith\",\"name\":\"pepeto\",\"valdate\":\"2014-01-01T18:00:32.212Z\",\"valdouble\":12.4,\"valdecimal\":null,\"valinteger\":null,\"valboolean\":null}", 
                     returnvalue.toString());
         }
     }
@@ -111,11 +112,11 @@ public class JsonORMTest {
             StatementExec<Object[]> insertMyTest = new QueryArray("insert into samplejson(id, code, name, valdate, valdouble, valdecimal, valinteger, valboolean) values (?, ?, ?, ?, ?, ?, ?, ?)")
                     .setParameters(Kind.STRING, Kind.STRING, Kind.STRING, Kind.TIMESTAMP, Kind.DOUBLE, Kind.DECIMAL, Kind.INT, Kind.BOOLEAN);
             
-            session.exec(insertMyTest, "a", "code 1", "name a", DateTime.parse("2014-01-01T18:00:32.212+00:00").toDate(), 12.23d, new BigDecimal("12.12"), 1234, true);
-            session.exec(insertMyTest, "b", "code x", "name b", DateTime.parse("2014-01-01T18:00:32.212+00:00").toDate(), 12.23d, new BigDecimal("12.12"), 1234, true);
-            session.exec(insertMyTest, "c", "code x", "name c", DateTime.parse("2014-01-01T18:00:32.212+00:00").toDate(), 12.23d, new BigDecimal("12.12"), 1234, true);
-            session.exec(insertMyTest, "d", "code x", "name d", DateTime.parse("2014-01-01T18:00:32.212+00:00").toDate(), 12.23d, new BigDecimal("12.12"), 1234, true);
-            session.exec(insertMyTest, "e", "code x", "name e", DateTime.parse("2014-01-01T18:00:32.212+00:00").toDate(), 12.23d, new BigDecimal("12.12"), 1234, true);                      
+            session.exec(insertMyTest, "a", "code 1", "name a", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);
+            session.exec(insertMyTest, "b", "code x", "name b", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);
+            session.exec(insertMyTest, "c", "code x", "name c", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);
+            session.exec(insertMyTest, "d", "code x", "name d", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);
+            session.exec(insertMyTest, "e", "code x", "name e", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);                      
             
         }
     }

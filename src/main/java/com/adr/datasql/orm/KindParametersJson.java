@@ -17,14 +17,15 @@
 
 package com.adr.datasql.orm;
 
-import com.adr.datasql.EncodeUtils;
 import com.adr.datasql.KindParameters;
 import com.adr.datasql.meta.MetaData;
 import com.google.gson.JsonObject;
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Base64;
 
 /**
  *
@@ -33,10 +34,6 @@ import org.joda.time.format.ISODateTimeFormat;
 public class KindParametersJson implements KindParameters {
 
     private final JsonObject json;
-    
-    private static final DateTimeFormatter fmtisodatetime = ISODateTimeFormat.dateTime();
-    private static final DateTimeFormatter fmtisodate= ISODateTimeFormat.date();
-    private static final DateTimeFormatter fmtisotime=  ISODateTimeFormat.time();
     
     public KindParametersJson(JsonObject json) {
         this.json = json;  
@@ -88,7 +85,7 @@ public class KindParametersJson implements KindParameters {
     }
     @Override
     public void setTimestamp(String paramName, java.util.Date dValue) throws SQLException {
-        json.addProperty(paramName, fmtisodatetime.print(dValue.getTime())); 
+        json.addProperty(paramName, Instant.ofEpochMilli(dValue.getTime()).toString()); 
     }
     @Override
     public void setDate(int paramIndex, java.util.Date dValue) throws SQLException {
@@ -96,7 +93,7 @@ public class KindParametersJson implements KindParameters {
     }
     @Override
     public void setDate(String paramName, java.util.Date dValue) throws SQLException {
-        json.addProperty(paramName, fmtisodate.print(dValue.getTime()));          
+        json.addProperty(paramName, LocalDate.from(Instant.ofEpochMilli(dValue.getTime())).toString());          
     }
     @Override
     public void setTime(int paramIndex, java.util.Date dValue) throws SQLException {
@@ -104,7 +101,7 @@ public class KindParametersJson implements KindParameters {
     }
     @Override
     public void setTime(String paramName, java.util.Date dValue) throws SQLException {
-        json.addProperty(paramName, fmtisotime.print(dValue.getTime()));    
+        json.addProperty(paramName, LocalTime.from(Instant.ofEpochMilli(dValue.getTime())).toString());          
     }        
     @Override
     public void setBytes(int paramIndex, byte[] value) throws SQLException {
@@ -112,7 +109,7 @@ public class KindParametersJson implements KindParameters {
     }
     @Override
     public void setBytes(String paramName, byte[] value) throws SQLException {
-        json.addProperty(paramName, EncodeUtils.encode(value));
+        json.addProperty(paramName, Base64.getEncoder().encodeToString(value));
     }
     @Override
     public void setObject(int paramIndex, Object value) throws SQLException {

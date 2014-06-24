@@ -17,18 +17,10 @@
 
 package com.adr.datasql;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.text.ParseException;
 import java.util.Date;
-import javax.imageio.ImageIO;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 
 /**
  *
@@ -44,12 +36,8 @@ public abstract class Kind<T> {
     public final static Kind<Boolean> BOOLEAN = new KindBOOLEAN();
     public final static Kind<Date> TIMESTAMP = new KindTIMESTAMP();
     public final static Kind<Date> DATE = new KindDATE();
-    public final static Kind<String> ISODATETIME = new KindISODATETIME();
-    public final static Kind<String> ISODATE = new KindISODATE();
-    public final static Kind<String> ISOTIME = new KindISOTIME();
+    public final static Kind<Date> TIME = new KindTIME();
     public final static Kind<byte[]> BYTEA = new KindBYTEA();
-    public final static Kind<String> BASE64 = new KindBASE64();
-    public final static Kind<BufferedImage> IMAGE = new KindIMAGE();
     public final static Kind<Object> OBJECT = new KindOBJECT();
 
     public abstract T get(KindResults read, String name) throws SQLException;
@@ -72,18 +60,10 @@ public abstract class Kind<T> {
             return Kind.TIMESTAMP;
         } else if ("DATE".equals(kind)) {
             return Kind.DATE;
-        } else if ("ISODATETIME".equals(kind)) {
-            return Kind.ISODATETIME;
-        } else if ("ISODATE".equals(kind)) {
-            return Kind.ISODATE;
-        } else if ("ISOTIME".equals(kind)) {
-            return Kind.ISOTIME;
+        } else if ("TIME".equals(kind)) {
+            return Kind.TIME;
         } else if ("BYTEA".equals(kind)) {
             return Kind.BYTEA;
-        } else if ("BASE64".equals(kind)) {
-            return Kind.BASE64;
-        } else if ("IMAGE".equals(kind)) {
-            return Kind.IMAGE;
         } else if ("OBJECT".equals(kind)) {
             return Kind.OBJECT;            
         } else {
@@ -102,10 +82,11 @@ public abstract class Kind<T> {
             case Types.BOOLEAN:
                 return Kind.BOOLEAN;
             case Types.DECIMAL:
+            case Types.NUMERIC:                
+                return Kind.DECIMAL;
             case Types.DOUBLE:
             case Types.FLOAT:
             case Types.REAL:
-            case Types.NUMERIC:
                 return Kind.DOUBLE;
             case Types.CHAR:
             case Types.VARCHAR:
@@ -113,7 +94,9 @@ public abstract class Kind<T> {
             case Types.CLOB:
                 return Kind.STRING;
             case Types.DATE:
+                return Kind.DATE;                
             case Types.TIME:
+                return Kind.TIME;                
             case Types.TIMESTAMP:
                 return Kind.TIMESTAMP;
             case Types.BINARY:
@@ -270,137 +253,7 @@ public abstract class Kind<T> {
         public String toString() {
             return "Kind.TIMESTAMP";
         }        
-    }
-    
-    private static final class KindISODATETIME extends Kind<String> {
-        
-        private static final DateTimeFormatter fmtisodatetime = ISODateTimeFormat.dateTime();
-        
-        public String format(Date d) {
-            return d == null ? null : fmtisodatetime.print(d.getTime());
-        }
-        
-        public Date parse(String s) throws ParseException {
-            if (s == null) {
-                return null;
-            } else {
-                return new Date(fmtisodatetime.parseMillis(s));
-            }   
-        }
-
-        @Override
-        public String get(KindResults read, String name) throws SQLException {
-            return format(read.getTimestamp(name));
-        }
-        @Override
-        public String get(KindResults read, int index) throws SQLException {
-            return format(read.getTimestamp(index));
-        }
-        @Override
-        public void set(KindParameters write, String name, String value) throws SQLException {
-            try {
-                write.setTimestamp(name, parse(value));
-            } catch (ParseException ex) {
-                throw new SQLException(ex);
-            }
-        }
-        @Override
-        public void set(KindParameters write, int index, String value) throws SQLException {
-            try {
-                write.setTimestamp(index, parse(value));
-            } catch (ParseException ex) {
-                throw new SQLException(ex);
-            }
-        }
-        @Override
-        public String toString() {
-            return "Kind.ISODATETIME";
-        }          
-    }
-    
-    private static final class KindISODATE extends Kind<String> {
-        
-        private final static DateTimeFormatter fmtisodate= ISODateTimeFormat.date();
-        
-        public String format(Date d) {
-            return d == null ? null : fmtisodate.print(d.getTime());
-        }
-        
-        public Date parse(String s) throws ParseException {
-            return s == null ? null : new Date(fmtisodate.parseMillis(s)); 
-        }
-
-        @Override
-        public String get(KindResults read, String name) throws SQLException {
-            return format(read.getDate(name));
-        }
-        @Override
-        public String get(KindResults read, int index) throws SQLException {
-            return format(read.getDate(index));
-        }
-        @Override
-        public void set(KindParameters write, String name, String value) throws SQLException {
-            try {
-                write.setDate(name, parse(value));
-            } catch (ParseException ex) {
-                throw new SQLException(ex);
-            }
-        }
-        @Override
-        public void set(KindParameters write, int index, String value) throws SQLException {
-            try {
-                write.setDate(index, parse(value));
-            } catch (ParseException ex) {
-                throw new SQLException(ex);
-            }
-        }
-        @Override
-        public String toString() {
-            return "Kind.ISODATE";
-        }          
-    }    
-    
-    private static final class KindISOTIME extends Kind<String> {
-        
-        private final static DateTimeFormatter fmtisotime= ISODateTimeFormat.time();
-        
-        public String format(Date d) {
-            return d == null ? null : fmtisotime.print(d.getTime());
-        }
-        
-        public Date parse(String s) throws ParseException {
-            return s == null ? null : new Date(fmtisotime.parseMillis(s)); 
-        }
-
-        @Override
-        public String get(KindResults read, String name) throws SQLException {
-            return format(read.getTime(name));
-        }
-        @Override
-        public String get(KindResults read, int index) throws SQLException {
-            return format(read.getTime(index));
-        }
-        @Override
-        public void set(KindParameters write, String name, String value) throws SQLException {
-            try {
-                write.setTime(name, parse(value));
-            } catch (ParseException ex) {
-                throw new SQLException(ex);
-            }
-        }
-        @Override
-        public void set(KindParameters write, int index, String value) throws SQLException {
-            try {
-                write.setTime(index, parse(value));
-            } catch (ParseException ex) {
-                throw new SQLException(ex);
-            }
-        }
-        @Override
-        public String toString() {
-            return "Kind.ISOTIME";
-        }          
-    }    
+    }  
     
     private static final class KindDATE extends Kind<Date> {
         @Override
@@ -424,6 +277,29 @@ public abstract class Kind<T> {
             return "Kind.DATE";
         }          
     }
+    
+    private static final class KindTIME extends Kind<Date> {
+        @Override
+        public Date get(KindResults read, String name) throws SQLException {
+            return read.getTime(name);
+        }
+        @Override
+        public Date get(KindResults read, int index) throws SQLException {
+            return read.getTime(index);
+        }
+        @Override
+        public void set(KindParameters write, String name, Date value) throws SQLException {
+            write.setTime(name, value);
+        }
+        @Override
+        public void set(KindParameters write, int index, Date value) throws SQLException {
+            write.setTime(index, value);
+        }
+        @Override
+        public String toString() {
+            return "Kind.TIME";
+        }          
+    }
 
     private static final class KindBYTEA extends Kind<byte[]> {
         @Override
@@ -445,87 +321,6 @@ public abstract class Kind<T> {
         @Override
         public String toString() {
             return "Kind.BYTEA";
-        }          
-    }
-
-    private static final class KindBASE64 extends Kind<String> {
-        @Override
-        public String get(KindResults read, String name) throws SQLException {
-            return EncodeUtils.encode(read.getBytes(name));
-        }
-        @Override
-        public String get(KindResults read, int index) throws SQLException {
-            return EncodeUtils.encode(read.getBytes(index));
-        }
-        @Override
-        public void set(KindParameters write, String name, String value) throws SQLException {
-            write.setBytes(name, EncodeUtils.decode(value));
-        }
-        @Override
-        public void set(KindParameters write, int index, String value) throws SQLException {
-            write.setBytes(index, EncodeUtils.decode(value));
-        }
-        @Override
-        public String toString() {
-            return "Kind.BASE64";
-        }          
-    }    
-    
-    private static final class KindIMAGE extends Kind<BufferedImage> {
-        @Override
-        public BufferedImage get(KindResults read, String name) throws SQLException {
-            try {
-                return readImage(read.getBytes(name));
-            } catch (IOException e) {
-                throw new SQLException(e);
-            }
-        }
-        @Override
-        public BufferedImage get(KindResults read, int index) throws SQLException {
-            try {
-                return readImage(read.getBytes(index));
-            } catch (IOException e) {
-                throw new SQLException(e);
-            }
-        }
-        @Override
-        public void set(KindParameters write, String name, BufferedImage value) throws SQLException {
-            try {
-                write.setBytes(name, writeImage(value));
-            } catch (IOException e) {
-                throw new SQLException(e);
-            }
-        }
-        @Override
-        public void set(KindParameters write, int index, BufferedImage value) throws SQLException {
-            try {
-                write.setBytes(index, writeImage(value));
-            } catch (IOException e) {
-                throw new SQLException(e);
-            }
-        }
-        
-        public BufferedImage readImage(byte[] b) throws IOException {
-            if (b == null) {
-                return null;
-            } else {
-                return ImageIO.read(new ByteArrayInputStream(b));
-            }
-        }
-
-        public byte[] writeImage(BufferedImage img)  throws IOException  {
-            if (img == null) {
-                return null;
-            } else {
-                try (ByteArrayOutputStream b = new ByteArrayOutputStream()) {
-                    ImageIO.write(img, "png", b);
-                    return b.toByteArray();
-                }
-            }
-        }        
-        @Override
-        public String toString() {
-            return "Kind.IMAGE";
         }          
     }
 
