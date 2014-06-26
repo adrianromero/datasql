@@ -15,29 +15,20 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql.orm;
+package com.adr.datasql.meta;
 
+import com.adr.datasql.Parameters;
+import com.adr.datasql.Results;
 import com.adr.datasql.StatementExec;
-import java.sql.Connection;
-import java.sql.SQLException;
+
 
 /**
  *
  * @author adrian
- * @param <P>
  */
-public class StatementUpdate<P> implements StatementExec<P> {
-        
-    private final StatementExec<P> queryupdate;
-    
-    public StatementUpdate(Data<P> data) {
-        
-        queryupdate = data.getDefinition().getStatementUpdate(data.createParams(data.getDefinition().getMetaDatas()));
-    }
-
-    @Override
-    public int exec(Connection c, P params) throws SQLException {
-        return queryupdate.exec(c, params);
-    }
-    
+public interface SourceTable extends SourceList {
+    public <P> StatementExec<P> getStatementDelete(Parameters<P> parameters);
+    public <P> StatementExec<P> getStatementUpdate(Parameters<P> parameters);
+    public <P> StatementExec<P> getStatementInsert(Parameters<P> parameters);    
+    public <R> R getNew(Results<R> results);
 }

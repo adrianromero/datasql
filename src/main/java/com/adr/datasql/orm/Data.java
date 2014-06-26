@@ -30,7 +30,6 @@ public abstract class Data<P> extends Record<P> {
     private final Entity entity;
     
     public Data(Entity entity) {
-        super(entity.getMetaDatas());
         this.entity = entity;
     }
     

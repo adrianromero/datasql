@@ -27,7 +27,7 @@ public class StatementGet<R> implements StatementFind<R, Object[]> {
         Field[] fieldskey = data.getDefinition().getFieldsKey();
         
         queryfind = new Query<R, Object[]>(data.getDefinition().getStatementSelect(fieldskey))
-                .setResults(data)
+                .setResults(data.createResults(data.getDefinition().getMetaDatas()))
                 .setParameters(new ParametersArray(fieldskey));
     }
 

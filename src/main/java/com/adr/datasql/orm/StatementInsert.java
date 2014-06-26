@@ -32,7 +32,7 @@ public class StatementInsert<P> implements StatementExec<P> {
     
     public StatementInsert(Data<P> data) {
         
-        queryinsert = data.getDefinition().getStatementInsert(data);
+        queryinsert = data.getDefinition().getStatementInsert(data.createParams(data.getDefinition().getMetaDatas()));
     }
 
     @Override

@@ -17,21 +17,24 @@
 
 package com.adr.datasql.meta;
 
+import com.adr.datasql.KindResultsNew;
 import com.adr.datasql.Parameters;
 import com.adr.datasql.Query;
 import com.adr.datasql.Results;
 import com.adr.datasql.SQL;
 import com.adr.datasql.StatementExec;
 import com.adr.datasql.StatementQuery;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 /**
  *
  * @author adrian
  */
-public class Entity implements SourceList {
+public class Entity implements SourceTable {
     
     private final String name;
     private final Field[] fields;
@@ -109,7 +112,8 @@ public class Entity implements SourceList {
 
         return new SQL(sql.toString(), fieldslist.toArray(new String[fieldslist.size()]));            
     }
-    
+
+    @Override
     public <P> StatementExec<P> getStatementDelete(Parameters<P> parameters) {
         
         StringBuilder sentence = new StringBuilder();
@@ -133,6 +137,7 @@ public class Entity implements SourceList {
         return new Query<Void, P>(sql).setParameters(parameters);
     }
     
+    @Override
     public <P> StatementExec<P> getStatementUpdate(Parameters<P> parameters) {
         
         StringBuilder sentence = new StringBuilder();
@@ -165,6 +170,7 @@ public class Entity implements SourceList {
         return new Query<Void, P>(sql).setParameters(parameters);
     }
     
+    @Override
     public <P> StatementExec<P> getStatementInsert(Parameters<P> parameters) {
         
         StringBuilder sentence = new StringBuilder();
@@ -193,12 +199,12 @@ public class Entity implements SourceList {
         SQL sql = new SQL(sentence.toString(), fieldslist.toArray(new String[fieldslist.size()]));     
         return new Query<Void, P>(sql).setParameters(parameters);
     }
-    
+
     @Override
     public <R, P> StatementQuery<R, P> getStatementFilter(Results<R> results, StatementOrder[] order) {
         
         StringBuilder sqlsent = new StringBuilder();
-        ArrayList<String> fieldslist = new ArrayList<String>();
+        List<String> fieldslist = new ArrayList<String>();
         
         sqlsent.append("SELECT ");
         boolean comma = false;
@@ -246,6 +252,15 @@ public class Entity implements SourceList {
         return new Query<R, P>(sql).setResults(results).setParameters(null);
     }
     
+    @Override
+    public <R> R getNew(Results<R> results) {
+        try {
+            return results.read(new KindResultsNew(fields));
+        } catch (SQLException e) {         
+            throw new RuntimeException(); // Never happens with the instanciated objects
+        }
+    }
+        
 //    public static enum Filter {
 //        NONE,
 //        NULL,

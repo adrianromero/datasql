@@ -32,7 +32,7 @@ public class StatementDelete<P> implements StatementExec<P> {
     
     public StatementDelete(Data<P> data) {
         
-        querydelete = data.getDefinition().getStatementDelete(data);
+        querydelete = data.getDefinition().getStatementDelete(data.createParams(data.getDefinition().getMetaDatas()));
     }
 
     @Override

@@ -50,7 +50,7 @@ public class StatementList<R> implements StatementQuery<R, Map<String, Object>> 
         }
         
         Query<R, Map<String, Object>> querylist = new Query<R, Map<String, Object>>(data.getDefinition().getStatementSelect(fieldsparams))
-                .setResults(data)
+                .setResults(data.createResults(data.getDefinition().getMetaDatas()))
                 .setParameters(new ParametersMap(fieldsparams));
         
         return querylist.query(c, params);

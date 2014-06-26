@@ -33,8 +33,8 @@ public class StatementUpsert<P> implements StatementExec<P> {
     
     public StatementUpsert(Data<P> data) {
         
-        queryinsert = data.getDefinition().getStatementInsert(data);       
-        queryupdate = data.getDefinition().getStatementUpdate(data);
+        queryinsert = data.getDefinition().getStatementInsert(data.createParams(data.getDefinition().getMetaDatas()));       
+        queryupdate = data.getDefinition().getStatementUpdate(data.createParams(data.getDefinition().getMetaDatas()));
     }
 
     @Override

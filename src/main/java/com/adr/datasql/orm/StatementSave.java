@@ -37,8 +37,8 @@ public class StatementSave<P> implements StatementExec<P> {
     public StatementSave(Data<P> data) {
         
         this.data = data;   
-        queryinsert = data.getDefinition().getStatementInsert(data);       
-        queryupdate = data.getDefinition().getStatementUpdate(data);
+        queryinsert = data.getDefinition().getStatementInsert(data.createParams(data.getDefinition().getMetaDatas()));       
+        queryupdate = data.getDefinition().getStatementUpdate(data.createParams(data.getDefinition().getMetaDatas()));
     }
 
     @Override
