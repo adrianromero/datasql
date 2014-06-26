@@ -27,6 +27,7 @@ import java.sql.SQLException;
 /**
  *
  * @author adrian
+ * @param <P>
  */
 public abstract class Record<P> {
 

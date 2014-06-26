@@ -17,16 +17,12 @@
 
 package com.adr.datasql.meta;
 
-import com.adr.datasql.StatementExec;
+import com.adr.datasql.data.Record;
 
 /**
  *
  * @author adrian
- * @param <R>
  */
-public interface SourceTable<R> extends SourceList<R> {
-    public StatementExec<R> getStatementDelete();
-    public StatementExec<R> getStatementUpdate();
-    public StatementExec<R> getStatementInsert();    
-    public R createNew();
+public interface SourceListFactory {
+     public <R> SourceList<R> createSourceList(Record<R> record);
 }

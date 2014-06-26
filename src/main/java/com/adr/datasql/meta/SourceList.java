@@ -17,16 +17,16 @@
 
 package com.adr.datasql.meta;
 
-import com.adr.datasql.Results;
 import com.adr.datasql.StatementQuery;
 
 
 /**
  *
  * @author adrian
+ * @param <R>
  */
-public interface SourceList {
+public interface SourceList<R> {
     
     public MetaData[] getMetaDatas();
-    public <R, P> StatementQuery<R, P> getStatementFilter(Results<R> results, StatementOrder[] order); 
+    public <P> StatementQuery<R, P> getStatementFilter(StatementOrder[] order); 
 }

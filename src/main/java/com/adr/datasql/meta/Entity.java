@@ -24,6 +24,7 @@ import com.adr.datasql.Results;
 import com.adr.datasql.SQL;
 import com.adr.datasql.StatementExec;
 import com.adr.datasql.StatementQuery;
+import com.adr.datasql.data.Record;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,7 +35,7 @@ import java.util.Set;
  *
  * @author adrian
  */
-public class Entity implements SourceTable {
+public class Entity implements SourceTableFactory, SourceListFactory {
     
     private final String name;
     private final Field[] fields;
@@ -43,12 +44,60 @@ public class Entity implements SourceTable {
         this.name = name;
         this.fields = fields;
     }
+    
+    @Override
+    public <R> SourceList<R> createSourceList(Record<R> record) {
+        return new EntitySourceTable(record);
+    }
+    
+    @Override
+    public <R> SourceTable<R> createSourceTable(Record<R> record) {
+        return new EntitySourceTable(record);
+    }
+    
+    private class EntitySourceTable<R> implements SourceTable<R> {
+        
+        private final Record<R> record;
+        
+        public EntitySourceTable(Record<R> record) {
+            this.record = record;
+        }
+        
+        @Override
+        public MetaData[] getMetaDatas() {
+            return fields;
+        }
 
+        @Override
+        public <P> StatementQuery<R, P> getStatementFilter(StatementOrder[] order) {
+            return Entity.this.getStatementFilter(record.createResults(fields), order);
+        }  
+
+        @Override
+        public StatementExec<R> getStatementDelete() {
+            return Entity.this.getStatementDelete(record.createParams(fields));
+        }
+
+        @Override
+        public StatementExec<R> getStatementUpdate() {
+            return Entity.this.getStatementUpdate(record.createParams(fields));
+        }
+
+        @Override
+        public StatementExec<R> getStatementInsert() {
+            return Entity.this.getStatementInsert(record.createParams(fields));
+        }
+
+        @Override
+        public R createNew() {
+            return Entity.this.getNew(record.createResults(fields));
+        }
+    }
+    
     public String getName() {
         return name;
     }
  
-    @Override
     public Field[] getMetaDatas() {
         return fields;
     }
@@ -113,7 +162,6 @@ public class Entity implements SourceTable {
         return new SQL(sql.toString(), fieldslist.toArray(new String[fieldslist.size()]));            
     }
 
-    @Override
     public <P> StatementExec<P> getStatementDelete(Parameters<P> parameters) {
         
         StringBuilder sentence = new StringBuilder();
@@ -137,7 +185,6 @@ public class Entity implements SourceTable {
         return new Query<Void, P>(sql).setParameters(parameters);
     }
     
-    @Override
     public <P> StatementExec<P> getStatementUpdate(Parameters<P> parameters) {
         
         StringBuilder sentence = new StringBuilder();
@@ -170,7 +217,6 @@ public class Entity implements SourceTable {
         return new Query<Void, P>(sql).setParameters(parameters);
     }
     
-    @Override
     public <P> StatementExec<P> getStatementInsert(Parameters<P> parameters) {
         
         StringBuilder sentence = new StringBuilder();
@@ -200,7 +246,6 @@ public class Entity implements SourceTable {
         return new Query<Void, P>(sql).setParameters(parameters);
     }
 
-    @Override
     public <R, P> StatementQuery<R, P> getStatementFilter(Results<R> results, StatementOrder[] order) {
         
         StringBuilder sqlsent = new StringBuilder();
@@ -252,7 +297,6 @@ public class Entity implements SourceTable {
         return new Query<R, P>(sql).setResults(results).setParameters(null);
     }
     
-    @Override
     public <R> R getNew(Results<R> results) {
         try {
             return results.read(new KindResultsNew(fields));

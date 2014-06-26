@@ -21,12 +21,13 @@ import com.adr.datasql.Query;
 import com.adr.datasql.Results;
 import com.adr.datasql.SQL;
 import com.adr.datasql.StatementQuery;
+import com.adr.datasql.data.Record;
 
 /**
  *
  * @author adrian
  */
-public class EntityList implements SourceList {
+public class EntityList implements SourceListFactory {
     
     private final String sentence;
     private final MetaData[] metadatas;
@@ -37,12 +38,30 @@ public class EntityList implements SourceList {
     }
     
     @Override
-    public MetaData[] getMetaDatas() {
-        return metadatas;
+    public <R> SourceList<R> createSourceList(Record<R> record) {
+        return new EntityListSourceList(record);
+    }
+    
+    private class EntityListSourceList<R> implements SourceList<R> {
+        
+        private final Record<R> record;
+        
+        public EntityListSourceList(Record<R> record) {
+            this.record = record;
+        }
+        
+        @Override
+        public MetaData[] getMetaDatas() {
+            return metadatas;
+        }
+
+        @Override
+        public <P> StatementQuery<R, P> getStatementFilter(StatementOrder[] order) {
+            return EntityList.this.getStatementFilter(record.createResults(metadatas), order);
+        }  
     }
 
-    @Override
-    public <R, P> StatementQuery<R, P> getStatementFilter(Results<R> results, StatementOrder[] order) {
+    private <R, P> StatementQuery<R, P> getStatementFilter(Results<R> results, StatementOrder[] order) {
         
         StringBuilder sqlsent = new StringBuilder(sentence);
         
