@@ -18,6 +18,7 @@
 package com.adr.datasql.orm;
 
 import com.adr.datasql.StatementExec;
+import com.adr.datasql.meta.SourceTable;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -31,10 +32,10 @@ public class StatementUpsert<P> implements StatementExec<P> {
     private final StatementExec<P> queryinsert;
     private final StatementExec<P> queryupdate;
     
-    public StatementUpsert(Data<P> data) {
+    public StatementUpsert(SourceTable<P> sourcetable) {
         
-        queryinsert = data.getDefinition().getStatementInsert(data.createParams(data.getDefinition().getMetaDatas()));       
-        queryupdate = data.getDefinition().getStatementUpdate(data.createParams(data.getDefinition().getMetaDatas()));
+        queryinsert = sourcetable.getStatementInsert();       
+        queryupdate = sourcetable.getStatementUpdate();
     }
 
     @Override

@@ -18,7 +18,7 @@
 package com.adr.datasql.meta;
 
 import com.adr.datasql.StatementQuery;
-
+import java.util.Map;
 
 /**
  *
@@ -28,5 +28,5 @@ import com.adr.datasql.StatementQuery;
 public interface SourceList<R> {
     
     public MetaData[] getMetaDatas();
-    public <P> StatementQuery<R, P> getStatementFilter(StatementOrder[] order); 
+    public StatementQuery<R, Map<String, Object>> getStatementList(MetaData[] filter, StatementOrder[] order); 
 }

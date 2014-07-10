@@ -17,7 +17,9 @@
 
 package com.adr.datasql.meta;
 
+
 import com.adr.datasql.StatementExec;
+import com.adr.datasql.StatementFind;
 
 /**
  *
@@ -25,6 +27,9 @@ import com.adr.datasql.StatementExec;
  * @param <R>
  */
 public interface SourceTable<R> extends SourceList<R> {
+    
+    public StatementFind<R, Object[]> getStatementGet();
+    
     public StatementExec<R> getStatementDelete();
     public StatementExec<R> getStatementUpdate();
     public StatementExec<R> getStatementInsert();    

@@ -17,8 +17,8 @@
 
 package com.adr.datasql.orm;
 
-import com.adr.datasql.meta.Entity;
 import com.adr.datasql.Kind;
+import com.adr.datasql.data.Record;
 import com.adr.datasql.meta.MetaData;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -31,41 +31,23 @@ import java.util.Map;
  * @author adrian
  * @param <P>
  */
-public class DataPojo<P> extends Data<P> {
+public class RecordPojo<P> extends Record<P> {
+    
+    private final static Object NULLMETHOD = new Object();
     
     private final Class<? extends P> clazz;
-    private final Map<String, Method> setters;
-    private final Map<String, Method> getters;
+    private final Map<String, Object> setters = new HashMap<String, Object>();
+    private final Map<String, Object> getters = new HashMap<String, Object>();
     
-    public DataPojo(Class<? extends P> clazz, Entity definition) {
-        super(definition);
-
+    public RecordPojo(Class<? extends P> clazz) {
         this.clazz = clazz;
-
-        setters = new HashMap<String, Method>();
-        getters = new HashMap<String, Method>();
-        Method[] methods = clazz.getMethods();
-        for (MetaData f: definition.getMetaDatas()) {
-            for (Method m: methods) {
-                if (m.getParameterTypes().length == 1 && m.getName().equals(getSetterName(f))) {
-                    setters.put(f.getName(), m);
-                }
-                if (m.getParameterTypes().length == 0 && m.getName().equals(getGetterName(f))) {
-                    getters.put(f.getName(), m);
-                }
-            }
-        }
     }
 
     @Override
     public Object getValue(MetaData md, P param) throws SQLException {
         
         try {          
-            Method m = getters.get(md.getName()); 
-            if (m == null) {
-              throw new SQLException ("Getter not found for field: " + md.getName() + ".");  
-            }
-            return m.invoke(param);              
+            return findGetter(md).invoke(param);              
         } catch (IllegalAccessException 
                 |IllegalArgumentException 
                 |InvocationTargetException  
@@ -77,16 +59,11 @@ public class DataPojo<P> extends Data<P> {
     @Override
     public void setValue(MetaData md, P param, Object value) throws SQLException {
         try {          
-            Method m = setters.get(md.getName());    
-            if (m == null) {
-              throw new SQLException ("Setter not found for field: " + md.getName() + ".");  
-            }            
-            Class<?>[] types = m.getParameterTypes();
-            
+            Method m = findSetter(md);               
+            Class<?>[] types = m.getParameterTypes();           
             if (value == null && types[0].isPrimitive()) {
                 return; // should not assign null to a primitive field.
             }
-
             m.invoke(param, value);              
         } catch (IllegalAccessException 
                 |IllegalArgumentException 
@@ -106,8 +83,44 @@ public class DataPojo<P> extends Data<P> {
         }
     }
     
+    private Method findSetter(MetaData md) throws SQLException {
+        Object method = setters.get(md.getName()); 
+        if (method == NULLMETHOD) {
+            throw new SQLException ("Setter not found for field: " + md.getName() + ".");  
+        } else if (method == null) {
+            for (Method m: clazz.getMethods()) {              
+                if (m.getParameterTypes().length == 1 && m.getName().equals(getSetterName(md))) {
+                    setters.put(md.getName(), m);
+                    return m;
+                }
+            }
+            setters.put(md.getName(), NULLMETHOD);
+            throw new SQLException ("Setter not found for field: " + md.getName() + ".");
+        } else {
+            return (Method) method;
+        }
+    }
+    
     private String getSetterName(MetaData md) {
         return "set" + Character.toUpperCase(md.getName().charAt(0)) + md.getName().substring(1);
+    }
+    
+    private Method findGetter(MetaData md) throws SQLException {
+        Object method = getters.get(md.getName()); 
+        if (method == NULLMETHOD) {
+            throw new SQLException ("Getter not found for field: " + md.getName() + ".");  
+        } else if (method == null) {
+            for (Method m: clazz.getMethods()) {
+                if (m.getParameterTypes().length == 0 && m.getName().equals(getGetterName(md))) {
+                    getters.put(md.getName(), m);
+                    return m;
+                }
+            }
+            getters.put(md.getName(), NULLMETHOD);
+            throw new SQLException ("Getter not found for field: " + md.getName() + ".");
+        } else {
+            return (Method) method;
+        }
     }
     
     private String getGetterName(MetaData md) {

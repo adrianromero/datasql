@@ -18,11 +18,10 @@
 package com.adr.datasql.tests;
 
 import com.adr.datasql.Kind;
-import com.adr.datasql.orm.Data;
-import com.adr.datasql.orm.DataPojo;
 import com.adr.datasql.meta.Entity;
 import com.adr.datasql.meta.Field;
 import com.adr.datasql.meta.FieldKey;
+import com.adr.datasql.meta.SourceTableFactory;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -39,9 +38,8 @@ public class SamplePojo {
     private BigDecimal valdecimal;
     private Integer valinteger;
     private Boolean valboolean;
-    
-    public final static Data<SamplePojo> DATA = new DataPojo(SamplePojo.class,
-        new Entity(
+   
+    public final static SourceTableFactory SOURCETABLEFACTORY = new Entity(
             "com_adr_datasql_tests_SamplePojo",
             new FieldKey("id", Kind.STRING),
             new Field("code", Kind.STRING),
@@ -50,7 +48,7 @@ public class SamplePojo {
             new Field("valdouble", Kind.DOUBLE),
             new Field("valdecimal", Kind.DECIMAL),
             new Field("valinteger", Kind.INT),
-            new Field("valboolean", Kind.BOOLEAN)));
+            new Field("valboolean", Kind.BOOLEAN));
 
     /**
      * @return the id

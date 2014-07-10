@@ -37,8 +37,8 @@ public class ParametersMap implements Parameters<Map<String, Object>> {
     
     @Override
     public void write(KindParameters dp, Map<String, Object> param) throws SQLException {
-        for(int i = 0; i < metadatas.length; i++) {
-            metadatas[i].getKind().set(dp, metadatas[i].getName(), param.get(metadatas[i].getName()));
+        for (MetaData metadata : metadatas) {
+            metadata.getKind().set(dp, metadata.getName(), param.get(metadata.getName()));
         }
     } 
 }

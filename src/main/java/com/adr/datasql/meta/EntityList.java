@@ -21,7 +21,9 @@ import com.adr.datasql.Query;
 import com.adr.datasql.Results;
 import com.adr.datasql.SQL;
 import com.adr.datasql.StatementQuery;
+import com.adr.datasql.data.ParametersMap;
 import com.adr.datasql.data.Record;
+import java.util.Map;
 
 /**
  *
@@ -56,14 +58,16 @@ public class EntityList implements SourceListFactory {
         }
 
         @Override
-        public <P> StatementQuery<R, P> getStatementFilter(StatementOrder[] order) {
-            return EntityList.this.getStatementFilter(record.createResults(metadatas), order);
+        public StatementQuery<R, Map<String, Object>> getStatementList(MetaData[] filter, StatementOrder[] order) {
+            return EntityList.this.getStatementList(record.createResults(metadatas), filter, order);
         }  
     }
 
-    private <R, P> StatementQuery<R, P> getStatementFilter(Results<R> results, StatementOrder[] order) {
+    private <R> StatementQuery<R, Map<String, Object>> getStatementList(Results<R> results, MetaData[] filter, StatementOrder[] order) {
         
         StringBuilder sqlsent = new StringBuilder(sentence);
+        
+        // the-filter-too.
         
        // ORDER BY CLAUSE
         boolean comma = false;
@@ -80,7 +84,7 @@ public class EntityList implements SourceListFactory {
 
         // build statement
         SQL sql = new SQL(sqlsent.toString());     
-        return new Query<R, P>(sql).setResults(results).setParameters(null);
+        return new Query<R, Map<String, Object>>(sql).setResults(results).setParameters(filter == null ? null : new ParametersMap(filter));
     }
     
 }

@@ -17,27 +17,30 @@
 
 package com.adr.datasql.orm;
 
-import com.adr.datasql.StatementExec;
-import java.sql.Connection;
+import com.adr.datasql.data.Record;
+import com.adr.datasql.meta.MetaData;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
  * @author adrian
- * @param <P>
  */
-public class StatementUpdate<P> implements StatementExec<P> {
-        
-    private final StatementExec<P> queryupdate;
-    
-    public StatementUpdate(Data<P> data) {
-        
-        queryupdate = data.getDefinition().getStatementUpdate(data.createParams(data.getDefinition().getMetaDatas()));
+public class RecordMap extends Record<Map<String, Object>> {
+
+    @Override
+    public Object getValue(MetaData md, Map<String, Object> param) throws SQLException {
+        return param.get(md.getName());      
+    }        
+
+    @Override
+    public void setValue(MetaData md, Map<String, Object> param, Object value) throws SQLException {
+        param.put(md.getName(), value);
     }
 
     @Override
-    public int exec(Connection c, P params) throws SQLException {
-        return queryupdate.exec(c, params);
+    public Map<String, Object> create() throws SQLException {
+        return new HashMap<String, Object>();
     }
-    
 }

@@ -22,11 +22,11 @@ import com.adr.datasql.StatementExec;
 import com.adr.datasql.QueryArray;
 import com.adr.datasql.Session;
 import com.adr.datasql.derby.DataTestSuite;
-import com.adr.datasql.orm.Data;
-import com.adr.datasql.orm.DataJson;
+import com.adr.datasql.orm.RecordJson;
 import com.adr.datasql.meta.Entity;
 import com.adr.datasql.meta.Field;
 import com.adr.datasql.meta.FieldKey;
+import com.adr.datasql.meta.SourceTable;
 import com.adr.datasql.orm.ORMSession;
 import com.google.gson.JsonObject;
 import java.math.BigDecimal;
@@ -49,7 +49,7 @@ import org.junit.Test;
  */
 public class JsonORMTest {
     
-    public final static Data<JsonObject> DATAJSON = new DataJson(new Entity(
+    public final static SourceTable<JsonObject> SOURCETABLE = new Entity(
             "samplejson",
             new FieldKey("id", Kind.STRING),
             new Field("code", Kind.STRING),
@@ -58,7 +58,7 @@ public class JsonORMTest {
             new Field("valdouble", Kind.DOUBLE),
             new Field("valdecimal", Kind.DECIMAL),
             new Field("valinteger", Kind.INT),
-            new Field("valboolean", Kind.BOOLEAN)));
+            new Field("valboolean", Kind.BOOLEAN)).createSourceTable(new RecordJson());
     
     @Test
     public void insertJson() throws SQLException {
@@ -73,9 +73,9 @@ public class JsonORMTest {
             value.addProperty("valdouble", 12.4D);
 
             
-            session.upsert(DATAJSON, value);
+            session.upsert(SOURCETABLE, value);
             
-            JsonObject returnvalue = session.get(DATAJSON, "John");
+            JsonObject returnvalue = session.get(SOURCETABLE, "John");
             
             Assert.assertEquals(
                     "{\"id\":\"John\",\"code\":\"Smith\",\"name\":\"pepeto\",\"valdate\":\"2014-01-01T18:00:32.212Z\",\"valdouble\":12.4,\"valdecimal\":null,\"valinteger\":null,\"valboolean\":null}", 
@@ -90,7 +90,7 @@ public class JsonORMTest {
             Map<String, Object> filter = new HashMap<String, Object>();
             filter.put("code", "code x");
             
-            List<JsonObject> results = session.list(DATAJSON, filter);
+            List<JsonObject> results = session.list(SOURCETABLE, filter);
             
             System.out.println(results);
         }

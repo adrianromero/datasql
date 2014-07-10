@@ -17,27 +17,29 @@
 
 package com.adr.datasql.orm;
 
-import com.adr.datasql.StatementExec;
-import java.sql.Connection;
+import com.adr.datasql.data.Record;
+import com.adr.datasql.meta.MetaData;
+import com.google.gson.JsonObject;
 import java.sql.SQLException;
 
 /**
  *
  * @author adrian
- * @param <P>
  */
-public class StatementDelete<P> implements StatementExec<P> {
-        
-    private final StatementExec<P> querydelete;
-    
-    public StatementDelete(Data<P> data) {
-        
-        querydelete = data.getDefinition().getStatementDelete(data.createParams(data.getDefinition().getMetaDatas()));
+public class RecordJson extends Record<JsonObject> {
+
+    @Override
+    public Object getValue(MetaData md, JsonObject param) throws SQLException {
+        return md.getKind().get(new KindResultsJson(param), md.getName());  
+    }        
+
+    @Override
+    public void setValue(MetaData md, JsonObject param, Object value) throws SQLException {
+        md.getKind().set(new KindParametersJson(param), md.getName(), value);
     }
 
     @Override
-    public int exec(Connection c, P params) throws SQLException {
-        return querydelete.exec(c, params);
+    public JsonObject create() throws SQLException {
+        return new JsonObject();
     }
-    
 }

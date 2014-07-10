@@ -19,13 +19,11 @@ package com.adr.datasql.tests;
 
 import com.adr.datasql.Kind;
 import com.adr.datasql.StatementExec;
-import com.adr.datasql.StatementFind;
-import com.adr.datasql.StatementQuery;
 import com.adr.datasql.QueryArray;
 import com.adr.datasql.Session;
 import com.adr.datasql.derby.DataTestSuite;
-import com.adr.datasql.orm.StatementGet;
-import com.adr.datasql.orm.StatementList;
+import com.adr.datasql.meta.SourceTable;
+import com.adr.datasql.orm.RecordPojo;
 import com.adr.datasql.orm.ORMSession;
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -75,11 +73,10 @@ public class ORMTest {
     @Test
     public void findPojo() throws SQLException {
         
-        try (Session session = DataTestSuite.newSession()) {        
-            
-            StatementFind<SamplePojo, Object[]> findSamplePojo = new StatementGet<SamplePojo>(SamplePojo.DATA);
+        try (ORMSession session = DataTestSuite.newSession()) {        
 
-            SamplePojo pojo = session.find(findSamplePojo, "pojoid");   
+            SourceTable<SamplePojo> st = SamplePojo.SOURCETABLEFACTORY.createSourceTable(new RecordPojo<SamplePojo>(SamplePojo.class));
+            SamplePojo pojo = session.get(st, "pojoid");   
             
             System.out.println(pojo.toString());              
         }        
@@ -88,11 +85,10 @@ public class ORMTest {
     @Test
     public void listPojo() throws SQLException {      
 
-        try (Session session = DataTestSuite.newSession()) { 
+        try (ORMSession session = DataTestSuite.newSession()) { 
             
-            StatementQuery<SamplePojo, Map<String, Object>> listSamplePojo = new StatementList<SamplePojo>(SamplePojo.DATA);
-                             
-            List<SamplePojo> pojos = session.query(listSamplePojo);   
+            SourceTable<SamplePojo> st = SamplePojo.SOURCETABLEFACTORY.createSourceTable(new RecordPojo<SamplePojo>(SamplePojo.class));                            
+            List<SamplePojo> pojos = session.list(st);   
             
             System.out.println(pojos);              
         }        
@@ -101,14 +97,14 @@ public class ORMTest {
     @Test
     public void filterPojo() throws SQLException {
         
-        try (Session session = DataTestSuite.newSession()) { 
+        try (ORMSession session = DataTestSuite.newSession()) { 
             
-            StatementQuery<SamplePojo, Map<String, Object>> listSamplePojo = new StatementList<SamplePojo>(SamplePojo.DATA);
+            SourceTable<SamplePojo> st = SamplePojo.SOURCETABLEFACTORY.createSourceTable(new RecordPojo<SamplePojo>(SamplePojo.class));
                              
             Map<String, Object> filter = new HashMap<String, Object>();
             filter.put("code", "code x");
             
-            List<SamplePojo> pojos = session.query(listSamplePojo, filter);   
+            List<SamplePojo> pojos = session.list(st, filter);   
             
             System.out.println(pojos);              
         }               
