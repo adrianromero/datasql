@@ -25,12 +25,26 @@ import com.adr.datasql.Kind;
  */
 public class Field extends MetaData {
     
+    private boolean key = false;
+    
+    public Field() {    
+    }
+    
     public Field(String name, Kind kind) {
         super(name, kind);
+    }    
+    
+    public Field(String name, Kind kind, boolean key) {
+        super(name, kind);
+        this.key = key;
     }
 
     public boolean isKey() {
-        return false;
+        return key;
+    }
+    
+    public void setKey(boolean key) {
+        this.key = key;
     }
     
     @Override

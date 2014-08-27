@@ -25,12 +25,15 @@ import com.adr.datasql.Kind;
  */
 public class MetaData {
     
-    private final Kind kind;
-    private final String name;
+    private Kind kind;
+    private String name;
+    
+    public MetaData() {
+        this(null, Kind.STRING);
+    }
     
     public MetaData(Kind kind) {
-        this.name = null;
-        this.kind = kind;
+        this(null, kind);
     }
     
     public MetaData(String name, Kind kind) {
@@ -42,9 +45,17 @@ public class MetaData {
         return name;
     }
     
+    public final void setName(String name) {
+        this.name = name;
+    }
+    
     public final Kind getKind() {
         return kind;
     } 
+    
+    public final void setKind(Kind kind) {
+        this.kind = kind;
+    }
     
     @Override
     public String toString() {

@@ -25,7 +25,6 @@ import com.adr.datasql.derby.DataTestSuite;
 import com.adr.datasql.orm.RecordJson;
 import com.adr.datasql.meta.Entity;
 import com.adr.datasql.meta.Field;
-import com.adr.datasql.meta.FieldKey;
 import com.adr.datasql.meta.SourceTable;
 import com.adr.datasql.orm.ORMSession;
 import com.google.gson.JsonObject;
@@ -51,7 +50,7 @@ public class JsonORMTest {
     
     public final static SourceTable<JsonObject> SOURCETABLE = new Entity(
             "samplejson",
-            new FieldKey("id", Kind.STRING),
+            new Field("id", Kind.STRING, true),
             new Field("code", Kind.STRING),
             new Field("name", Kind.STRING),
             new Field("valdate", Kind.TIMESTAMP),

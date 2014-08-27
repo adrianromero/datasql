@@ -23,7 +23,11 @@ import com.adr.datasql.SQL;
 import com.adr.datasql.StatementQuery;
 import com.adr.datasql.data.ParametersMap;
 import com.adr.datasql.data.Record;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  *
@@ -31,13 +35,33 @@ import java.util.Map;
  */
 public class EntityList implements SourceListFactory {
     
-    private final String sentence;
-    private final MetaData[] metadatas;
+    private String sentence = null;
+    private final List<MetaData> metadatas = new ArrayList<MetaData>();
     
-    public EntityList(String sentence, MetaData[] metadatas) {
-        this.sentence = sentence;
-        this.metadatas = metadatas;
+    public EntityList() {        
     }
+    
+    public EntityList(String sentence, MetaData... metadatas) {
+        this.sentence = sentence;
+        this.metadatas.addAll(Arrays.asList(metadatas));
+    }
+
+    public String getSentence() {
+        return sentence;
+    }
+    
+    public void setSentence(String sentence) {
+        this.sentence = sentence;
+    }
+ 
+    public List<MetaData> getMetaDatas() {
+        return metadatas;
+    }  
+    
+    @Override
+    public String toString() {
+        return "EntityList {sentence: " + Objects.toString(sentence) + ", metadatas: " + Objects.toString(metadatas) + "}";
+    }   
     
     @Override
     public <R> SourceList<R> createSourceList(Record<R> record) {
@@ -47,19 +71,21 @@ public class EntityList implements SourceListFactory {
     private class EntityListSourceList<R> implements SourceList<R> {
         
         private final Record<R> record;
+        private final MetaData[] metadatasSource;
         
         public EntityListSourceList(Record<R> record) {
             this.record = record;
+            this.metadatasSource = metadatas.toArray(new MetaData[metadatas.size()]);            
         }
         
         @Override
         public MetaData[] getMetaDatas() {
-            return metadatas;
+            return metadatasSource;
         }
 
         @Override
         public StatementQuery<R, Map<String, Object>> getStatementList(MetaData[] filter, StatementOrder[] order) {
-            return EntityList.this.getStatementList(record.createResults(metadatas), filter, order);
+            return EntityList.this.getStatementList(record.createResults(metadatasSource), filter, order);
         }  
     }
 

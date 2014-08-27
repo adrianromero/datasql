@@ -18,10 +18,8 @@
 package com.adr.datasql.samples;
 
 import com.adr.datasql.Kind;
-import com.adr.datasql.orm.RecordPojo;
 import com.adr.datasql.meta.Entity;
 import com.adr.datasql.meta.Field;
-import com.adr.datasql.meta.FieldKey;
 import com.adr.datasql.meta.SourceTableFactory;
 
 /**
@@ -32,7 +30,7 @@ public class ObjectPojo {
     // ObjectPojo Configuration   
     public final static SourceTableFactory SOURCETABLEFACTORY = new Entity(
             "com_adr_datasql_samples_ObjectPojo",
-            new FieldKey("id", Kind.STRING),
+            new Field("id", Kind.STRING, true),
             new Field("name", Kind.STRING),            
             new Field("line", Kind.INT),
             new Field("amount", Kind.DOUBLE));

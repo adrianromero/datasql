@@ -20,7 +20,6 @@ package com.adr.datasql.tests;
 import com.adr.datasql.Kind;
 import com.adr.datasql.meta.Entity;
 import com.adr.datasql.meta.Field;
-import com.adr.datasql.meta.FieldKey;
 import com.adr.datasql.meta.SourceTableFactory;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -41,7 +40,7 @@ public class SamplePojo {
    
     public final static SourceTableFactory SOURCETABLEFACTORY = new Entity(
             "com_adr_datasql_tests_SamplePojo",
-            new FieldKey("id", Kind.STRING),
+            new Field("id", Kind.STRING, true),
             new Field("code", Kind.STRING),
             new Field("name", Kind.STRING),
             new Field("valdate", Kind.TIMESTAMP),

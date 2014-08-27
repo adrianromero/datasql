@@ -17,7 +17,6 @@
 
 package com.adr.datasql.meta;
 
-import com.adr.datasql.KindResultsNew;
 import com.adr.datasql.Parameters;
 import com.adr.datasql.Query;
 import com.adr.datasql.Results;
@@ -33,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
 /**
  *
@@ -40,12 +41,32 @@ import java.util.Map;
  */
 public class Entity implements SourceTableFactory, SourceListFactory {
     
-    private final String name;
-    private final Field[] fields;
-       
+    private String name = null;
+    private final List<Field> fields = new ArrayList<Field>();
+    
+    public Entity() {
+    }
+    
     public Entity(String name, Field... fields) {
         this.name = name;
-        this.fields = fields;
+        this.fields.addAll(Arrays.asList(fields));
+    }   
+
+    public String getName() {
+        return name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+ 
+    public List<Field> getFields() {
+        return fields;
+    }
+    
+    @Override
+    public String toString() {
+        return "Entity {name: " + Objects.toString(name) + ", fields: " + Objects.toString(fields) + "}";
     }
     
     @Override
@@ -61,59 +82,48 @@ public class Entity implements SourceTableFactory, SourceListFactory {
     private class EntitySourceTable<R> implements SourceTable<R> {
         
         private final Record<R> record;
+        private final MetaData[] metadatas;
         
         public EntitySourceTable(Record<R> record) {
             this.record = record;
+            this.metadatas = fields.toArray(new MetaData[fields.size()]);
         }
         
         @Override
         public MetaData[] getMetaDatas() {
-            return fields;
+            return metadatas;
         }
 
         @Override
         public StatementFind<R, Object[]> getStatementGet() {
             MetaData[] fieldskey = getFieldsKey();
-            return Entity.this.getStatementList(record.createResults(fields), new ParametersArray(fieldskey), fieldskey, null);           
+            return Entity.this.getStatementList(record.createResults(metadatas), new ParametersArray(fieldskey), fieldskey, null);           
         }
         
         @Override
         public StatementQuery<R, Map<String, Object>> getStatementList(MetaData[] filter, StatementOrder[] order) {
-            return Entity.this.getStatementList(record.createResults(fields), filter == null ? null : new ParametersMap(filter), filter, order);
+            return Entity.this.getStatementList(record.createResults(metadatas), filter == null ? null : new ParametersMap(filter), filter, order);
         }  
 
         @Override
         public StatementExec<R> getStatementDelete() {
-            return Entity.this.getStatementDelete(record.createParams(fields));
+            return Entity.this.getStatementDelete(record.createParams(metadatas));
         }
 
         @Override
         public StatementExec<R> getStatementUpdate() {
-            return Entity.this.getStatementUpdate(record.createParams(fields));
+            return Entity.this.getStatementUpdate(record.createParams(metadatas));
         }
 
         @Override
         public StatementExec<R> getStatementInsert() {
-            return Entity.this.getStatementInsert(record.createParams(fields));
+            return Entity.this.getStatementInsert(record.createParams(metadatas));
         }
 
         @Override
         public R createNew() {
-            return Entity.this.getNew(record.createResults(fields));
+            return Entity.this.createNew(record);
         }
-    }
-    
-    public String getName() {
-        return name;
-    }
- 
-    public Field[] getMetaDatas() {
-        return fields;
-    }
-    
-    @Override
-    public String toString() {
-        return "Entity {name: " + name + ", fields: " + Arrays.toString(fields) + "}";
     }
     
     public Field[] getFieldsKey() {
@@ -265,9 +275,15 @@ public class Entity implements SourceTableFactory, SourceListFactory {
         return new Query<R, P>(sql).setResults(results).setParameters(parameters);
     }
     
-    public <R> R getNew(Results<R> results) {
+    public <R> R createNew(Record<R> record) {
         try {
-            return results.read(new KindResultsNew(fields));
+            R r = record.create();
+            for (Field f: fields) {
+                if (f.isKey()) {
+                    record.setValue(f, r, UUID.randomUUID().toString().replaceAll("-", ""));
+                }
+            }
+            return r;
         } catch (SQLException e) {         
             throw new RuntimeException(e); // Never happens with the instanciated objects
         }
