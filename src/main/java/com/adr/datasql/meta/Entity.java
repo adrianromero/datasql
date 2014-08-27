@@ -126,7 +126,7 @@ public class Entity implements SourceTableFactory, SourceListFactory {
         }
     }
     
-    public Field[] getFieldsKey() {
+    private Field[] getFieldsKey() {
         ArrayList<Field> keys = new ArrayList<Field>();
         for (Field f: fields) {
             if (f.isKey()) {
