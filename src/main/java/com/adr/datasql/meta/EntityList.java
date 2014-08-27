@@ -54,7 +54,7 @@ public class EntityList implements SourceListFactory {
         this.sentence = sentence;
     }
  
-    public List<MetaData> getMetaDatas() {
+    public List<MetaData> getMetadatas() {
         return metadatas;
     }  
     
