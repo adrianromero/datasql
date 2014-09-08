@@ -26,6 +26,7 @@ import com.adr.datasql.Kind;
 public class Field extends MetaData {
     
     private boolean key = false;
+    private boolean filter = false;
     
     public Field() {    
     }
@@ -45,6 +46,14 @@ public class Field extends MetaData {
     
     public void setKey(boolean key) {
         this.key = key;
+    }
+    
+    public boolean isFilter() {
+        return filter;
+    }
+    
+    public void setFilter(boolean filter) {
+        this.filter = filter;
     }
     
     @Override

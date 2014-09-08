@@ -72,17 +72,24 @@ public class EntityList implements SourceListFactory {
         
         private final Record<R> record;
         private final MetaData[] metadatasSource;
-        
+        private final MetaData[] filtermetadatas;
+                
         public EntityListSourceList(Record<R> record) {
             this.record = record;
             this.metadatasSource = metadatas.toArray(new MetaData[metadatas.size()]);            
+            this.filtermetadatas = new MetaData[0];
         }
         
         @Override
-        public MetaData[] getMetaDatas() {
+        public final MetaData[] getMetaDatas() {
             return metadatasSource;
         }
-
+        
+        @Override 
+        public final MetaData[] getFilterMetaDatas() {
+            return filtermetadatas;
+        }
+        
         @Override
         public StatementQuery<R, Map<String, Object>> getStatementList(MetaData[] filter, StatementOrder[] order) {
             return EntityList.this.getStatementList(record.createResults(metadatasSource), filter, order);

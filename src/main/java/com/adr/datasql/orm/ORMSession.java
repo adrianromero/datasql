@@ -134,6 +134,10 @@ public class ORMSession extends Session {
         return sourcelist.getStatementList(getMetaDatas(sourcelist.getMetaDatas(), filter.keySet()), order).query(c, filter);
     }
     
+    public <P> List<P> list(SourceList<P> sourcelist, MetaData[] filtermetadatas, Map<String, Object>  filter, StatementOrder[] order) throws SQLException {
+        return sourcelist.getStatementList(filtermetadatas, order).query(c, filter);
+    }
+    
     private MetaData[] getMetaDatas(MetaData[] metadatas, Set<String> fieldsname) {
         ArrayList<MetaData> keys = new ArrayList<MetaData>();
         for (MetaData m: metadatas) {

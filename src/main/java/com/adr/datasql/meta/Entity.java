@@ -17,6 +17,7 @@
 
 package com.adr.datasql.meta;
 
+import com.adr.datasql.Kind;
 import com.adr.datasql.Parameters;
 import com.adr.datasql.Query;
 import com.adr.datasql.Results;
@@ -83,20 +84,27 @@ public class Entity implements SourceTableFactory, SourceListFactory {
         
         private final Record<R> record;
         private final MetaData[] metadatas;
+        private final MetaData[] filtermetadatas;
         
         public EntitySourceTable(Record<R> record) {
             this.record = record;
             this.metadatas = fields.toArray(new MetaData[fields.size()]);
+            this.filtermetadatas = getFilterMetaDatas();
         }
         
         @Override
-        public MetaData[] getMetaDatas() {
+        public final MetaData[] getMetaDatas() {
             return metadatas;
+        }
+        
+        @Override 
+        public final MetaData[] getFilterMetaDatas() {
+            return filtermetadatas;
         }
 
         @Override
         public StatementFind<R, Object[]> getStatementGet() {
-            MetaData[] fieldskey = getFieldsKey();
+            MetaData[] fieldskey = getKeyMetaDatas();
             return Entity.this.getStatementList(record.createResults(metadatas), new ParametersArray(fieldskey), fieldskey, null);           
         }
         
@@ -126,15 +134,28 @@ public class Entity implements SourceTableFactory, SourceListFactory {
         }
     }
     
-    private Field[] getFieldsKey() {
-        ArrayList<Field> keys = new ArrayList<Field>();
+    private MetaData[] getKeyMetaDatas() {
+        ArrayList<MetaData> keys = new ArrayList<MetaData>();
         for (Field f: fields) {
             if (f.isKey()) {
                 keys.add(f);
             }
         }        
-        return keys.toArray(new Field[keys.size()]);
+        return keys.toArray(new MetaData[keys.size()]);
     }
+    
+    private MetaData[] getFilterMetaDatas() {
+        ArrayList<MetaData> keys = new ArrayList<MetaData>();
+        for (Field f: fields) {
+            if (f.isFilter()) {
+                keys.add(f);
+                if (Kind.STRING.equals(f.getKind())) {
+                    keys.add(new MetaData(f.getName() + "_LIKE", f.getKind()));
+                }
+            }
+        }        
+        return keys.toArray(new MetaData[keys.size()]);
+    }    
  
     public <P> StatementExec<P> getStatementDelete(Parameters<P> parameters) {
         
@@ -248,10 +269,19 @@ public class Entity implements SourceTableFactory, SourceListFactory {
                 } else {
                     sqlsent.append(" WHERE ");
                     comma = true;
-                }           
-                sqlsent.append(m.getName());
-                sqlsent.append(" = ?");
-                fieldslist.add(m.getName());            
+                }
+                
+                String realname;
+                if (m.getName().endsWith("_LIKE")) {
+                    realname = m.getName().substring(0, m.getName().length() - 5);
+                    sqlsent.append(realname);
+                    sqlsent.append(" LIKE ?");
+                    fieldslist.add(realname);                      
+                } else {
+                    sqlsent.append(m.getName());
+                    sqlsent.append(" = ?");
+                    fieldslist.add(m.getName());    
+                }
             }
         }
         

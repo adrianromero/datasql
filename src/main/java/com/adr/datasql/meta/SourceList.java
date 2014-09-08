@@ -28,5 +28,6 @@ import java.util.Map;
 public interface SourceList<R> {
     
     public MetaData[] getMetaDatas();
+    public MetaData[] getFilterMetaDatas();
     public StatementQuery<R, Map<String, Object>> getStatementList(MetaData[] filter, StatementOrder[] order); 
 }
