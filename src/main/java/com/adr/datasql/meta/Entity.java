@@ -89,7 +89,7 @@ public class Entity implements SourceTableFactory, SourceListFactory {
         public EntitySourceTable(Record<R> record) {
             this.record = record;
             this.metadatas = fields.toArray(new MetaData[fields.size()]);
-            this.filtermetadatas = getFilterMetaDatas();
+            this.filtermetadatas = Entity.this.getFilterMetaDatas();
         }
         
         @Override
