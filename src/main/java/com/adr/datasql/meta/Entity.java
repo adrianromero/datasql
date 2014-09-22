@@ -275,8 +275,8 @@ public class Entity implements SourceTableFactory, SourceListFactory {
                 if (m.getName().endsWith("_LIKE")) {
                     realname = m.getName().substring(0, m.getName().length() - 5);
                     sqlsent.append(realname);
-                    sqlsent.append(" LIKE ?");
-                    fieldslist.add(realname);                      
+                    sqlsent.append(" LIKE ? {escape '$'}");
+                    fieldslist.add(m.getName());                      
                 } else {
                     sqlsent.append(m.getName());
                     sqlsent.append(" = ?");
