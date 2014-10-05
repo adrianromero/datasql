@@ -17,7 +17,6 @@
 
 package com.adr.datasql;
 
-import com.adr.datasql.orm.ORMSession;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -38,7 +37,6 @@ import javax.sql.DataSource;
  * </pre>
  *
  * @author adrianromero
- * @see ORMSession
  * @see Connection
  * @see DataSource
  * @since 1.0.0

@@ -18,7 +18,7 @@
 package com.adr.datasql.orm;
 
 import com.adr.datasql.KindResults;
-import com.adr.datasql.meta.MetaData;
+import com.adr.datasql.data.MetaData;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.math.BigDecimal;

@@ -17,6 +17,7 @@
 
 package com.adr.datasql.meta;
 
+import com.adr.datasql.data.MetaData;
 import com.adr.datasql.Kind;
 
 /**

@@ -18,8 +18,7 @@
 package com.adr.datasql.orm;
 
 import com.adr.datasql.Kind;
-import com.adr.datasql.data.Record;
-import com.adr.datasql.meta.MetaData;
+import com.adr.datasql.data.MetaData;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.SQLException;

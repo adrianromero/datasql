@@ -19,7 +19,7 @@ package com.adr.datasql.orm;
 
 import com.adr.datasql.Session;
 import com.adr.datasql.StatementExec;
-import com.adr.datasql.meta.MetaData;
+import com.adr.datasql.data.MetaData;
 import com.adr.datasql.meta.SourceList;
 import com.adr.datasql.meta.SourceTable;
 import com.adr.datasql.meta.SourceTableFactory;

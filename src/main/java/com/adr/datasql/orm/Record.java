@@ -15,13 +15,13 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql.data;
+package com.adr.datasql.orm;
 
 import com.adr.datasql.KindParameters;
 import com.adr.datasql.KindResults;
 import com.adr.datasql.Parameters;
 import com.adr.datasql.Results;
-import com.adr.datasql.meta.MetaData;
+import com.adr.datasql.data.MetaData;
 import java.sql.SQLException;
 
 /**

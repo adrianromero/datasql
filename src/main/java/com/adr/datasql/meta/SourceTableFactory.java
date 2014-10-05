@@ -17,7 +17,7 @@
 
 package com.adr.datasql.meta;
 
-import com.adr.datasql.data.Record;
+import com.adr.datasql.orm.Record;
 
 /**
  *

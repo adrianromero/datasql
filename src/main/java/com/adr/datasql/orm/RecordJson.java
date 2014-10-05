@@ -17,8 +17,7 @@
 
 package com.adr.datasql.orm;
 
-import com.adr.datasql.data.Record;
-import com.adr.datasql.meta.MetaData;
+import com.adr.datasql.data.MetaData;
 import com.google.gson.JsonObject;
 import java.sql.SQLException;
 

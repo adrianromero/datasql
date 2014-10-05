@@ -18,7 +18,6 @@
 package com.adr.datasql.data;
 
 import com.adr.datasql.KindResults;
-import com.adr.datasql.meta.MetaData;
 import com.adr.datasql.Results;
 import java.sql.SQLException;
 import java.util.HashMap;

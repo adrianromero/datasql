@@ -17,6 +17,7 @@
 
 package com.adr.datasql.meta;
 
+import com.adr.datasql.data.MetaData;
 import com.adr.datasql.Kind;
 import com.adr.datasql.Parameters;
 import com.adr.datasql.Query;
@@ -27,7 +28,7 @@ import com.adr.datasql.StatementFind;
 import com.adr.datasql.StatementQuery;
 import com.adr.datasql.data.ParametersArray;
 import com.adr.datasql.data.ParametersMap;
-import com.adr.datasql.data.Record;
+import com.adr.datasql.orm.Record;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;

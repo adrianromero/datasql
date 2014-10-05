@@ -17,8 +17,7 @@
 
 package com.adr.datasql.orm;
 
-import com.adr.datasql.data.Record;
-import com.adr.datasql.meta.MetaData;
+import com.adr.datasql.data.MetaData;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;

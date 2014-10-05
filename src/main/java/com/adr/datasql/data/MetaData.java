@@ -15,7 +15,7 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql.meta;
+package com.adr.datasql.data;
 
 import com.adr.datasql.Kind;
 

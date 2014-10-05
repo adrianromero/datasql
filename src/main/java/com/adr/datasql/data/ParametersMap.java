@@ -18,7 +18,6 @@
 package com.adr.datasql.data;
 
 import com.adr.datasql.KindParameters;
-import com.adr.datasql.meta.MetaData;
 import com.adr.datasql.Parameters;
 import java.sql.SQLException;
 import java.util.Map;
