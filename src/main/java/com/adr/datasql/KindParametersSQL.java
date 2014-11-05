@@ -38,42 +38,43 @@ public final class KindParametersSQL implements KindParameters {
         this.stmt = stmt;
         this.params = params;
     }
+    
+    @FunctionalInterface
+    private interface Setter {
+        void set(int index) throws SQLException;
+    }
+    
+    private void set(String paramName, Setter s) throws SQLException {
+        for (int i = 0; i < params.length; i++) {
+            if (params[i] != null && params[i].equals(paramName)) {
+                s.set(i + 1);
+            }
+        } 
+    }     
 
     @Override
-    public void setInt(int paramIndex, Integer iValue) throws SQLException {
-        stmt.setObject(paramIndex, iValue, Types.INTEGER);
+    public void setInt(int paramIndex, Integer value) throws SQLException {
+        stmt.setObject(paramIndex, value, Types.INTEGER);
     }
     @Override
-    public void setInt(String paramName, Integer iValue) throws SQLException {
-        for (int i = 0; i < params.length; i++) {
-            if (params[i] != null && params[i].equals(paramName)) {
-                setInt(i + 1, iValue);
-            }
-        }    
+    public void setInt(String paramName, Integer value) throws SQLException {
+        set(paramName, index -> setInt(index, value));  
     }
     @Override
-    public void setString(int paramIndex, String sValue) throws SQLException {
-        stmt.setString(paramIndex, sValue);
+    public void setString(int paramIndex, String value) throws SQLException {
+        stmt.setString(paramIndex, value);
     }
     @Override
-    public void setString(String paramName, String sValue) throws SQLException {
-        for (int i = 0; i < params.length; i++) {
-            if (params[i] != null && params[i].equals(paramName)) {
-                setString(i + 1, sValue);
-            }
-        }              
+    public void setString(String paramName, String value) throws SQLException {
+        set(paramName, index -> setString(index, value));              
     }
     @Override
-    public void setDouble(int paramIndex, Double dValue) throws SQLException {
-        stmt.setObject(paramIndex, dValue, Types.DOUBLE);
+    public void setDouble(int paramIndex, Double value) throws SQLException {
+        stmt.setObject(paramIndex, value, Types.DOUBLE);
     }
     @Override
-    public void setDouble(String paramName, Double dValue) throws SQLException {
-        for (int i = 0; i < params.length; i++) {
-            if (params[i] != null && params[i].equals(paramName)) {
-                setDouble(i + 1, dValue);
-            }
-        }               
+    public void setDouble(String paramName, Double value) throws SQLException {
+        set(paramName, index -> setDouble(index, value));               
     }
     @Override
     public void setBigDecimal(int paramIndex, BigDecimal value) throws SQLException {
@@ -81,59 +82,39 @@ public final class KindParametersSQL implements KindParameters {
     }
     @Override
     public void setBigDecimal(String paramName, BigDecimal value) throws SQLException {
-        for (int i = 0; i < params.length; i++) {
-            if (params[i] != null && params[i].equals(paramName)) {
-                stmt.setBigDecimal(i + 1, value);
-            }
-        }               
+        set(paramName, index -> setBigDecimal(index, value));                          
     }
     @Override
-    public void setBoolean(int paramIndex, Boolean bValue) throws SQLException {
-        stmt.setObject(paramIndex, bValue, Types.BOOLEAN);
+    public void setBoolean(int paramIndex, Boolean value) throws SQLException {
+        stmt.setObject(paramIndex, value, Types.BOOLEAN);
     }
     @Override
-    public void setBoolean(String paramName, Boolean bValue) throws SQLException {
-        for (int i = 0; i < params.length; i++) {
-            if (params[i] != null && params[i].equals(paramName)) {
-                setBoolean(i + 1, bValue);
-            }
-        }               
+    public void setBoolean(String paramName, Boolean value) throws SQLException {
+        set(paramName, index -> setBoolean(index, value));                         
     }
     @Override
-    public void setTimestamp(int paramIndex, java.util.Date dValue) throws SQLException {
-        stmt.setObject(paramIndex, dValue == null ? null : new Timestamp(dValue.getTime()), Types.TIMESTAMP);
+    public void setTimestamp(int paramIndex, java.util.Date value) throws SQLException {
+        stmt.setObject(paramIndex, value == null ? null : new Timestamp(value.getTime()), Types.TIMESTAMP);
     }
     @Override
-    public void setTimestamp(String paramName, java.util.Date dValue) throws SQLException {
-        for (int i = 0; i < params.length; i++) {
-            if (params[i] != null && params[i].equals(paramName)) {
-                setTimestamp(i + 1, dValue);
-            }
-        }               
+    public void setTimestamp(String paramName, java.util.Date value) throws SQLException {
+        set(paramName, index -> setTimestamp(index, value));
     }
     @Override
-    public void setDate(int paramIndex, java.util.Date dValue) throws SQLException {
-        stmt.setObject(paramIndex, dValue == null ? null : new java.sql.Date(dValue.getTime()), Types.DATE);
+    public void setDate(int paramIndex, java.util.Date value) throws SQLException {
+        stmt.setObject(paramIndex, value == null ? null : new java.sql.Date(value.getTime()), Types.DATE);
     }
     @Override
-    public void setDate(String paramName, java.util.Date dValue) throws SQLException {
-        for (int i = 0; i < params.length; i++) {
-            if (params[i] != null && params[i].equals(paramName)) {
-                setDate(i + 1, dValue);
-            }
-        }               
+    public void setDate(String paramName, java.util.Date value) throws SQLException {
+        set(paramName, index -> setDate(index, value));     
     }
     @Override
-    public void setTime(int paramIndex, java.util.Date dValue) throws SQLException {
-        stmt.setObject(paramIndex, dValue == null ? null : new java.sql.Date(dValue.getTime()), Types.TIME);
+    public void setTime(int paramIndex, java.util.Date value) throws SQLException {
+        stmt.setObject(paramIndex, value == null ? null : new java.sql.Date(value.getTime()), Types.TIME);
     }
     @Override
-    public void setTime(String paramName, java.util.Date dValue) throws SQLException {
-        for (int i = 0; i < params.length; i++) {
-            if (params[i] != null && params[i].equals(paramName)) {
-                setTime(i + 1, dValue);
-            }
-        }               
+    public void setTime(String paramName, java.util.Date value) throws SQLException {
+        set(paramName, index -> setTime(index, value));     
     }        
     @Override
     public void setBytes(int paramIndex, byte[] value) throws SQLException {
@@ -141,11 +122,7 @@ public final class KindParametersSQL implements KindParameters {
     }
     @Override
     public void setBytes(String paramName, byte[] value) throws SQLException {
-        for (int i = 0; i < params.length; i++) {
-            if (params[i] != null && params[i].equals(paramName)) {
-                setBytes(i + 1, value);
-            }
-        }               
+        set(paramName, index -> setBytes(index, value));     
     }
     @Override
     public void setObject(int paramIndex, Object value) throws SQLException {
@@ -153,11 +130,7 @@ public final class KindParametersSQL implements KindParameters {
     }
     @Override
     public void setObject(String paramName, Object value) throws SQLException {
-        for (int i = 0; i < params.length; i++) {
-            if (params[i] != null && params[i].equals(paramName)) {
-                setObject(i + 1, value);
-            }
-        }       
+        set(paramName, index -> setObject(index, value));     
     }
     
     @Override
