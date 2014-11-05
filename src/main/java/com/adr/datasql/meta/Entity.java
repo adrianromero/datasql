@@ -19,23 +19,22 @@ package com.adr.datasql.meta;
 
 import com.adr.datasql.data.MetaData;
 import com.adr.datasql.Kind;
-import com.adr.datasql.Parameters;
 import com.adr.datasql.Query;
 import com.adr.datasql.Results;
 import com.adr.datasql.SQL;
 import com.adr.datasql.StatementExec;
 import com.adr.datasql.StatementFind;
 import com.adr.datasql.StatementQuery;
-import com.adr.datasql.data.ParametersArray;
-import com.adr.datasql.data.ParametersMap;
 import com.adr.datasql.orm.Record;
+import com.adr.datasql.orm.RecordArray;
+import com.adr.datasql.orm.RecordParameters;
+import com.adr.datasql.orm.RecordResults;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -72,164 +71,216 @@ public class Entity implements SourceTableFactory, SourceListFactory {
     }
     
     @Override
-    public <R> SourceList<R> createSourceList(Record<R> record) {
-        return new EntitySourceTable(record);
+    public <R, F> SourceList<R, F> createSourceList(RecordResults<R> record, RecordParameters<F> filter) {
+        return new EntitySourceList(this, record, filter);
     }
     
     @Override
     public <R> SourceTable<R> createSourceTable(Record<R> record) {
-        return new EntitySourceTable(record);
+        return new EntitySourceTable(this, record);
     }
     
-    private class EntitySourceTable<R> implements SourceTable<R> {
+    private static class EntitySourceList<R, F> implements SourceList<R, F> {
+        
+        private final RecordResults<R> record;
+        private final RecordParameters<F> filter;
+        private final String entityname;
+        private MetaData[] projection;
+        private MetaData[] criteria;
+        private StatementOrder[] order;
+        
+        public EntitySourceList(Entity entity, RecordResults<R> record, RecordParameters<F> filter) {
+            this.entityname = entity.getName();
+            this.record = record;
+            this.filter = filter;
+            this.projection = entity.getProjection();
+            this.criteria = entity.getCriteria();
+            this.order = null;
+        }
+        
+        @Override
+        public final MetaData[] getProjection() {
+            return projection;
+        }
+
+        @Override
+        public void setProjection(MetaData[] projection) {
+            this.projection = projection;
+        }
+        
+        @Override 
+        public final MetaData[] getCriteria() {
+            return criteria;
+        }
+
+        @Override
+        public void setCriteria(MetaData[] criteria) {
+            this.criteria = criteria;
+        }
+        
+        @Override
+        public StatementOrder[] getOrder() {
+            return order;
+        }
+
+        @Override
+        public void setOrder(StatementOrder[] order) {
+            this.order = order;
+        }
+        
+        @Override
+        public StatementQuery<R, F> getStatementList() {
+            return Entity.getStatementList(record, filter, entityname, projection, criteria, order);
+        }  
+    }
+    
+    private static class EntitySourceTable<R> implements SourceTable<R> {
         
         private final Record<R> record;
+        private final String entityname;
         private final MetaData[] metadatas;
-        private final MetaData[] filtermetadatas;
+        private final MetaData[] keys;
         
-        public EntitySourceTable(Record<R> record) {
+        public EntitySourceTable(Entity entity, Record<R> record) {
             this.record = record;
-            this.metadatas = fields.toArray(new MetaData[fields.size()]);
-            this.filtermetadatas = Entity.this.getFilterMetaDatas();
+            this.entityname = entity.getName();
+            this.metadatas = entity.getProjection();
+            this.keys = entity.getProjectionKeys();
         }
         
         @Override
         public final MetaData[] getMetaDatas() {
             return metadatas;
         }
-        
-        @Override 
-        public final MetaData[] getFilterMetaDatas() {
-            return filtermetadatas;
-        }
 
         @Override
         public StatementFind<R, Object[]> getStatementGet() {
-            MetaData[] fieldskey = getKeyMetaDatas();
-            return Entity.this.getStatementList(record.createResults(metadatas), new ParametersArray(fieldskey), fieldskey, null);           
+            return Entity.getStatementList(record, new RecordArray(), entityname, metadatas, keys, null);           
         }
-        
-        @Override
-        public StatementQuery<R, Map<String, Object>> getStatementList(MetaData[] filter, StatementOrder[] order) {
-            return Entity.this.getStatementList(record.createResults(metadatas), filter == null ? null : new ParametersMap(filter), filter, order);
-        }  
 
         @Override
         public StatementExec<R> getStatementDelete() {
-            return Entity.this.getStatementDelete(record.createParams(metadatas));
+            return Entity.getStatementDelete(record, entityname, metadatas, keys);
         }
 
         @Override
         public StatementExec<R> getStatementUpdate() {
-            return Entity.this.getStatementUpdate(record.createParams(metadatas));
+            return Entity.getStatementUpdate(record, entityname, metadatas, keys);
         }
 
         @Override
         public StatementExec<R> getStatementInsert() {
-            return Entity.this.getStatementInsert(record.createParams(metadatas));
+            return Entity.getStatementInsert(record, entityname, metadatas, keys);
         }
 
         @Override
         public R createNew() {
-            return Entity.this.createNew(record);
+            return Entity.createNew(record, entityname, metadatas, keys);
         }
     }
     
-    private MetaData[] getKeyMetaDatas() {
-        ArrayList<MetaData> keys = new ArrayList<MetaData>();
-        for (Field f: fields) {
-            if (f.isKey()) {
-                keys.add(f);
-            }
-        }        
-        return keys.toArray(new MetaData[keys.size()]);
+    private MetaData[] projection = null;
+    public MetaData[] getProjection() {
+        if (projection == null) {
+            projection = fields.toArray(new MetaData[fields.size()]);
+        }
+        return projection;
     }
     
-    private MetaData[] getFilterMetaDatas() {
-        ArrayList<MetaData> keys = new ArrayList<MetaData>();
-        for (Field f: fields) {
-            if (f.isFilter()) {
-                keys.add(f);
-                if (Kind.STRING.equals(f.getKind())) {
-                    keys.add(new MetaData(f.getName() + "_LIKE", f.getKind()));
+    private MetaData[] projectionkeys = null;
+    public MetaData[] getProjectionKeys() {
+        if (projectionkeys == null) {            
+            List<Field> l = fields.stream().filter(f -> f.isKey()).collect(Collectors.toList());    
+            projectionkeys = l.toArray(new MetaData[l.size()]);
+        }
+        return projectionkeys;
+    }
+    
+    private MetaData[] criteria = null;
+    public MetaData[] getCriteria() {
+        if (criteria == null) {
+            ArrayList<MetaData> keys = new ArrayList<MetaData>();
+            for (Field f: fields) {
+                if (f.isFilter()) {
+                    keys.add(f);
+                    if (Kind.STRING.equals(f.getKind())) {
+                        keys.add(new MetaData(f.getName() + "_LIKE", f.getKind()));
+                    }
                 }
-            }
-        }        
-        return keys.toArray(new MetaData[keys.size()]);
+            }        
+            criteria = keys.toArray(new MetaData[keys.size()]);
+        }
+        return criteria;
     }    
  
-    public <P> StatementExec<P> getStatementDelete(Parameters<P> parameters) {
+    public static <P> StatementExec<P> getStatementDelete(RecordParameters<P> parameters, String name, MetaData[] projection, MetaData[] keys) {
         
         StringBuilder sentence = new StringBuilder();
         StringBuilder sentencefilter = new StringBuilder();
         ArrayList<String> keyfields = new ArrayList<String>();
         
         sentence.append("DELETE FROM ");
-        sentence.append(getName());
+        sentence.append(name);
         
-        for (Field f: fields) {
-            if (f.isKey()) {
+        for (MetaData m: keys) {
                 sentencefilter.append(sentencefilter.length() == 0 ? " WHERE " : " AND ");
-                sentencefilter.append(f.getName());
+                sentencefilter.append(m.getName());
                 sentencefilter.append(" = ?");
-                keyfields.add(f.getName());
-            }
+                keyfields.add(m.getName());
         }
         sentence.append(sentencefilter);
             
         SQL sql = new SQL(sentence.toString(), keyfields.toArray(new String[keyfields.size()]));  
-        return new Query<Void, P>(sql).setParameters(parameters);
+        return new Query<Void, P>(sql).setParameters(parameters.createParams(projection));
     }
     
-    public <P> StatementExec<P> getStatementUpdate(Parameters<P> parameters) {
+    public static <P> StatementExec<P> getStatementUpdate(RecordParameters<P> parameters, String name, MetaData[] projection, MetaData[] keys) {
         
         StringBuilder sentence = new StringBuilder();
         ArrayList<String> keyfields = new ArrayList<String>();
         
         sentence.append("UPDATE ");
-        sentence.append(getName());
+        sentence.append(name);
                
         boolean filter = false;
-        for (Field f: fields) {
+        for (MetaData m: projection) {
             sentence.append(filter ? ", " : " SET ");
-            sentence.append(f.getName());
+            sentence.append(m.getName());
             sentence.append(" = ?");    
-            keyfields.add(f.getName());
+            keyfields.add(m.getName());
             filter = true;
         }  
         
         filter = false;
-        for (Field f: fields) {
-            if (f.isKey()) {
+        for (MetaData m: keys) {
                 sentence.append(filter ? " AND " : " WHERE ");
-                sentence.append(f.getName());
+                sentence.append(m.getName());
                 sentence.append(" = ?");
-                keyfields.add(f.getName());
+                keyfields.add(m.getName());
                 filter = true;
-            }
         }  
             
         SQL sql =  new SQL(sentence.toString(), keyfields.toArray(new String[keyfields.size()]));   
-        return new Query<Void, P>(sql).setParameters(parameters);
+        return new Query<Void, P>(sql).setParameters(parameters.createParams(projection));
     }
     
-    public <P> StatementExec<P> getStatementInsert(Parameters<P> parameters) {
+    public static <P> StatementExec<P> getStatementInsert(RecordParameters<P> parameters, String name, MetaData[] projection, MetaData[] keys) {
         
         StringBuilder sentence = new StringBuilder();
         StringBuilder values = new StringBuilder();
         ArrayList<String> fieldslist = new ArrayList<String>();
         
         sentence.append("INSERT INTO ");
-        sentence.append(getName());
+        sentence.append(name);
         sentence.append("(");
                
         boolean filter = false;
-        for (Field f: fields) {
+        for (MetaData m: projection) {
             sentence.append(filter ? ", " : "");
-            sentence.append(f.getName());
+            sentence.append(m.getName());
 
             values.append(filter ? ", ?": "?");
-            fieldslist.add(f.getName());
+            fieldslist.add(m.getName());
 
             filter = true;
         }  
@@ -239,32 +290,32 @@ public class Entity implements SourceTableFactory, SourceListFactory {
         sentence.append(")");
             
         SQL sql = new SQL(sentence.toString(), fieldslist.toArray(new String[fieldslist.size()]));     
-        return new Query<Void, P>(sql).setParameters(parameters);
+        return new Query<Void, P>(sql).setParameters(parameters.createParams(projection));
     }
 
-    public <R, P> Query<R, P> getStatementList(Results<R> results, Parameters<P> parameters, MetaData[] filter, StatementOrder[] order) {
+    private static <R, P> Query<R, P> getStatementList(RecordResults<R> results, RecordParameters<P> parameters, String name, MetaData[] projection, MetaData[] criteria, StatementOrder[] order) {
         
         StringBuilder sqlsent = new StringBuilder();
         List<String> fieldslist = new ArrayList<String>();
         
         sqlsent.append("SELECT ");
         boolean comma = false;
-        for (Field f: fields) {
+        for (MetaData m: projection) {
             if (comma) {
                 sqlsent.append(", ");
             } else {
                 comma = true;       
             }
-            sqlsent.append(f.getName()); 
+            sqlsent.append(m.getName()); 
         }    
         
         sqlsent.append(" FROM ");       
-        sqlsent.append(getName());
+        sqlsent.append(name);
         
         // WHERE CLAUSE
-        if (filter != null) {
+        if (criteria != null) {
             comma = false;
-            for (MetaData m: filter) {
+            for (MetaData m: criteria) {
                 if (comma) {
                     sqlsent.append(" AND ");
                 } else {
@@ -303,18 +354,13 @@ public class Entity implements SourceTableFactory, SourceListFactory {
 
         // build statement
         SQL sql = new SQL(sqlsent.toString(), fieldslist.toArray(new String[fieldslist.size()]));     
-        return new Query<R, P>(sql).setResults(results).setParameters(parameters);
+        return new Query<R, P>(sql).setResults(results.createResults(projection)).setParameters(parameters.createParams(criteria));
     }
     
-    public <R> R createNew(Record<R> record) {
+    public static <R> R createNew(RecordResults<R> record, String name, MetaData[] projection, MetaData[] keys) {
         try {
-            R r = record.create();
-            for (Field f: fields) {
-                if (f.isKey()) {
-                    record.setValue(f, r, UUID.randomUUID().toString().replaceAll("-", ""));
-                }
-            }
-            return r;
+            Results<R> r = record.createResults(projection);
+            return r.read(new KindResultsNew(projection, keys));
         } catch (SQLException e) {         
             throw new RuntimeException(e); // Never happens with the instanciated objects
         }

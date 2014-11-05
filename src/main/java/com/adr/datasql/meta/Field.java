@@ -40,6 +40,12 @@ public class Field extends MetaData {
         super(name, kind);
         this.key = key;
     }
+    
+    public Field(String name, Kind kind, boolean key, boolean filter) {
+        super(name, kind);
+        this.key = key;
+        this.filter = filter;
+    }
 
     public boolean isKey() {
         return key;

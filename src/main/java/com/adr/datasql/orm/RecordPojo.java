@@ -30,7 +30,7 @@ import java.util.Map;
  * @author adrian
  * @param <P>
  */
-public class RecordPojo<P> extends Record<P> {
+public class RecordPojo<P> extends RecordAbstract<P> {
     
     private final static Object NULLMETHOD = new Object();
     

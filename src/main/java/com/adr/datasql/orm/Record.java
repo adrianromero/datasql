@@ -17,52 +17,10 @@
 
 package com.adr.datasql.orm;
 
-import com.adr.datasql.KindParameters;
-import com.adr.datasql.KindResults;
-import com.adr.datasql.Parameters;
-import com.adr.datasql.Results;
-import com.adr.datasql.data.MetaData;
-import java.sql.SQLException;
-
 /**
  *
  * @author adrian
  * @param <P>
  */
-public abstract class Record<P> {
-
-    public abstract Object getValue(MetaData f, P param) throws SQLException;
-    public abstract void setValue(MetaData f, P param, Object value) throws SQLException;
-    public abstract P create() throws SQLException;
-    
-    public final Results<P> createResults(MetaData[] metadatas) {
-        return new RecordParametersResults(metadatas);
-    }
-    
-    public final Parameters<P> createParams(MetaData[] metadatas) {
-        return new RecordParametersResults(metadatas);
-    }
-    
-    private class RecordParametersResults implements Parameters<P>, Results<P> {
-        private final MetaData[] metadatas;
-
-        public RecordParametersResults(MetaData[] metadatas) {
-            this.metadatas = metadatas;
-        }
-        
-        @Override
-        public final P read(KindResults dp) throws SQLException {
-            P param = create();
-            for (MetaData md : metadatas) {    
-                setValue(md, param, md.getKind().get(dp, md.getName()));              
-            }
-            return param;
-        }    
-        @Override
-        public final void write(KindParameters dp, P param) throws SQLException {
-            for (MetaData md : metadatas) {           
-                md.getKind().set(dp, md.getName(), getValue(md, param));              
-            }
-        }         
-    }
+public interface Record<P> extends RecordParameters<P>, RecordResults<P> {
 }

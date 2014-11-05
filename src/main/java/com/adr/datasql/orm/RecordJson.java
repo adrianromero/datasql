@@ -25,7 +25,7 @@ import java.sql.SQLException;
  *
  * @author adrian
  */
-public class RecordJson extends Record<JsonObject> {
+public class RecordJson extends RecordAbstract<JsonObject> {
 
     @Override
     public Object getValue(MetaData md, JsonObject param) throws SQLException {

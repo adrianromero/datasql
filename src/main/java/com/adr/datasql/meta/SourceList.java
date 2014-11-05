@@ -19,16 +19,21 @@ package com.adr.datasql.meta;
 
 import com.adr.datasql.data.MetaData;
 import com.adr.datasql.StatementQuery;
-import java.util.Map;
 
 /**
  *
  * @author adrian
  * @param <R>
+ * @param <F>
  */
-public interface SourceList<R> {
+public interface SourceList<R, F> {
     
-    public MetaData[] getMetaDatas();
-    public MetaData[] getFilterMetaDatas();
-    public StatementQuery<R, Map<String, Object>> getStatementList(MetaData[] filter, StatementOrder[] order); 
+    public MetaData[] getProjection();
+    public void setProjection(MetaData[] projection);
+    public MetaData[] getCriteria();
+    public void setCriteria(MetaData[] criteria);
+    public StatementOrder[] getOrder();
+    public void setOrder(StatementOrder[] order);
+    
+    public StatementQuery<R, F> getStatementList(); 
 }

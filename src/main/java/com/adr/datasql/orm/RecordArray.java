@@ -15,15 +15,28 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql.meta;
+package com.adr.datasql.orm;
 
-import com.adr.datasql.orm.RecordParameters;
-import com.adr.datasql.orm.RecordResults;
+import com.adr.datasql.Parameters;
+import com.adr.datasql.Results;
+import com.adr.datasql.data.MetaData;
+import com.adr.datasql.data.ParametersArray;
+import com.adr.datasql.data.ResultsArray;
 
 /**
  *
  * @author adrian
  */
-public interface SourceListFactory {
-     public <R, F> SourceList<R, F> createSourceList(RecordResults<R> record, RecordParameters<F> filter);
+public class RecordArray implements RecordParameters<Object[]>, RecordResults<Object[]> {
+
+    @Override
+    public Parameters<Object[]> createParams(MetaData[] metadatas) {
+        return new ParametersArray(metadatas);
+    }
+
+    @Override
+    public Results<Object[]> createResults(MetaData[] metadatas) {
+        return new ResultsArray(metadatas);
+    }
+    
 }

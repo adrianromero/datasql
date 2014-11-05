@@ -20,13 +20,16 @@ package com.adr.datasql.meta;
 
 import com.adr.datasql.StatementExec;
 import com.adr.datasql.StatementFind;
+import com.adr.datasql.data.MetaData;
 
 /**
  *
  * @author adrian
  * @param <R>
  */
-public interface SourceTable<R> extends SourceList<R> {
+public interface SourceTable<R> {
+    
+    public MetaData[] getMetaDatas();
     
     public StatementFind<R, Object[]> getStatementGet();
     

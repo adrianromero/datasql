@@ -20,7 +20,6 @@ package com.adr.datasql.tests;
 import com.adr.datasql.Kind;
 import com.adr.datasql.meta.Entity;
 import com.adr.datasql.meta.Field;
-import com.adr.datasql.meta.SourceTableFactory;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -29,25 +28,26 @@ import java.util.Date;
  * @author adrian
  */
 public class SamplePojo {
+    
     private String id;
     private String name;
     private String code;
-    private Date valdate;
-    private Double valdouble;
-    private BigDecimal valdecimal;
-    private Integer valinteger;
-    private Boolean valboolean;
+    private Date startdate;
+    private Double weight;
+    private BigDecimal amount;
+    private Integer line;
+    private Boolean active;
    
-    public final static SourceTableFactory SOURCETABLEFACTORY = new Entity(
-            "com_adr_datasql_tests_SamplePojo",
-            new Field("id", Kind.STRING, true),
-            new Field("code", Kind.STRING),
-            new Field("name", Kind.STRING),
-            new Field("valdate", Kind.TIMESTAMP),
-            new Field("valdouble", Kind.DOUBLE),
-            new Field("valdecimal", Kind.DECIMAL),
-            new Field("valinteger", Kind.INT),
-            new Field("valboolean", Kind.BOOLEAN));
+    public final static Entity SOURCEFACTORY = new Entity(
+            "samplepojo",
+            new Field("id", Kind.STRING, true, true),
+            new Field("code", Kind.STRING, false, true),
+            new Field("name", Kind.STRING, false, true),
+            new Field("startdate", Kind.TIMESTAMP),
+            new Field("weight", Kind.DOUBLE),
+            new Field("amount", Kind.DECIMAL),
+            new Field("line", Kind.INT),
+            new Field("active", Kind.BOOLEAN));
 
     /**
      * @return the id
@@ -92,73 +92,73 @@ public class SamplePojo {
     }
     
     /**
-     * @return the valdate
+     * @return the startdate
      */
-    public Date getValdate() {
-        return valdate;
+    public Date getStartdate() {
+        return startdate;
     }
 
     /**
-     * @param valdate the valdate to set
+     * @param startdate the startdate to set
      */
-    public void setValdate(Date valdate) {
-        this.valdate = valdate;
+    public void setStartdate(Date startdate) {
+        this.startdate = startdate;
     }
 
     /**
-     * @return the valdouble
+     * @return the weight
      */
-    public Double getValdouble() {
-        return valdouble;
+    public Double getWeight() {
+        return weight;
     }
 
     /**
-     * @param valdouble the valdouble to set
+     * @param weight the weight to set
      */
-    public void setValdouble(Double valdouble) {
-        this.valdouble = valdouble;
+    public void setWeight(Double weight) {
+        this.weight = weight;
     }
 
     /**
-     * @return the valboolean
+     * @return the active
      */
-    public Boolean isValboolean() {
-        return valboolean;
+    public Boolean isActive() {
+        return active;
     }
 
     /**
-     * @param valboolean the valboolean to set
+     * @param active the active to set
      */
-    public void setValboolean(Boolean valboolean) {
-        this.valboolean = valboolean;
+    public void setActive(Boolean active) {
+        this.active = active;
     }    
 
     /**
-     * @return the valdecimal
+     * @return the amount
      */
-    public BigDecimal getValdecimal() {
-        return valdecimal;
+    public BigDecimal getAmount() {
+        return amount;
     }
 
     /**
-     * @param valdecimal the valdecimal to set
+     * @param amount the amount to set
      */
-    public void setValdecimal(BigDecimal valdecimal) {
-        this.valdecimal = valdecimal;
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
 
     /**
-     * @return the valinteger
+     * @return the line
      */
-    public Integer getValinteger() {
-        return valinteger;
+    public Integer getLine() {
+        return line;
     }
 
     /**
-     * @param valinteger the valinteger to set
+     * @param line the line to set
      */
-    public void setValinteger(Integer valinteger) {
-        this.valinteger = valinteger;
+    public void setLine(Integer line) {
+        this.line = line;
     }
     
     @Override

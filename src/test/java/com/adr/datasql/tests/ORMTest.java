@@ -21,9 +21,7 @@ import com.adr.datasql.Kind;
 import com.adr.datasql.StatementExec;
 import com.adr.datasql.QueryArray;
 import com.adr.datasql.Session;
-import com.adr.datasql.derby.DataTestSuite;
-import com.adr.datasql.meta.SourceTable;
-import com.adr.datasql.orm.RecordPojo;
+import com.adr.datasql.databases.DataBase;
 import com.adr.datasql.orm.ORMSession;
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -48,7 +46,7 @@ public class ORMTest {
     @Test
     public void InsertPojo() throws SQLException {
 
-        try (ORMSession session = DataTestSuite.newSession()) {  
+        try (ORMSession session = DataBase.newSession()) {  
             
             SamplePojo pojo = new SamplePojo();
             pojo.setId("pojoid");
@@ -62,33 +60,33 @@ public class ORMTest {
             Assert.assertEquals(returnpojo.getId(), pojo.getId());  
             Assert.assertEquals(returnpojo.getCode(), pojo.getCode());  
             Assert.assertEquals(returnpojo.getName(), pojo.getName());  
-            Assert.assertEquals(returnpojo.isValboolean(), pojo.isValboolean());  
-            Assert.assertEquals(returnpojo.getValdate(), pojo.getValdate());  
-            Assert.assertEquals(returnpojo.getValdecimal(), pojo.getValdecimal());  
-            Assert.assertEquals(returnpojo.getValdouble(), pojo.getValdouble());  
-            Assert.assertEquals(returnpojo.getValinteger(), pojo.getValinteger());  
+            Assert.assertEquals(returnpojo.isActive(), pojo.isActive());  
+            Assert.assertEquals(returnpojo.getStartdate(), pojo.getStartdate());  
+            Assert.assertEquals(returnpojo.getAmount(), pojo.getAmount());  
+            Assert.assertEquals(returnpojo.getWeight(), pojo.getWeight());  
+            Assert.assertEquals(returnpojo.getLine(), pojo.getLine());  
         }
     }  
     
     @Test
     public void findPojo() throws SQLException {
         
-        try (ORMSession session = DataTestSuite.newSession()) {        
+        try (ORMSession session = DataBase.newSession()) {        
 
-            SourceTable<SamplePojo> st = SamplePojo.SOURCETABLEFACTORY.createSourceTable(new RecordPojo<SamplePojo>(SamplePojo.class));
-            SamplePojo pojo = session.get(st, "pojoid");   
+            SamplePojo pojo = session.get(SamplePojo.class, "a");   
             
-            System.out.println(pojo.toString());              
+            Assert.assertEquals("a", pojo.getId());  
+            Assert.assertEquals("code 1", pojo.getCode());             
+            Assert.assertEquals("name a", pojo.getName());             
         }        
     }  
     
     @Test
     public void listPojo() throws SQLException {      
 
-        try (ORMSession session = DataTestSuite.newSession()) { 
-            
-            SourceTable<SamplePojo> st = SamplePojo.SOURCETABLEFACTORY.createSourceTable(new RecordPojo<SamplePojo>(SamplePojo.class));                            
-            List<SamplePojo> pojos = session.list(st);   
+        try (ORMSession session = DataBase.newSession()) { 
+                                     
+            List<SamplePojo> pojos = session.list(SamplePojo.class);   
             
             System.out.println(pojos);              
         }        
@@ -97,33 +95,56 @@ public class ORMTest {
     @Test
     public void filterPojo() throws SQLException {
         
-        try (ORMSession session = DataTestSuite.newSession()) { 
-            
-            SourceTable<SamplePojo> st = SamplePojo.SOURCETABLEFACTORY.createSourceTable(new RecordPojo<SamplePojo>(SamplePojo.class));
+        try (ORMSession session = DataBase.newSession()) { 
                              
             Map<String, Object> filter = new HashMap<String, Object>();
             filter.put("code", "code x");
             
-            List<SamplePojo> pojos = session.list(st, filter);   
+            List<SamplePojo> pojos = session.list(SamplePojo.class, filter);   
             
-            System.out.println(pojos);              
+            System.out.println("filter pojos " + pojos);          
+            Assert.assertEquals("Sample pojos codex", 4, pojos.size());
         }               
     }
     
+    @Test
+    public void pojoStatements() throws SQLException {
+        
+        try (ORMSession session = DataBase.newSession()) {
+            // Defining a new SamplePojo
+            SamplePojo pojo = new SamplePojo();
+            pojo.setId("id-99");
+            pojo.setName("name for object");
+            pojo.setLine(10);
+            pojo.setWeight(50.0);
+            // Insert
+            session.insert(pojo);  
+            // Get an instance
+            SamplePojo returnpojo = session.get(SamplePojo.class, "id-99");
+            
+            Assert.assertEquals(pojo.getId(), returnpojo.getId());
+            Assert.assertEquals(pojo.getName(), returnpojo.getName());
+            Assert.assertEquals(pojo.getLine(), returnpojo.getLine());
+            Assert.assertEquals(pojo.getWeight(), returnpojo.getWeight());
+        }  
+    }      
     @BeforeClass
     public static void setUpClass() throws SQLException {   
    
-        try (Session session = DataTestSuite.newSession()) { 
-            session.exec(new QueryArray("create table com_adr_datasql_tests_SamplePojo("
+        try (Session session = DataBase.newSession()) { 
+            
+            session.exec(new QueryArray("drop table if exists samplepojo"));
+            session.exec(new QueryArray("create table samplepojo("
                     + "id varchar(32), "
                     + "code varchar(128), "
                     + "name varchar(1024), "
-                    + "valdate timestamp, "
-                    + "valdouble double precision, "
-                    + "valdecimal decimal(10,2), "
-                    + "valinteger integer, "
-                    + "valboolean smallint)"));    
-            StatementExec<Object[]> insertMyTest = new QueryArray("insert into com_adr_datasql_tests_SamplePojo(id, code, name, valdate, valdouble, valdecimal, valinteger, valboolean) values (?, ?, ?, ?, ?, ?, ?, ?)")
+                    + "startdate timestamp, "
+                    + "weight double precision, "
+                    + "amount decimal(10,2), "
+                    + "line integer, "
+                    + "active smallint,"
+                    + "primary key(id))"));    
+            StatementExec<Object[]> insertMyTest = new QueryArray("insert into samplepojo(id, code, name, startdate, weight, amount, line, active) values (?, ?, ?, ?, ?, ?, ?, ?)")
                     .setParameters(Kind.STRING, Kind.STRING, Kind.STRING, Kind.TIMESTAMP, Kind.DOUBLE, Kind.DECIMAL, Kind.INT, Kind.BOOLEAN);
             
             session.exec(insertMyTest, "a", "code 1", "name a", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);

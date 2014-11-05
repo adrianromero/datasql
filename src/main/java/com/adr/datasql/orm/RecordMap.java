@@ -26,7 +26,7 @@ import java.util.Map;
  *
  * @author adrian
  */
-public class RecordMap extends Record<Map<String, Object>> {
+public class RecordMap extends RecordAbstract<Map<String, Object>> {
 
     @Override
     public Object getValue(MetaData md, Map<String, Object> param) throws SQLException {

@@ -15,15 +15,16 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql.meta;
+package com.adr.datasql.orm;
 
-import com.adr.datasql.orm.RecordParameters;
-import com.adr.datasql.orm.RecordResults;
+import com.adr.datasql.Parameters;
+import com.adr.datasql.data.MetaData;
 
 /**
  *
  * @author adrian
+ * @param <P>
  */
-public interface SourceListFactory {
-     public <R, F> SourceList<R, F> createSourceList(RecordResults<R> record, RecordParameters<F> filter);
+public interface RecordParameters<P> {
+    public Parameters<P> createParams(MetaData[] metadatas);
 }

@@ -18,9 +18,9 @@
 package com.adr.datasql.orm;
 
 import com.adr.datasql.Session;
-import com.adr.datasql.StatementExec;
 import com.adr.datasql.data.MetaData;
 import com.adr.datasql.meta.SourceList;
+import com.adr.datasql.meta.SourceListFactory;
 import com.adr.datasql.meta.SourceTable;
 import com.adr.datasql.meta.SourceTableFactory;
 import com.adr.datasql.meta.StatementOrder;
@@ -51,8 +51,20 @@ public class ORMSession extends Session {
     
     private <P> SourceTable<P> getSourceTable(Class<? extends P> clazz) throws SQLException {
         try {
-            return ((SourceTableFactory) clazz.getField("SOURCETABLEFACTORY").get(null))
+            return ((SourceTableFactory) clazz.getField("SOURCEFACTORY").get(null))
                     .createSourceTable(new RecordPojo(clazz));
+        } catch (NoSuchFieldException 
+                |IllegalArgumentException
+                |IllegalAccessException
+                |SecurityException ex) {
+            throw new SQLException(ex);
+        }
+    }
+    
+    private <P> SourceList<P, Map<String, Object>> getSourceList(Class<? extends P> clazz) throws SQLException {
+        try {
+            return ((SourceListFactory) clazz.getField("SOURCEFACTORY").get(null))
+                    .createSourceList(new RecordPojo(clazz), new RecordMap());
         } catch (NoSuchFieldException 
                 |IllegalArgumentException
                 |IllegalAccessException
@@ -82,60 +94,58 @@ public class ORMSession extends Session {
     }
     
     public <P> List<P> list(Class<? extends P> clazz) throws SQLException {
-        return list(getSourceTable(clazz));
+        SourceList<P, Map<String, Object>> sourcelist = getSourceList(clazz);
+        sourcelist.setCriteria(null);
+        return list(sourcelist);
     }  
     
     public <P> List<P> list(Class<? extends P> clazz, StatementOrder[] order) throws SQLException {
-        return list(getSourceTable(clazz), order);
+        SourceList<P, Map<String, Object>> sourcelist = getSourceList(clazz);
+        sourcelist.setCriteria(null);
+        sourcelist.setOrder(order);
+        return list(sourcelist);
     }  
     
     public <P> List<P> list(Class<? extends P> clazz, Map<String, Object> filter) throws SQLException {
-        return list(getSourceTable(clazz), filter);
+        SourceList<P, Map<String, Object>> sourcelist = getSourceList(clazz);
+        sourcelist.setCriteria(getMetaDatas(sourcelist.getCriteria(), filter.keySet()));
+        return list(sourcelist, filter);
     }  
     
     public <P> List<P> list(Class<? extends P> clazz, Map<String, Object> filter, StatementOrder[] order) throws SQLException {
-        return list(getSourceTable(clazz), filter, order);
+        SourceList<P, Map<String, Object>> sourcelist = getSourceList(clazz);
+        sourcelist.setCriteria(getMetaDatas(sourcelist.getCriteria(), filter.keySet()));
+        sourcelist.setOrder(order);
+        return list(sourcelist, filter);
     }  
     
     public <P> int insert(SourceTable<P> sourcetable, P value) throws SQLException {
-        return sourcetable.getStatementInsert().exec(c, value);
+        return exec(sourcetable.getStatementInsert(), value);
     }
     
     public <P> int delete(SourceTable<P> sourcetable, P value) throws SQLException {
-        return sourcetable.getStatementDelete().exec(c, value);
+        return exec(sourcetable.getStatementDelete(), value);
     }
     
     public <P> int upsert(SourceTable<P> sourcetable, P value) throws SQLException {
-        StatementExec<P> upsert = new StatementUpsert<P>(sourcetable); 
-        return upsert.exec(c, value);
+        return exec(new StatementUpsert<P>(sourcetable), value);
     }
     
     public <P> int update(SourceTable<P> sourcetable, P value) throws SQLException {
-        return sourcetable.getStatementUpdate().exec(c, value);
+        return exec(sourcetable.getStatementUpdate(), value);
     }
     
     public <P> P get(SourceTable<P> sourcetable, Object... key) throws SQLException { 
-        return sourcetable.getStatementGet().find(c, key);
+        return find(sourcetable.getStatementGet(), key);
     }
     
-    public <P> List<P> list(SourceList<P> sourcelist) throws SQLException {
-        return sourcelist.getStatementList(null, null).query(c, null);
-    } 
-    
-    public <P> List<P> list(SourceList<P> sourcelist, Map<String, Object> filter) throws SQLException {
-        return sourcelist.getStatementList(getMetaDatas(sourcelist.getMetaDatas(), filter.keySet()), null).query(c, filter);
+    public <P> List<P> list(SourceList<P, ?> sourcelist) throws SQLException {
+        return query(sourcelist.getStatementList());
     } 
 
-    public <P> List<P> list(SourceList<P> sourcelist, StatementOrder[] order) throws SQLException {
-        return sourcelist.getStatementList(null, order).query(c, null);
-    }
     
-    public <P> List<P> list(SourceList<P> sourcelist, Map<String, Object> filter, StatementOrder[] order) throws SQLException {
-        return sourcelist.getStatementList(getMetaDatas(sourcelist.getMetaDatas(), filter.keySet()), order).query(c, filter);
-    }
-    
-    public <P> List<P> list(SourceList<P> sourcelist, MetaData[] filtermetadatas, Map<String, Object>  filter, StatementOrder[] order) throws SQLException {
-        return sourcelist.getStatementList(filtermetadatas, order).query(c, filter);
+    public <P, F> List<P> list(SourceList<P, F> sourcelist, F filter) throws SQLException {
+        return query(sourcelist.getStatementList(), filter);
     }
     
     private MetaData[] getMetaDatas(MetaData[] metadatas, Set<String> fieldsname) {

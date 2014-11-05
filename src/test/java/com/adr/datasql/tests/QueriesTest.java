@@ -18,13 +18,16 @@
 package com.adr.datasql.tests;
 
 import com.adr.datasql.Kind;
+import com.adr.datasql.Query;
 import com.adr.datasql.SQLNamed;
 import com.adr.datasql.StatementExec;
 import com.adr.datasql.StatementFind;
 import com.adr.datasql.QueryArray;
 import com.adr.datasql.QueryMap;
 import com.adr.datasql.Session;
-import com.adr.datasql.derby.DataTestSuite;
+import com.adr.datasql.data.ParametersDouble;
+import com.adr.datasql.data.ResultsInteger;
+import com.adr.datasql.databases.DataBase;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -32,6 +35,7 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.junit.Assert;
 import org.junit.After;
@@ -51,7 +55,8 @@ public class QueriesTest {
 
     @Test
     public void initialTest() throws SQLException, ParseException {
-        try (Session session = DataTestSuite.newSession()) {
+        
+        try (Session session = DataBase.newSession()) {
             Map<String, Object> parameters = new HashMap<String, Object>();
             parameters.put("id", "two");
             parameters.put("code", "two code");
@@ -65,7 +70,7 @@ public class QueriesTest {
     
     @Test
     public void query2Test() throws SQLException, ParseException {   
-        try (Session session = DataTestSuite.newSession()) {
+        try (Session session = DataBase.newSession()) {
             StatementExec<Object[]> insertMYTEST = new QueryArray("insert into mytest(id, code, name) values (?, ?, ?)")
                     .setParameters(Kind.STRING, Kind.STRING, Kind.STRING);
             session.exec(insertMYTEST, "one", "code one", "name one");
@@ -74,48 +79,91 @@ public class QueriesTest {
     
     @Test
     public void querySelectWithKinds() throws SQLException, ParseException {   
-        try (Session session = DataTestSuite.newSession()) {         
+        try (Session session = DataBase.newSession()) {         
            StatementFind<Object[], Object[]> selectMyTest = new QueryArray(
-                   "select id, code, name, valdate, valdouble, valdecimal, valinteger, valboolean from mytest where code = ?")
+                   "select id, code, name, startdate, weight, amount, line, active from mytest where code = ?")
                    .setParameters(Kind.STRING)
                    .setResults(Kind.STRING, Kind.STRING, Kind.STRING, Kind.TIMESTAMP, Kind.DOUBLE, Kind.DECIMAL, Kind.INT, Kind.BOOLEAN);       
            Object[] result = session.find(selectMyTest, "code 1");         
-           Assert.assertEquals("[a, code 1, name a, Wed Jan 01 19:00:32 CET 2014, 12.23, 12.12, 1234, true]", Arrays.toString(result));
+           Assert.assertEquals("[a, code 1, name one, Wed Jan 01 19:00:32 CET 2014, 12.23, 12.12, 10, true]", Arrays.toString(result));
        }
     } 
     
     @Test
     public void querySelectMetadata() throws SQLException, ParseException {   
-        try (Session session = DataTestSuite.newSession()) {
+        try (Session session = DataBase.newSession()) {
            StatementFind<Object[], Object[]> selectMyTest = new QueryArray(
-                   "select id, code, name, valdate, valdouble, valdecimal, valinteger, valboolean from mytest where code = ?");
+                   "select id, code, name, startdate, weight, amount, line, active from mytest where code = ?");
            Object[] result = session.find(selectMyTest, "code 1");
            System.out.println(Arrays.toString(result)); // [a, code 1, name a, Tue Feb 11 18:37:52 CET 2014, 12.23, 12.12, 1234, 1]
         }
     }     
     
+    @Test
+    public void simpleStatements() throws SQLException {
+        
+        try (Session session = DataBase.newSession()) {
+            // Insert a record
+            session.exec(new QueryArray("insert into mytest(id, name, amount, line) values (?, ?, ?, ?)"),
+                "record one", "name one", new BigDecimal("10.10"), 33);
+            // Find a record
+            Object[] record = session.find(new QueryArray("select id, name, line, amount from mytest where name = ?"), "name one");
+            // List records
+            List<Object[]> records = session.query(new QueryArray("select id, name, line, amount from mytest"));
+        }    
+    }
+
+    @Test
+    public void simpleStatementsTyped() throws SQLException {
+        
+        try (Session session = DataBase.newSession())  {
+            // Find a record specifying types
+            StatementFind<Object[], Object[]> selectTestTable = new QueryArray(
+                "select id, name, line, amount from mytest where name = ?")
+                .setParameters(Kind.STRING)
+                .setResults(Kind.STRING, Kind.STRING, Kind.INT, Kind.DOUBLE);       
+            Object[] result = session.find(selectTestTable, "name one");
+        }    
+    }
+
+    @Test
+    public void simpleStatementsPrimitives() throws SQLException {
+        
+        try (Session session = DataBase.newSession()) {
+            // Count records
+            StatementFind<Number, Number> countTestTable = new Query(
+                "select count(*) from mytest where amount > ?")
+                .setParameters(ParametersDouble.INSTANCE)
+                .setResults(ResultsInteger.INSTANCE);       
+            int countrows = session.find(countTestTable, 10.0).intValue();   
+        }    
+    }       
+        
     @BeforeClass
     public static void setUpClass() throws SQLException {   
-   
-        try (Session session = DataTestSuite.newSession()) {
+        try (Session session = DataBase.newSession()) {
         
+            session.exec(new QueryArray("drop table if exists mytest"));
+            
             session.exec(new QueryArray("create table mytest("
                     + "id varchar(32), "
                     + "code varchar(128), "
                     + "name varchar(1024), "
-                    + "valdate timestamp, "
-                    + "valdouble double precision, "
-                    + "valdecimal decimal(10,2), "
-                    + "valinteger integer, "
-                    + "valboolean smallint)"));    
-            StatementExec<Object[]> insertMyTest = new QueryArray("insert into mytest(id, code, name, valdate, valdouble, valdecimal, valinteger, valboolean) values (?, ?, ?, ?, ?, ?, ?, ?)")
+                    + "startdate timestamp, "
+                    + "weight double precision, "
+                    + "amount decimal(10,2), "
+                    + "line integer, "
+                    + "active smallint,"
+                    + "primary key (id))"));    
+            StatementExec<Object[]> insertMyTest = new QueryArray(
+                    "insert into mytest(id, code, name, startdate, weight, amount, line, active) values (?, ?, ?, ?, ?, ?, ?, ?)")
                     .setParameters(Kind.STRING, Kind.STRING, Kind.STRING, Kind.TIMESTAMP, Kind.DOUBLE, Kind.DECIMAL, Kind.INT, Kind.BOOLEAN);
             
-            session.exec(insertMyTest, "a", "code 1", "name a", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);
-            session.exec(insertMyTest, "b", "code x", "name b", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);
-            session.exec(insertMyTest, "c", "code x", "name c", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);
-            session.exec(insertMyTest, "d", "code x", "name d", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);
-            session.exec(insertMyTest, "e", "code x", "name e", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);            
+            session.exec(insertMyTest, "a", "code 1", "name one", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 10, true);
+            session.exec(insertMyTest, "b", "code x", "name two", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 20, true);
+            session.exec(insertMyTest, "c", "code x", "name three", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 30, true);
+            session.exec(insertMyTest, "d", "code x", "name four", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 40, true);
+            session.exec(insertMyTest, "e", "code x", "name five", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 50, true);            
         }
     }
     
@@ -124,7 +172,7 @@ public class QueriesTest {
     }
     
     @Before
-    public void setUp() {  
+    public void setUp() { 
     }
     
     @After
