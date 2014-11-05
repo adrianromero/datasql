@@ -36,7 +36,7 @@ public class SQLFilter extends SQL {
                     addand = true;
                 }
                 where.append(p);
-                where.append(" = ?");
+                where.append(" = :");
                 where.append(p);
             }            
         }       
