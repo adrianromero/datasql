@@ -46,7 +46,7 @@ public class Session implements AutoCloseable {
     /**
      * Database connection instance 
      */
-    protected final Connection c;
+    private final Connection c;
     
     /**
      *
