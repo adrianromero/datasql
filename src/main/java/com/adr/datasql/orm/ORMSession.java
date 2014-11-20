@@ -108,13 +108,13 @@ public class ORMSession extends Session {
     
     public <P> List<P> list(Class<? extends P> clazz, Map<String, Object> filter) throws SQLException {
         SourceList<P, Map<String, Object>> sourcelist = getSourceList(clazz);
-        sourcelist.setCriteria(getMetaDatas(sourcelist.getCriteria(), filter.keySet()));
+        sourcelist.setCriteria(getMetaDatas(sourcelist.defCriteria(), filter.keySet()));
         return list(sourcelist, filter);
     }  
     
     public <P> List<P> list(Class<? extends P> clazz, Map<String, Object> filter, StatementOrder[] order) throws SQLException {
         SourceList<P, Map<String, Object>> sourcelist = getSourceList(clazz);
-        sourcelist.setCriteria(getMetaDatas(sourcelist.getCriteria(), filter.keySet()));
+        sourcelist.setCriteria(getMetaDatas(sourcelist.defCriteria(), filter.keySet()));
         sourcelist.setOrder(order);
         return list(sourcelist, filter);
     }  

@@ -28,12 +28,15 @@ import com.adr.datasql.StatementQuery;
  */
 public interface SourceList<R, F> {
     
-    public MetaData[] getProjection();
-    public void setProjection(MetaData[] projection);
-    public MetaData[] getCriteria();
-    public void setCriteria(MetaData[] criteria);
-    public StatementOrder[] getOrder();
-    public void setOrder(StatementOrder[] order);
+//    public String[] getKeyMetaData(); // By default ["id"]
+//    public String getNameTemplate(); // By default {{name}}
+//    
+    public MetaData[] defProjection();
+    public MetaData[] defCriteria();
+    public StatementOrder[] defOrder();
     
+    public void setProjection(MetaData[] projection);
+    public void setCriteria(MetaData[] criteria);
+    public void setOrder(StatementOrder[] order);   
     public StatementQuery<R, F> getStatementList(); 
 }

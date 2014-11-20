@@ -82,47 +82,46 @@ public class Entity implements SourceTableFactory, SourceListFactory {
     
     private static class EntitySourceList<R, F> implements SourceList<R, F> {
         
+        private final Entity entity;
         private final RecordResults<R> record;
         private final RecordParameters<F> filter;
-        private final String entityname;
         private MetaData[] projection;
         private MetaData[] criteria;
         private StatementOrder[] order;
         
         public EntitySourceList(Entity entity, RecordResults<R> record, RecordParameters<F> filter) {
-            this.entityname = entity.getName();
+            this.entity = entity;
             this.record = record;
             this.filter = filter;
-            this.projection = entity.getProjection();
-            this.criteria = entity.getCriteria();
+            this.projection = entity.defProjection();
+            this.criteria = entity.defCriteria();
             this.order = null;
         }
         
         @Override
-        public final MetaData[] getProjection() {
-            return projection;
+        public final MetaData[] defProjection() {
+            return entity.defProjection();
         }
-
+        
+        @Override 
+        public final MetaData[] defCriteria() {
+            return entity.defCriteria();
+        }
+        @Override
+        public StatementOrder[] defOrder() {
+            return null;
+        }
+        
         @Override
         public void setProjection(MetaData[] projection) {
             this.projection = projection;
         }
         
-        @Override 
-        public final MetaData[] getCriteria() {
-            return criteria;
-        }
-
         @Override
         public void setCriteria(MetaData[] criteria) {
             this.criteria = criteria;
         }
         
-        @Override
-        public StatementOrder[] getOrder() {
-            return order;
-        }
-
         @Override
         public void setOrder(StatementOrder[] order) {
             this.order = order;
@@ -130,57 +129,53 @@ public class Entity implements SourceTableFactory, SourceListFactory {
         
         @Override
         public StatementQuery<R, F> getStatementList() {
-            return Entity.getStatementList(record, filter, entityname, projection, criteria, order);
+            return Entity.getStatementList(record, filter, entity.getName(), projection, criteria, order);
         }  
     }
     
     private static class EntitySourceTable<R> implements SourceTable<R> {
         
+        private final Entity entity;
         private final Record<R> record;
-        private final String entityname;
-        private final MetaData[] metadatas;
-        private final MetaData[] keys;
         
         public EntitySourceTable(Entity entity, Record<R> record) {
+            this.entity = entity;            
             this.record = record;
-            this.entityname = entity.getName();
-            this.metadatas = entity.getProjection();
-            this.keys = entity.getProjectionKeys();
         }
         
         @Override
-        public final MetaData[] getMetaDatas() {
-            return metadatas;
+        public final MetaData[] defMetaDatas() {
+            return entity.defProjection();
         }
 
         @Override
         public StatementFind<R, Object[]> getStatementGet() {
-            return Entity.getStatementList(record, new RecordArray(), entityname, metadatas, keys, null);           
+            return Entity.getStatementList(record, new RecordArray(), entity.getName(), entity.defProjection(), entity.defProjectionKeys(), null);           
         }
 
         @Override
         public StatementExec<R> getStatementDelete() {
-            return Entity.getStatementDelete(record, entityname, metadatas, keys);
+            return Entity.getStatementDelete(record, entity.getName(), entity.defProjection(), entity.defProjectionKeys());
         }
 
         @Override
         public StatementExec<R> getStatementUpdate() {
-            return Entity.getStatementUpdate(record, entityname, metadatas, keys);
+            return Entity.getStatementUpdate(record, entity.getName(), entity.defProjection(), entity.defProjectionKeys());
         }
 
         @Override
         public StatementExec<R> getStatementInsert() {
-            return Entity.getStatementInsert(record, entityname, metadatas, keys);
+            return Entity.getStatementInsert(record, entity.getName(), entity.defProjection(), entity.defProjectionKeys());
         }
 
         @Override
         public R createNew() {
-            return Entity.createNew(record, entityname, metadatas, keys);
+            return Entity.createNew(record, entity.getName(), entity.defProjection(), entity.defProjectionKeys());
         }
     }
     
     private MetaData[] projection = null;
-    public MetaData[] getProjection() {
+    public MetaData[] defProjection() {
         if (projection == null) {
             projection = fields.toArray(new MetaData[fields.size()]);
         }
@@ -188,7 +183,7 @@ public class Entity implements SourceTableFactory, SourceListFactory {
     }
     
     private MetaData[] projectionkeys = null;
-    public MetaData[] getProjectionKeys() {
+    public MetaData[] defProjectionKeys() {
         if (projectionkeys == null) {            
             List<Field> l = fields.stream().filter(f -> f.isKey()).collect(Collectors.toList());    
             projectionkeys = l.toArray(new MetaData[l.size()]);
@@ -197,7 +192,7 @@ public class Entity implements SourceTableFactory, SourceListFactory {
     }
     
     private MetaData[] criteria = null;
-    public MetaData[] getCriteria() {
+    public MetaData[] defCriteria() {
         if (criteria == null) {
             ArrayList<MetaData> keys = new ArrayList<MetaData>();
             for (Field f: fields) {

@@ -67,27 +67,27 @@ public class EntityList implements SourceListFactory {
         return new EntityListSourceList(this, record, filter);
     }
     
-    private class EntityListSourceList<R, F> implements SourceList<R, F> {
+    private static class EntityListSourceList<R, F> implements SourceList<R, F> {
         
+        private final EntityList entitylist;
         private final RecordResults<R> record;
         private final RecordParameters<F> filter;
-        private final String sentence;
         private MetaData[] projection;
         private MetaData[] criteria;
         private StatementOrder[] order;
         
         public EntityListSourceList(EntityList entitylist, RecordResults<R> record, RecordParameters<F> filter) {
-            this.sentence = entitylist.getSentence();
+            this.entitylist = entitylist;
             this.record = record;
             this.filter = filter;
-            this.projection = entitylist.getProjection();
+            this.projection = entitylist.defProjection();
             this.criteria = null;
             this.order = null;
         }
         
         @Override
-        public final MetaData[] getProjection() {
-            return projection;
+        public final MetaData[] defProjection() {
+            return entitylist.defProjection();
         }
 
         @Override
@@ -96,8 +96,8 @@ public class EntityList implements SourceListFactory {
         }
         
         @Override 
-        public final MetaData[] getCriteria() {
-            return criteria;
+        public final MetaData[] defCriteria() {
+            return null;
         }
 
         @Override
@@ -106,8 +106,8 @@ public class EntityList implements SourceListFactory {
         }
         
         @Override
-        public StatementOrder[] getOrder() {
-            return order;
+        public StatementOrder[] defOrder() {
+            return null;
         }
 
         @Override
@@ -117,12 +117,12 @@ public class EntityList implements SourceListFactory {
         
         @Override
         public StatementQuery<R, F> getStatementList() {
-            return EntityList.getStatementList(record, filter, sentence, projection, criteria, order);
+            return EntityList.getStatementList(record, filter, entitylist.getSentence(), projection, criteria, order);
         }  
     }
     
     private MetaData[] projection = null;
-    public MetaData[] getProjection() {
+    public MetaData[] defProjection() {
         if (projection == null) {
             projection = metadatas.toArray(new MetaData[metadatas.size()]);
         }

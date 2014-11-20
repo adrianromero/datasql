@@ -29,7 +29,7 @@ import com.adr.datasql.data.MetaData;
  */
 public interface SourceTable<R> {
     
-    public MetaData[] getMetaDatas();
+    public MetaData[] defMetaDatas();
     
     public StatementFind<R, Object[]> getStatementGet();
     
