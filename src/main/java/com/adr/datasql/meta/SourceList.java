@@ -28,9 +28,6 @@ import com.adr.datasql.StatementQuery;
  */
 public interface SourceList<R, F> {
     
-//    public String[] getKeyMetaData(); // By default ["id"]
-//    public String getNameTemplate(); // By default {{name}}
-//    
     public MetaData[] defProjection();
     public MetaData[] defCriteria();
     public StatementOrder[] defOrder();

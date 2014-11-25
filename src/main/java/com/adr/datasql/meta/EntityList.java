@@ -35,14 +35,14 @@ import java.util.Objects;
 public class EntityList implements SourceListFactory {
     
     private String sentence = null;
-    private final List<MetaData> metadatas = new ArrayList<MetaData>();
+    private final List<Field> fields = new ArrayList<Field>();
     
     public EntityList() {        
     }
     
-    public EntityList(String sentence, MetaData... metadatas) {
+    public EntityList(String sentence, Field... fields) {
         this.sentence = sentence;
-        this.metadatas.addAll(Arrays.asList(metadatas));
+        this.fields.addAll(Arrays.asList(fields));
     }
 
     public String getSentence() {
@@ -53,13 +53,13 @@ public class EntityList implements SourceListFactory {
         this.sentence = sentence;
     }
  
-    public List<MetaData> getMetadatas() {
-        return metadatas;
+    public List<Field> getFields() {
+        return fields;
     }  
     
     @Override
     public String toString() {
-        return "EntityList {sentence: " + Objects.toString(sentence) + ", metadatas: " + Objects.toString(metadatas) + "}";
+        return "EntityList {sentence: " + Objects.toString(sentence) + ", fields: " + Objects.toString(fields) + "}";
     }   
     
     @Override
@@ -124,7 +124,7 @@ public class EntityList implements SourceListFactory {
     private MetaData[] projection = null;
     public MetaData[] defProjection() {
         if (projection == null) {
-            projection = metadatas.toArray(new MetaData[metadatas.size()]);
+            projection = fields.toArray(new MetaData[fields.size()]);
         }
         return projection;
     }

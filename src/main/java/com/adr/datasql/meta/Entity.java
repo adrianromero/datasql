@@ -144,7 +144,7 @@ public class Entity implements SourceTableFactory, SourceListFactory {
         }
         
         @Override
-        public final MetaData[] defMetaDatas() {
+        public final MetaData[] defProjection() {
             return entity.defProjection();
         }
 
