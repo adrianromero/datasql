@@ -27,7 +27,6 @@ import com.adr.datasql.Kind;
 public class Field extends MetaData {
     
     private boolean key = false;
-    private boolean filter = false;
     
     public Field() {    
     }
@@ -40,12 +39,6 @@ public class Field extends MetaData {
         super(name, kind);
         this.key = key;
     }
-    
-    public Field(String name, Kind kind, boolean key, boolean filter) {
-        super(name, kind);
-        this.key = key;
-        this.filter = filter;
-    }
 
     public boolean isKey() {
         return key;
@@ -54,15 +47,7 @@ public class Field extends MetaData {
     public void setKey(boolean key) {
         this.key = key;
     }
-    
-    public boolean isFilter() {
-        return filter;
-    }
-    
-    public void setFilter(boolean filter) {
-        this.filter = filter;
-    }
-    
+
     @Override
     public String toString() {
         return "Field {name: " + getName() + ", kind: " + getKind().toString() + "}";

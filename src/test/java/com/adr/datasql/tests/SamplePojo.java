@@ -40,9 +40,9 @@ public class SamplePojo {
    
     public final static Entity SOURCEFACTORY = new Entity(
             "samplepojo",
-            new Field("id", Kind.STRING, true, true),
-            new Field("code", Kind.STRING, false, true),
-            new Field("name", Kind.STRING, false, true),
+            new Field("id", Kind.STRING, true),
+            new Field("code", Kind.STRING, false),
+            new Field("name", Kind.STRING, false),
             new Field("startdate", Kind.TIMESTAMP),
             new Field("weight", Kind.DOUBLE),
             new Field("amount", Kind.DECIMAL),

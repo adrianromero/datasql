@@ -94,20 +94,10 @@ public class EntityList implements SourceListFactory {
         public void setProjection(MetaData[] projection) {
             this.projection = projection;
         }
-        
-        @Override 
-        public final MetaData[] defCriteria() {
-            return null;
-        }
 
         @Override
         public void setCriteria(MetaData[] criteria) {
             this.criteria = criteria;
-        }
-        
-        @Override
-        public StatementOrder[] defOrder() {
-            return null;
         }
 
         @Override

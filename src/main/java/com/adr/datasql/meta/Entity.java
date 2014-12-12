@@ -94,7 +94,7 @@ public class Entity implements SourceTableFactory, SourceListFactory {
             this.record = record;
             this.filter = filter;
             this.projection = entity.defProjection();
-            this.criteria = entity.defCriteria();
+            this.criteria = null;
             this.order = null;
         }
         
@@ -102,16 +102,7 @@ public class Entity implements SourceTableFactory, SourceListFactory {
         public final MetaData[] defProjection() {
             return entity.defProjection();
         }
-        
-        @Override 
-        public final MetaData[] defCriteria() {
-            return entity.defCriteria();
-        }
-        @Override
-        public StatementOrder[] defOrder() {
-            return null;
-        }
-        
+
         @Override
         public void setProjection(MetaData[] projection) {
             this.projection = projection;
@@ -191,23 +182,6 @@ public class Entity implements SourceTableFactory, SourceListFactory {
         return projectionkeys;
     }
     
-    private MetaData[] criteria = null;
-    public MetaData[] defCriteria() {
-        if (criteria == null) {
-            ArrayList<MetaData> keys = new ArrayList<MetaData>();
-            for (Field f: fields) {
-                if (f.isFilter()) {
-                    keys.add(f);
-                    if (Kind.STRING.equals(f.getKind())) {
-                        keys.add(new MetaData(f.getName() + "_LIKE", f.getKind()));
-                    }
-                }
-            }        
-            criteria = keys.toArray(new MetaData[keys.size()]);
-        }
-        return criteria;
-    }    
- 
     public static <P> StatementExec<P> getStatementDelete(RecordParameters<P> parameters, String name, MetaData[] projection, MetaData[] keys) {
         
         StringBuilder sentence = new StringBuilder();

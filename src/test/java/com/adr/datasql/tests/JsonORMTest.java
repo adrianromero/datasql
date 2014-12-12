@@ -52,7 +52,7 @@ public class JsonORMTest {
     public final static Entity ENTITY = new Entity(
             "samplejson",
             new Field("id", Kind.STRING, true),
-            new Field("code", Kind.STRING, false, true),
+            new Field("code", Kind.STRING, false),
             new Field("name", Kind.STRING),
             new Field("startdate", Kind.TIMESTAMP),
             new Field("weight", Kind.DOUBLE),
