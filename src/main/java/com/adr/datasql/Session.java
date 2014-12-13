@@ -64,15 +64,7 @@ public class Session implements AutoCloseable {
     public Session(DataSource ds) throws SQLException {
         this.c = ds.getConnection();
     }
-    
-    /**
-     *
-     * @return The database connection
-     */
-    public final Connection getConnection() {
-        return c;
-    }
-    
+
     /**
      *
      * @param statement The 
