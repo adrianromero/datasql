@@ -17,9 +17,14 @@
 
 package com.adr.datasql;
 
+import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
+import com.sun.org.apache.xml.internal.security.utils.Base64;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -44,6 +49,18 @@ public abstract class Kind<T> {
     public abstract T get(KindResults read, int index) throws SQLException;
     public abstract void set(KindParameters write, String name, T value) throws SQLException;
     public abstract void set(KindParameters write, int index, T value) throws SQLException;
+    public abstract String _formatISO(T value) throws KindException;
+    public final String formatISO(T value) throws KindException {
+        return value == null ? "" : _formatISO(value);
+    }
+    public abstract T _parseISO(String value) throws KindException;
+    public final T parseISO(String value) throws KindException {
+        return value == null || value.equals("") ? null : _parseISO(value);
+    }    
+    
+    private static final DateFormat dateISO = new SimpleDateFormat("yyyy-MM-dd");
+    private static final DateFormat timeISO = new SimpleDateFormat("HH:mm:ss.SSS");
+    private static final DateFormat datetimeISO = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");     
     
     public static final Kind<?> valueOf(String kind) {
         if ("INT".equals(kind)) {
@@ -135,6 +152,18 @@ public abstract class Kind<T> {
             write.setInt(index, value == null ? null : value.intValue());
         }
         @Override
+        public String _formatISO(Number value) throws KindException {
+            return Long.toString(value.longValue());
+        }
+        @Override
+        public Number _parseISO(String value) throws KindException {          
+            try {
+                return Integer.parseInt(value);
+            } catch (NumberFormatException ex) {
+                throw new KindException(ex);
+            }
+        }
+        @Override
         public String toString() {
             return "Kind.INT";
         }       
@@ -157,6 +186,14 @@ public abstract class Kind<T> {
         public void set(KindParameters write, int index, String value) throws SQLException {
             write.setString(index, value);
         }
+        @Override
+        public String _formatISO(String value) throws KindException {
+            return value;
+        }
+        @Override
+        public String _parseISO(String value) throws KindException {
+            return value;
+        }         
         @Override
         public String toString() {
             return "Kind.STRING";
@@ -181,6 +218,18 @@ public abstract class Kind<T> {
             write.setDouble(index, value == null ? null : value.doubleValue());
         }
         @Override
+        public String _formatISO(Number value) throws KindException {
+            return Double.toString(value.doubleValue());
+        }
+        @Override
+        public Number _parseISO(String value) throws KindException {
+            try {
+                return Double.parseDouble(value);
+            } catch (NumberFormatException ex) {
+                throw new KindException(ex);
+            }
+        }          
+        @Override
         public String toString() {
             return "Kind.DOUBLE";
         }          
@@ -203,6 +252,18 @@ public abstract class Kind<T> {
         public void set(KindParameters write, int index, BigDecimal value) throws SQLException {
             write.setBigDecimal(index, value);
         }
+        @Override
+        public String _formatISO(BigDecimal value) throws KindException {
+            return ((BigDecimal) value).toString();
+        }
+        @Override
+        public BigDecimal _parseISO(String value) throws KindException {
+            try {
+                return new BigDecimal(value);
+            } catch (NumberFormatException ex) {
+                throw new KindException(ex);
+            }
+        }         
         @Override
         public String toString() {
             return "Kind.DECIMAL";
@@ -227,6 +288,14 @@ public abstract class Kind<T> {
             write.setBoolean(index, value);
         }
         @Override
+        public String _formatISO(Boolean value) throws KindException {
+            return value.toString();
+        }
+        @Override
+        public Boolean _parseISO(String value) throws KindException {
+            return Boolean.valueOf(value);
+        }             
+        @Override
         public String toString() {
             return "Kind.BOOLEAN";
         }           
@@ -249,6 +318,18 @@ public abstract class Kind<T> {
         public void set(KindParameters write, int index, Date value) throws SQLException {
             write.setTimestamp(index, value);
         }
+        @Override
+        public String _formatISO(Date value) throws KindException {          
+            return datetimeISO.format(value);
+        }
+        @Override
+        public Date _parseISO(String value) throws KindException {        
+            try {
+                return datetimeISO.parse(value);
+            } catch (ParseException e) {
+                throw new KindException(e);                
+            }
+        }          
         @Override
         public String toString() {
             return "Kind.TIMESTAMP";
@@ -273,6 +354,18 @@ public abstract class Kind<T> {
             write.setDate(index, value);
         }
         @Override
+        public String _formatISO(Date value) throws KindException {          
+            return dateISO.format(value);
+        }
+        @Override
+        public Date _parseISO(String value) throws KindException {        
+            try {
+                return dateISO.parse(value);
+            } catch (ParseException e) {
+                throw new KindException(e);                
+            }
+        }          
+        @Override
         public String toString() {
             return "Kind.DATE";
         }          
@@ -295,6 +388,18 @@ public abstract class Kind<T> {
         public void set(KindParameters write, int index, Date value) throws SQLException {
             write.setTime(index, value);
         }
+        @Override
+        public String _formatISO(Date value) throws KindException {          
+            return timeISO.format(value);
+        }
+        @Override
+        public Date _parseISO(String value) throws KindException {        
+            try {
+                return timeISO.parse(value);
+            } catch (ParseException e) {
+                throw new KindException(e);                
+            }
+        }          
         @Override
         public String toString() {
             return "Kind.TIME";
@@ -319,6 +424,18 @@ public abstract class Kind<T> {
             write.setBytes(index, value);
         }
         @Override
+        public String _formatISO(byte[] value) throws KindException {          
+            return Base64.encode(value);
+        }
+        @Override
+        public byte[] _parseISO(String value) throws KindException {           
+            try {
+                return Base64.decode(value);
+            } catch (Base64DecodingException e) {
+                throw new KindException(e);          
+            }
+        }         
+        @Override
         public String toString() {
             return "Kind.BYTEA";
         }          
@@ -341,6 +458,14 @@ public abstract class Kind<T> {
         public void set(KindParameters write, int index, Object value) throws SQLException {
             write.setObject(index, value);
         }
+        @Override
+        public String _formatISO(Object value) throws KindException {          
+            throw new UnsupportedOperationException("Cannot parse using Kind.OBJECT");
+        }
+        @Override
+        public Object _parseISO(String value) throws KindException {           
+            throw new UnsupportedOperationException("Cannot parse using Kind.OBJECT");
+        }         
         @Override
         public String toString() {
             return "Kind.OBJECT";
