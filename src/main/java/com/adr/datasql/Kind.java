@@ -17,14 +17,13 @@
 
 package com.adr.datasql;
 
-import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
-import com.sun.org.apache.xml.internal.security.utils.Base64;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Date;
 
 /**
@@ -425,15 +424,16 @@ public abstract class Kind<T> {
         }
         @Override
         public String _formatISO(byte[] value) throws KindException {          
-            return Base64.encode(value);
+            return Base64.getEncoder().encodeToString(value);
         }
         @Override
         public byte[] _parseISO(String value) throws KindException {           
             try {
-                return Base64.decode(value);
-            } catch (Base64DecodingException e) {
-                throw new KindException(e);          
+                return Base64.getDecoder().decode(value);
+            } catch(IllegalArgumentException e) {
+                throw new KindException(e);
             }
+
         }         
         @Override
         public String toString() {
