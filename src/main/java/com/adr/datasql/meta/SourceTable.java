@@ -30,6 +30,7 @@ import com.adr.datasql.data.MetaData;
 public interface SourceTable<R> {
     
     public MetaData[] defProjection();
+    public MetaData[] defProjectionKeys();
     
     public StatementFind<R, Object[]> getStatementGet();
     

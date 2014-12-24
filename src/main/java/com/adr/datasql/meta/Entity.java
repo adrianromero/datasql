@@ -18,7 +18,6 @@
 package com.adr.datasql.meta;
 
 import com.adr.datasql.data.MetaData;
-import com.adr.datasql.Kind;
 import com.adr.datasql.Query;
 import com.adr.datasql.Results;
 import com.adr.datasql.SQL;
@@ -102,7 +101,12 @@ public class Entity implements SourceTableFactory, SourceListFactory {
         public final MetaData[] defProjection() {
             return entity.defProjection();
         }
-
+        
+        @Override
+        public final MetaData[] defProjectionKeys() {
+            return entity.defProjectionKeys();
+        }
+        
         @Override
         public void setProjection(MetaData[] projection) {
             this.projection = projection;
@@ -138,7 +142,12 @@ public class Entity implements SourceTableFactory, SourceListFactory {
         public final MetaData[] defProjection() {
             return entity.defProjection();
         }
-
+        
+        @Override
+        public final MetaData[] defProjectionKeys() {
+            return entity.defProjectionKeys();
+        }
+        
         @Override
         public StatementFind<R, Object[]> getStatementGet() {
             return Entity.getStatementList(record, new RecordArray(), entity.getName(), entity.defProjection(), entity.defProjectionKeys(), null);           

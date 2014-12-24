@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -89,7 +90,12 @@ public class EntityList implements SourceListFactory {
         public final MetaData[] defProjection() {
             return entitylist.defProjection();
         }
-
+        
+        @Override
+        public final MetaData[] defProjectionKeys() {
+            return entitylist.defProjectionKeys();
+        }
+        
         @Override
         public void setProjection(MetaData[] projection) {
             this.projection = projection;
@@ -118,6 +124,15 @@ public class EntityList implements SourceListFactory {
         }
         return projection;
     }
+    
+    private MetaData[] projectionkeys = null;
+    public MetaData[] defProjectionKeys() {
+        if (projectionkeys == null) {            
+            List<Field> l = fields.stream().filter(f -> f.isKey()).collect(Collectors.toList());    
+            projectionkeys = l.toArray(new MetaData[l.size()]);
+        }
+        return projectionkeys;
+    }    
     
     private static<R, P> StatementQuery<R, P> getStatementList(RecordResults<R> results, RecordParameters<P> parameters, String sentence, MetaData[] projection, MetaData[] criteria, StatementOrder[] order) {
         

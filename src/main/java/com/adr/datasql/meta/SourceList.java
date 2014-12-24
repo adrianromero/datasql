@@ -29,6 +29,7 @@ import com.adr.datasql.StatementQuery;
 public interface SourceList<R, F> {
     
     public MetaData[] defProjection();
+    public MetaData[] defProjectionKeys();
     
     public void setProjection(MetaData[] projection);
     public void setCriteria(MetaData[] criteria);
