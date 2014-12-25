@@ -17,6 +17,7 @@
 
 package com.adr.datasql.meta;
 
+import com.adr.datasql.data.MetaData;
 import com.adr.datasql.orm.RecordParameters;
 import com.adr.datasql.orm.RecordResults;
 
@@ -25,5 +26,8 @@ import com.adr.datasql.orm.RecordResults;
  * @author adrian
  */
 public interface SourceListFactory {
-     public <R, F> SourceList<R, F> createSourceList(RecordResults<R> record, RecordParameters<F> filter);
+    
+    public MetaData[] defProjection();
+    public MetaData[] defProjectionKeys();    
+    public <R, F> SourceList<R, F> createSourceList(RecordResults<R> record, RecordParameters<F> filter);
 }

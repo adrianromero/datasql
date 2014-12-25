@@ -61,10 +61,9 @@ public class ORMSession extends Session {
         }
     }
     
-    private <P> SourceList<P, Map<String, Object>> getSourceList(Class<? extends P> clazz) throws SQLException {
+    private SourceListFactory getSourceListFactory(Class<?> clazz) throws SQLException {
         try {
-            return ((SourceListFactory) clazz.getField("SOURCEFACTORY").get(null))
-                    .createSourceList(new RecordPojo(clazz), new RecordMap());
+            return ((SourceListFactory) clazz.getField("SOURCEFACTORY").get(null));
         } catch (NoSuchFieldException 
                 |IllegalArgumentException
                 |IllegalAccessException
@@ -73,7 +72,7 @@ public class ORMSession extends Session {
         }
     }
     
-    public <P> int insert(P value) throws SQLException {      
+    public <P> int insert(P value) throws SQLException {  
         return insert(getSourceTable((Class<? extends P>) value.getClass()), value);
     }
     
@@ -89,32 +88,36 @@ public class ORMSession extends Session {
         return update(getSourceTable((Class<? extends P>) value.getClass()), value); 
     }
     
-    public <P> P get(Class<? extends P> clazz, Object... key) throws SQLException {       
+    public <P> P get(Class<? extends P> clazz, Object... key) throws SQLException {      
         return get(getSourceTable(clazz), key);
     }
     
     public <P> List<P> list(Class<? extends P> clazz) throws SQLException {
-        SourceList<P, Map<String, Object>> sourcelist = getSourceList(clazz);
+        SourceListFactory sourcelistfactory = getSourceListFactory(clazz);
+        SourceList<P, Map<String, Object>> sourcelist = sourcelistfactory.createSourceList(new RecordPojo(clazz), new RecordMap());
         sourcelist.setCriteria(null);
         return list(sourcelist);
     }  
     
     public <P> List<P> list(Class<? extends P> clazz, StatementOrder[] order) throws SQLException {
-        SourceList<P, Map<String, Object>> sourcelist = getSourceList(clazz);
+        SourceListFactory sourcelistfactory = getSourceListFactory(clazz);
+        SourceList<P, Map<String, Object>> sourcelist = sourcelistfactory.createSourceList(new RecordPojo(clazz), new RecordMap());
         sourcelist.setCriteria(null);
         sourcelist.setOrder(order);
         return list(sourcelist);
     }  
     
     public <P> List<P> list(Class<? extends P> clazz, Map<String, Object> filter) throws SQLException {
-        SourceList<P, Map<String, Object>> sourcelist = getSourceList(clazz);
-        sourcelist.setCriteria(getMetaDatas(sourcelist.defProjection(), filter.keySet()));
+        SourceListFactory sourcelistfactory = getSourceListFactory(clazz);
+        SourceList<P, Map<String, Object>> sourcelist = sourcelistfactory.createSourceList(new RecordPojo(clazz), new RecordMap());
+        sourcelist.setCriteria(getMetaDatas(sourcelistfactory.defProjection(), filter.keySet()));
         return list(sourcelist, filter);
     }  
     
     public <P> List<P> list(Class<? extends P> clazz, Map<String, Object> filter, StatementOrder[] order) throws SQLException {
-        SourceList<P, Map<String, Object>> sourcelist = getSourceList(clazz);
-        sourcelist.setCriteria(getMetaDatas(sourcelist.defProjection(), filter.keySet()));
+        SourceListFactory sourcelistfactory = getSourceListFactory(clazz);
+        SourceList<P, Map<String, Object>> sourcelist = sourcelistfactory.createSourceList(new RecordPojo(clazz), new RecordMap());
+        sourcelist.setCriteria(getMetaDatas(sourcelistfactory.defProjection(), filter.keySet()));
         sourcelist.setOrder(order);
         return list(sourcelist, filter);
     }  

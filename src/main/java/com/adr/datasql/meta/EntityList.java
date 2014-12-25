@@ -63,6 +63,25 @@ public class EntityList implements SourceListFactory {
         return "EntityList {sentence: " + Objects.toString(sentence) + ", fields: " + Objects.toString(fields) + "}";
     }   
     
+    private MetaData[] projection = null;
+    @Override
+    public MetaData[] defProjection() {
+        if (projection == null) {
+            projection = fields.toArray(new MetaData[fields.size()]);
+        }
+        return projection;
+    }
+    
+    private MetaData[] projectionkeys = null;
+    @Override
+    public MetaData[] defProjectionKeys() {
+        if (projectionkeys == null) {            
+            List<Field> l = fields.stream().filter(f -> f.isKey()).collect(Collectors.toList());    
+            projectionkeys = l.toArray(new MetaData[l.size()]);
+        }
+        return projectionkeys;
+    } 
+    
     @Override
     public <R, F> SourceList<R, F> createSourceList(RecordResults<R> record, RecordParameters<F> filter) {
         return new EntityListSourceList(this, record, filter);
@@ -87,16 +106,6 @@ public class EntityList implements SourceListFactory {
         }
         
         @Override
-        public final MetaData[] defProjection() {
-            return entitylist.defProjection();
-        }
-        
-        @Override
-        public final MetaData[] defProjectionKeys() {
-            return entitylist.defProjectionKeys();
-        }
-        
-        @Override
         public void setProjection(MetaData[] projection) {
             this.projection = projection;
         }
@@ -115,24 +124,7 @@ public class EntityList implements SourceListFactory {
         public StatementQuery<R, F> getStatementList() {
             return EntityList.getStatementList(record, filter, entitylist.getSentence(), projection, criteria, order);
         }  
-    }
-    
-    private MetaData[] projection = null;
-    public MetaData[] defProjection() {
-        if (projection == null) {
-            projection = fields.toArray(new MetaData[fields.size()]);
-        }
-        return projection;
-    }
-    
-    private MetaData[] projectionkeys = null;
-    public MetaData[] defProjectionKeys() {
-        if (projectionkeys == null) {            
-            List<Field> l = fields.stream().filter(f -> f.isKey()).collect(Collectors.toList());    
-            projectionkeys = l.toArray(new MetaData[l.size()]);
-        }
-        return projectionkeys;
-    }    
+    }  
     
     private static<R, P> StatementQuery<R, P> getStatementList(RecordResults<R> results, RecordParameters<P> parameters, String sentence, MetaData[] projection, MetaData[] criteria, StatementOrder[] order) {
         

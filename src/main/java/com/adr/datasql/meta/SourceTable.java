@@ -20,7 +20,6 @@ package com.adr.datasql.meta;
 
 import com.adr.datasql.StatementExec;
 import com.adr.datasql.StatementFind;
-import com.adr.datasql.data.MetaData;
 
 /**
  *
@@ -28,12 +27,7 @@ import com.adr.datasql.data.MetaData;
  * @param <R>
  */
 public interface SourceTable<R> {
-    
-    public MetaData[] defProjection();
-    public MetaData[] defProjectionKeys();
-    
-    public StatementFind<R, Object[]> getStatementGet();
-    
+    public StatementFind<R, Object[]> getStatementGet();    
     public StatementExec<R> getStatementDelete();
     public StatementExec<R> getStatementUpdate();
     public StatementExec<R> getStatementInsert();    

@@ -69,6 +69,25 @@ public class Entity implements SourceTableFactory, SourceListFactory {
         return "Entity {name: " + Objects.toString(name) + ", fields: " + Objects.toString(fields) + "}";
     }
     
+    private MetaData[] projection = null;
+    @Override
+    public MetaData[] defProjection() {
+        if (projection == null) {
+            projection = fields.toArray(new MetaData[fields.size()]);
+        }
+        return projection;
+    }
+    
+    private MetaData[] projectionkeys = null;
+    @Override
+    public MetaData[] defProjectionKeys() {
+        if (projectionkeys == null) {            
+            List<Field> l = fields.stream().filter(f -> f.isKey()).collect(Collectors.toList());    
+            projectionkeys = l.toArray(new MetaData[l.size()]);
+        }
+        return projectionkeys;
+    }
+    
     @Override
     public <R, F> SourceList<R, F> createSourceList(RecordResults<R> record, RecordParameters<F> filter) {
         return new EntitySourceList(this, record, filter);
@@ -95,16 +114,6 @@ public class Entity implements SourceTableFactory, SourceListFactory {
             this.projection = entity.defProjection();
             this.criteria = null;
             this.order = null;
-        }
-        
-        @Override
-        public final MetaData[] defProjection() {
-            return entity.defProjection();
-        }
-        
-        @Override
-        public final MetaData[] defProjectionKeys() {
-            return entity.defProjectionKeys();
         }
         
         @Override
@@ -139,16 +148,6 @@ public class Entity implements SourceTableFactory, SourceListFactory {
         }
         
         @Override
-        public final MetaData[] defProjection() {
-            return entity.defProjection();
-        }
-        
-        @Override
-        public final MetaData[] defProjectionKeys() {
-            return entity.defProjectionKeys();
-        }
-        
-        @Override
         public StatementFind<R, Object[]> getStatementGet() {
             return Entity.getStatementList(record, new RecordArray(), entity.getName(), entity.defProjection(), entity.defProjectionKeys(), null);           
         }
@@ -172,23 +171,6 @@ public class Entity implements SourceTableFactory, SourceListFactory {
         public R createNew() {
             return Entity.createNew(record, entity.getName(), entity.defProjection(), entity.defProjectionKeys());
         }
-    }
-    
-    private MetaData[] projection = null;
-    public MetaData[] defProjection() {
-        if (projection == null) {
-            projection = fields.toArray(new MetaData[fields.size()]);
-        }
-        return projection;
-    }
-    
-    private MetaData[] projectionkeys = null;
-    public MetaData[] defProjectionKeys() {
-        if (projectionkeys == null) {            
-            List<Field> l = fields.stream().filter(f -> f.isKey()).collect(Collectors.toList());    
-            projectionkeys = l.toArray(new MetaData[l.size()]);
-        }
-        return projectionkeys;
     }
     
     public static <P> StatementExec<P> getStatementDelete(RecordParameters<P> parameters, String name, MetaData[] projection, MetaData[] keys) {

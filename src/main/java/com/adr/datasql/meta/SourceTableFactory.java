@@ -17,6 +17,7 @@
 
 package com.adr.datasql.meta;
 
+import com.adr.datasql.data.MetaData;
 import com.adr.datasql.orm.Record;
 
 /**
@@ -24,5 +25,7 @@ import com.adr.datasql.orm.Record;
  * @author adrian
  */
 public interface SourceTableFactory {
-     public <R> SourceTable<R> createSourceTable(Record<R> record);    
+    public MetaData[] defProjection();
+    public MetaData[] defProjectionKeys();    
+    public <R> SourceTable<R> createSourceTable(Record<R> record);    
 }
