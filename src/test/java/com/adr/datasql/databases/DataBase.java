@@ -25,6 +25,6 @@ public class DataBase {
     }
     
     public static ORMSession newSession() throws SQLException {
-        return new ORMSession(cpds.getConnection()); 
+        return new ORMSession(cpds); 
     }    
 }

@@ -48,14 +48,7 @@ public class Session implements AutoCloseable {
      */
     private final Connection c;
     
-    /**
-     *
-     * @param c
-     */
-    public Session(Connection c) {
-        this.c = c;
-    }
-    
+   
     /**
      *
      * @param ds

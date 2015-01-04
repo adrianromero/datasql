@@ -24,7 +24,6 @@ import com.adr.datasql.meta.SourceListFactory;
 import com.adr.datasql.meta.SourceTable;
 import com.adr.datasql.meta.SourceTableFactory;
 import com.adr.datasql.meta.StatementOrder;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,10 +39,6 @@ import javax.sql.DataSource;
 public class ORMSession extends Session {
     
     private static final Logger logger = Logger.getLogger(ORMSession.class.getName());   
-    
-    public ORMSession(Connection c) {
-        super(c);
-    }
 
     public ORMSession(DataSource ds) throws SQLException {
         super(ds);
@@ -152,7 +147,7 @@ public class ORMSession extends Session {
     }
     
     private MetaData[] getMetaDatas(MetaData[] metadatas, Set<String> fieldsname) {
-        ArrayList<MetaData> keys = new ArrayList<MetaData>();
+        ArrayList<MetaData> keys = new ArrayList<>();
         for (MetaData m: metadatas) {
             if (fieldsname.contains(m.getName())) {
                 keys.add(m);

@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 public class EntityList implements SourceListFactory {
     
     private String sentence = null;
-    private final List<Field> fields = new ArrayList<Field>();
+    private final List<Field> fields = new ArrayList<>();
     
     public EntityList() {        
     }

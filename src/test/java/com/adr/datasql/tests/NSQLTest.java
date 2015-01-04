@@ -19,9 +19,7 @@ package com.adr.datasql.tests;
 
 import com.adr.datasql.SQLNamed;
 import com.adr.datasql.SQLFilter;
-import com.adr.datasql.meta.Entity;
 import java.text.ParseException;
-import java.util.Collections;
 import org.junit.Assert;
 import org.junit.Test;
 
