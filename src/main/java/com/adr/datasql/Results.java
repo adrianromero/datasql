@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2012-2014 Adrián Romero Corchado.
+//    Copyright (C) 2012-2015 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -17,7 +17,7 @@
 
 package com.adr.datasql;
 
-import java.sql.SQLException;
+import com.adr.datasql.link.DataLinkException;
 
 /**
  *
@@ -25,5 +25,5 @@ import java.sql.SQLException;
  * @param <T>
  */
 public interface Results<T> {
-    public T read(KindResults dp) throws SQLException;
+    public T read(KindResults dp) throws DataLinkException;
 }

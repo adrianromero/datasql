@@ -1,7 +1,7 @@
-//    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2014 Adrián Romero Corchado.
+//    Data Command is a light JDBC wrapper.
+//    Copyright (C) 2014-2015 Adrián Romero Corchado.
 //
-//    This file is part of Data SQL
+//    This file is part of Data Command
 //
 //     Licensed under the Apache License, Version 2.0 (the "License");
 //     you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ package com.adr.datasql;
  *
  * @author adrian
  */
-public class SQLFilter extends SQL {
+public class CommandFilter extends Command {
 
-    public SQLFilter(String sql, String... filters) {
+    public CommandFilter(String command, String... filters) {
         StringBuilder where = new StringBuilder("(");
         if (filters.length == 0) {
             where.append("1 = 1");
@@ -42,6 +42,6 @@ public class SQLFilter extends SQL {
         }       
         where.append(")");
         
-        init(sql.replaceFirst(":\\(filter\\)", where.toString()), filters);
+        init(command.replaceFirst(":\\(filter\\)", where.toString()), filters);
     }
 }

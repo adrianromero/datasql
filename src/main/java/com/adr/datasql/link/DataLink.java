@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2014-2015 Adrián Romero Corchado.
+//    Copyright (C) 2015 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -15,34 +15,21 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql.data;
+package com.adr.datasql.link;
 
-import com.adr.datasql.KindResults;
+import com.adr.datasql.Command;
+import com.adr.datasql.Parameters;
 import com.adr.datasql.Results;
-import com.adr.datasql.link.DataLinkException;
-import java.util.Map;
+import java.util.List;
 
 /**
  *
  * @author adrian
  */
-public class ResultsMapMeta  implements Results<Map<String, Object>> {
-    
-    private static ResultsMapMeta instance = null;
-    
-    public static ResultsMapMeta getInstance() {
-        if (instance == null) {
-            instance = new ResultsMapMeta();
-        }
-        return instance;
-    }
-    
-    private ResultsMapMeta() {
-    }
-    
+public interface DataLink extends AutoCloseable {
+    public <P> int exec(Command command, Parameters<P> parameters, P params) throws DataLinkException;
+    public <R,P> R find(Command command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException;
+    public <R,P> List<R> query(Command command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException;
     @Override
-    public Map<String, Object> read(KindResults kr) throws DataLinkException {
-        Results<Map<String, Object>> results = new ResultsMap(kr.getMetaData());
-        return results.read(kr);
-    }
+    public void close() throws DataLinkException;
 }

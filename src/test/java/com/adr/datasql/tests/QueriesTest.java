@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2014 Adrián Romero Corchado.
+//    Copyright (C) 2014-2015 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -19,7 +19,7 @@ package com.adr.datasql.tests;
 
 import com.adr.datasql.Kind;
 import com.adr.datasql.Query;
-import com.adr.datasql.SQLNamed;
+import com.adr.datasql.CommandNamed;
 import com.adr.datasql.StatementExec;
 import com.adr.datasql.StatementFind;
 import com.adr.datasql.QueryArray;
@@ -28,8 +28,8 @@ import com.adr.datasql.Session;
 import com.adr.datasql.data.ParametersDouble;
 import com.adr.datasql.data.ResultsInteger;
 import com.adr.datasql.databases.DataBase;
+import com.adr.datasql.link.DataLinkException;
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.time.Instant;
 import java.util.Arrays;
@@ -54,14 +54,14 @@ public class QueriesTest {
     }
 
     @Test
-    public void initialTest() throws SQLException, ParseException {
+    public void initialTest() throws DataLinkException, ParseException {
         
         try (Session session = DataBase.newSession()) {
             Map<String, Object> parameters = new HashMap<String, Object>();
             parameters.put("id", "two");
             parameters.put("code", "two code");
             parameters.put("name", "two name");
-            session.exec(new QueryMap(new SQLNamed("insert into mytest(id, code, name) values (:id, :code, :name)")), parameters);
+            session.exec(new QueryMap(new CommandNamed("insert into mytest(id, code, name) values (:id, :code, :name)")), parameters);
 
             Object[] result = session.find(new QueryArray("select id, code, name from mytest where id = ?"), "two");
             Assert.assertEquals("[two, two code, two name]", Arrays.toString(result));
@@ -69,7 +69,7 @@ public class QueriesTest {
     }     
     
     @Test
-    public void query2Test() throws SQLException, ParseException {   
+    public void query2Test() throws DataLinkException, ParseException {   
         try (Session session = DataBase.newSession()) {
             StatementExec<Object[]> insertMYTEST = new QueryArray("insert into mytest(id, code, name) values (?, ?, ?)")
                     .setParameters(Kind.STRING, Kind.STRING, Kind.STRING);
@@ -78,7 +78,7 @@ public class QueriesTest {
     } 
     
     @Test
-    public void querySelectWithKinds() throws SQLException, ParseException {   
+    public void querySelectWithKinds() throws DataLinkException, ParseException {   
         try (Session session = DataBase.newSession()) {         
            StatementFind<Object[], Object[]> selectMyTest = new QueryArray(
                    "select id, code, name, startdate, weight, amount, line, active from mytest where code = ?")
@@ -90,7 +90,7 @@ public class QueriesTest {
     } 
     
     @Test
-    public void querySelectMetadata() throws SQLException, ParseException {   
+    public void querySelectMetadata() throws DataLinkException, ParseException {   
         try (Session session = DataBase.newSession()) {
            StatementFind<Object[], Object[]> selectMyTest = new QueryArray(
                    "select id, code, name, startdate, weight, amount, line, active from mytest where code = ?");
@@ -100,7 +100,7 @@ public class QueriesTest {
     }     
     
     @Test
-    public void simpleStatements() throws SQLException {
+    public void simpleStatements() throws DataLinkException {
         
         try (Session session = DataBase.newSession()) {
             // Insert a record
@@ -114,7 +114,7 @@ public class QueriesTest {
     }
 
     @Test
-    public void simpleStatementsTyped() throws SQLException {
+    public void simpleStatementsTyped() throws DataLinkException {
         
         try (Session session = DataBase.newSession())  {
             // Find a record specifying types
@@ -127,7 +127,7 @@ public class QueriesTest {
     }
 
     @Test
-    public void simpleStatementsPrimitives() throws SQLException {
+    public void simpleStatementsPrimitives() throws DataLinkException {
         
         try (Session session = DataBase.newSession()) {
             // Count records
@@ -140,7 +140,7 @@ public class QueriesTest {
     }       
         
     @BeforeClass
-    public static void setUpClass() throws SQLException {   
+    public static void setUpClass() throws DataLinkException {   
         try (Session session = DataBase.newSession()) {
         
             session.exec(new QueryArray("drop table if exists mytest"));

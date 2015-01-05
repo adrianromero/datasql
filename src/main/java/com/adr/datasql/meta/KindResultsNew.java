@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2014 Adrián Romero Corchado.
+//    Copyright (C) 2014-2015 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -19,8 +19,8 @@ package com.adr.datasql.meta;
 
 import com.adr.datasql.KindResults;
 import com.adr.datasql.data.MetaData;
+import com.adr.datasql.link.DataLinkException;
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
@@ -50,8 +50,8 @@ public final class KindResultsNew implements KindResults {
         this.keys = keys;
         this.keysset = Arrays.stream(keys).map(m -> m.getName()).collect(Collectors.toSet());
         
-        this.projectionint = new HashSet<Integer>();
-        this.keysint = new HashSet<Integer>();
+        this.projectionint = new HashSet<>();
+        this.keysint = new HashSet<>();
         for (int i = 0; i < projection.length; i++) {
             projectionint.add(i);
             if (keysset.contains(projection[i].getName())) {
@@ -60,109 +60,109 @@ public final class KindResultsNew implements KindResults {
         }        
     }
     
-    private <T> T get(String columnName, Supplier<T> s) throws SQLException {
+    private <T> T get(String columnName, Supplier<T> s) throws DataLinkException {
         if (keysset.contains(columnName)) {
             return s.get();
         }
         if (projectionset.contains(columnName)) {
             return null;
         }
-        throw new SQLException("Cannot find column: " + columnName);
+        throw new DataLinkException("Cannot find column: " + columnName);
     } 
     
-    private <T> T get(int columnIndex, Supplier<T> s) throws SQLException {
+    private <T> T get(int columnIndex, Supplier<T> s) throws DataLinkException {
         if (keysint.contains(columnIndex)) {
             return s.get();
         }
         if (projectionint.contains(columnIndex)) {
             return null;
         }
-        throw new SQLException("Cannot find column: " + columnIndex);
+        throw new DataLinkException("Cannot find column: " + columnIndex);
     } 
     
     @Override
-    public Integer getInt(int columnIndex) throws SQLException {
+    public Integer getInt(int columnIndex) throws DataLinkException {
         return get(columnIndex, () -> r.nextInt());
     }
     @Override
-    public Integer getInt(String columnName) throws SQLException {
+    public Integer getInt(String columnName) throws DataLinkException {
         return get(columnName, () -> r.nextInt());
     }
     @Override
-    public String getString(int columnIndex) throws SQLException {
+    public String getString(int columnIndex) throws DataLinkException {
         return get(columnIndex, () -> UUID.randomUUID().toString().replaceAll("-", ""));
     }
     @Override
-    public String getString(String columnName) throws SQLException {
+    public String getString(String columnName) throws DataLinkException {
         return get(columnName, () -> UUID.randomUUID().toString().replaceAll("-", ""));
     }
     @Override
-    public Double getDouble(int columnIndex) throws SQLException {
+    public Double getDouble(int columnIndex) throws DataLinkException {
         return get(columnIndex, () -> r.nextDouble());
     }
     @Override
-    public Double getDouble(String columnName) throws SQLException {
+    public Double getDouble(String columnName) throws DataLinkException {
         return get(columnName, () -> r.nextDouble());
     }
     @Override
-    public BigDecimal getBigDecimal(int columnIndex) throws SQLException {
+    public BigDecimal getBigDecimal(int columnIndex) throws DataLinkException {
         return get(columnIndex, () -> new BigDecimal(r.nextDouble()));
     }
     @Override
-    public BigDecimal getBigDecimal(String columnName) throws SQLException {
+    public BigDecimal getBigDecimal(String columnName) throws DataLinkException {
         return get(columnName, () -> new BigDecimal(r.nextDouble()));
     }
     @Override
-    public Boolean getBoolean(int columnIndex) throws SQLException {
+    public Boolean getBoolean(int columnIndex) throws DataLinkException {
         return null;
     }
     @Override
-    public Boolean getBoolean(String columnName) throws SQLException {        
+    public Boolean getBoolean(String columnName) throws DataLinkException {        
         return null;
     }
     @Override
-    public java.util.Date getTimestamp(int columnIndex) throws SQLException {
+    public java.util.Date getTimestamp(int columnIndex) throws DataLinkException {
         return null;
     }
     @Override
-    public java.util.Date getTimestamp(String columnName) throws SQLException {
+    public java.util.Date getTimestamp(String columnName) throws DataLinkException {
         return null;
     }
     @Override
-    public java.util.Date getDate(int columnIndex) throws SQLException {
+    public java.util.Date getDate(int columnIndex) throws DataLinkException {
         return null;
     }
     @Override
-    public java.util.Date getDate(String columnName) throws SQLException {
+    public java.util.Date getDate(String columnName) throws DataLinkException {
         return null;
     }
     @Override
-    public java.util.Date getTime(int columnIndex) throws SQLException {
+    public java.util.Date getTime(int columnIndex) throws DataLinkException {
         return null;
     }
     @Override
-    public java.util.Date getTime(String columnName) throws SQLException {
+    public java.util.Date getTime(String columnName) throws DataLinkException {
         return null;
     }        
     @Override
-    public byte[] getBytes(int columnIndex) throws SQLException {
+    public byte[] getBytes(int columnIndex) throws DataLinkException {
         return null;
     }
     @Override
-    public byte[] getBytes(String columnName) throws SQLException {
+    public byte[] getBytes(String columnName) throws DataLinkException {
         return null;
     }
     @Override
-    public Object getObject(int columnIndex) throws SQLException {
+    public Object getObject(int columnIndex) throws DataLinkException {
         return null;
     }
     @Override
-    public Object getObject(String columnName) throws SQLException {
+    public Object getObject(String columnName) throws DataLinkException {
         return null;
     }
     
     @Override
-    public MetaData[] getMetaData() throws SQLException {
+    public MetaData[] getMetaData() throws DataLinkException {
         return projection;        
     }    
 }

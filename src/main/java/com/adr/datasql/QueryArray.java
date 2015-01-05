@@ -1,7 +1,7 @@
-//    Data SQL is a light JDBC wrapper.
+//    Data Command is a light JDBC wrapper.
 //    Copyright (C) 2014 Adrián Romero Corchado.
 //
-//    This file is part of Data SQL
+//    This file is part of Data Command
 //
 //     Licensed under the Apache License, Version 2.0 (the "License");
 //     you may not use this file except in compliance with the License.
@@ -29,13 +29,13 @@ import com.adr.datasql.data.ResultsArrayMeta;
  */
 public class QueryArray extends Query<Object[], Object[]> {
 
-    public QueryArray(String sql, String... paramnames) {
-        super(sql, paramnames);
+    public QueryArray(String command, String... paramnames) {
+        super(command, paramnames);
         init();
     }
 
-    public QueryArray(SQL sql) {
-        super(sql);
+    public QueryArray(Command command) {
+        super(command);
         init();
     }
     

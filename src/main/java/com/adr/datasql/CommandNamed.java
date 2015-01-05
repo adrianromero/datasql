@@ -1,7 +1,7 @@
-//    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2014 Adrián Romero Corchado.
+//    Data Command is a light JDBC wrapper.
+//    Copyright (C) 2014-2015 Adrián Romero Corchado.
 //
-//    This file is part of Data SQL
+//    This file is part of Data Command
 //
 //     Licensed under the Apache License, Version 2.0 (the "License");
 //     you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import java.util.List;
  *
  * @author adrian
  */
-public class SQLNamed extends SQL {
+public class CommandNamed extends Command {
     
     private static final char CHAR_ETX = '\u0003';
     
@@ -35,79 +35,79 @@ public class SQLNamed extends SQL {
     private static final int STATE_PARAMETERSTART = 3;
     private static final int STATE_PARAMETERPART = 4;
 
-    public SQLNamed(String sql) throws ParseException {
+    public CommandNamed(String command) throws ParseException {
         
-        StringBuilder parsedsql = new StringBuilder();
+        StringBuilder parsedcommand = new StringBuilder();
         StringBuilder parametername = new StringBuilder();
-        List<String> parsedparams = new ArrayList<String>();
+        List<String> parsedparams = new ArrayList<>();
         
         int i = 0;
         int state = STATE_LOOK;
         char c;
         for (;;) {   
             
-            c = i < sql.length() ? sql.charAt(i) : CHAR_ETX;
+            c = i < command.length() ? command.charAt(i) : CHAR_ETX;
                     
             if (state == STATE_LOOK) {
                 if (c == '\'') {
-                    parsedsql.append(c);
+                    parsedcommand.append(c);
                     state = STATE_SINGLEQUOTE;
                 } else if (c == '\"') {
-                    parsedsql.append(c);
+                    parsedcommand.append(c);
                     state = STATE_DOUBLEQUOTE;
                 } else if (c == ':') {
                     state = STATE_PARAMETERSTART;
                 } else if (c == CHAR_ETX) {
-                    init(parsedsql.toString(), parsedparams.toArray(new String[parsedparams.size()]));
+                    init(parsedcommand.toString(), parsedparams.toArray(new String[parsedparams.size()]));
                     return;
                 } else {
-                    parsedsql.append(c);
+                    parsedcommand.append(c);
                 }
             } else if (state == STATE_SINGLEQUOTE) {                
                 if (c == '\'') {
-                    parsedsql.append(c);
+                    parsedcommand.append(c);
                     state = STATE_LOOK;
                 } else if (c == CHAR_ETX) {   
-                    throw new ParseException("Error parsing sql. Invalid literal.", i);
+                    throw new ParseException("Error parsing command. Invalid literal.", i);
                 } else {
-                    parsedsql.append(c);
+                    parsedcommand.append(c);
                 }
             } else if (state == STATE_DOUBLEQUOTE) {                
                 if (c == '\"') {
-                    parsedsql.append(c);
+                    parsedcommand.append(c);
                     state = STATE_LOOK;
                 } else if (c == CHAR_ETX) {   
-                    throw new ParseException("Error parsing sql. Invalid literal.", i);
+                    throw new ParseException("Error parsing command Invalid literal.", i);
                 } else {
-                    parsedsql.append(c);
+                    parsedcommand.append(c);
                 }    
             } else if (state == STATE_PARAMETERSTART) {
                 if (c == CHAR_ETX) {
-                    throw new ParseException("Error parsing sql. Bad identifier.", i);
+                    throw new ParseException("Error parsing command. Bad identifier.", i);
                 } else if (Character.isJavaIdentifierStart(c)) {
                     parametername = new StringBuilder();
                     parametername.append(c);
                     state = STATE_PARAMETERPART;
                 } else {
-                    throw new ParseException("Error parsing sql. Bad identifier.", i);
+                    throw new ParseException("Error parsing command. Bad identifier.", i);
                 }
             } else if (state == STATE_PARAMETERPART) {
                 if (c == CHAR_ETX) { 
-                    parsedsql.append('?');
+                    parsedcommand.append('?');
                     parsedparams.add(parametername.toString());
                     
-                    init(parsedsql.toString(), parsedparams.toArray(new String[parsedparams.size()]));
+                    init(parsedcommand.toString(), parsedparams.toArray(new String[parsedparams.size()]));
                     return;   
                 } else if (Character.isJavaIdentifierPart(c)) {
                     parametername.append(c);
                 } else {
-                    parsedsql.append('?');
-                    parsedsql.append(c);
+                    parsedcommand.append('?');
+                    parsedcommand.append(c);
                     parsedparams.add(parametername.toString());
                     state = STATE_LOOK;
                 }
             } else {
-                throw new ParseException("Error parsing sql. Invalid state.", i);
+                throw new ParseException("Error parsing command. Invalid state.", i);
             }
 
             i++;

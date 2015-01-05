@@ -1,7 +1,7 @@
-//    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2012-2014 Adrián Romero Corchado.
+//    Data Command is a light JDBC wrapper.
+//    Copyright (C) 2012-2015 Adrián Romero Corchado.
 //
-//    This file is part of Data SQL
+//    This file is part of Data Command
 //
 //     Licensed under the Apache License, Version 2.0 (the "License");
 //     you may not use this file except in compliance with the License.
@@ -20,15 +20,15 @@ package com.adr.datasql.meta;
 import com.adr.datasql.data.MetaData;
 import com.adr.datasql.Query;
 import com.adr.datasql.Results;
-import com.adr.datasql.SQL;
+import com.adr.datasql.Command;
 import com.adr.datasql.StatementExec;
 import com.adr.datasql.StatementFind;
 import com.adr.datasql.StatementQuery;
+import com.adr.datasql.link.DataLinkException;
 import com.adr.datasql.orm.Record;
 import com.adr.datasql.orm.RecordArray;
 import com.adr.datasql.orm.RecordParameters;
 import com.adr.datasql.orm.RecordResults;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -177,7 +177,7 @@ public class Entity implements SourceTableFactory, SourceListFactory {
         
         StringBuilder sentence = new StringBuilder();
         StringBuilder sentencefilter = new StringBuilder();
-        ArrayList<String> keyfields = new ArrayList<String>();
+        ArrayList<String> keyfields = new ArrayList<>();
         
         sentence.append("DELETE FROM ");
         sentence.append(name);
@@ -190,7 +190,7 @@ public class Entity implements SourceTableFactory, SourceListFactory {
         }
         sentence.append(sentencefilter);
             
-        SQL sql = new SQL(sentence.toString(), keyfields.toArray(new String[keyfields.size()]));  
+        Command sql = new Command(sentence.toString(), keyfields.toArray(new String[keyfields.size()]));  
         return new Query<Void, P>(sql).setParameters(parameters.createParams(projection));
     }
     
@@ -220,7 +220,7 @@ public class Entity implements SourceTableFactory, SourceListFactory {
                 filter = true;
         }  
             
-        SQL sql =  new SQL(sentence.toString(), keyfields.toArray(new String[keyfields.size()]));   
+        Command sql =  new Command(sentence.toString(), keyfields.toArray(new String[keyfields.size()]));   
         return new Query<Void, P>(sql).setParameters(parameters.createParams(projection));
     }
     
@@ -249,7 +249,7 @@ public class Entity implements SourceTableFactory, SourceListFactory {
         sentence.append(values);
         sentence.append(")");
             
-        SQL sql = new SQL(sentence.toString(), fieldslist.toArray(new String[fieldslist.size()]));     
+        Command sql = new Command(sentence.toString(), fieldslist.toArray(new String[fieldslist.size()]));     
         return new Query<Void, P>(sql).setParameters(parameters.createParams(projection));
     }
 
@@ -313,7 +313,7 @@ public class Entity implements SourceTableFactory, SourceListFactory {
         }
 
         // build statement
-        SQL sql = new SQL(sqlsent.toString(), fieldslist.toArray(new String[fieldslist.size()]));     
+        Command sql = new Command(sqlsent.toString(), fieldslist.toArray(new String[fieldslist.size()]));     
         return new Query<R, P>(sql).setResults(results.createResults(projection)).setParameters(parameters.createParams(criteria));
     }
     
@@ -321,17 +321,17 @@ public class Entity implements SourceTableFactory, SourceListFactory {
         try {
             Results<R> r = record.createResults(projection);
             return r.read(new KindResultsNew(projection, keys));
-        } catch (SQLException e) {         
+        } catch (DataLinkException e) {         
             throw new RuntimeException(e); // Never happens with the instanciated objects
         }
     }
      
 //    
-//    public SQL getStatementCreateTable(Database db) {
+//    public Command getStatementCreateTable(Database db) {
 //        
 //    }
 //    
-//    public SQL getStatementDropTable(Database db) {
+//    public Command getStatementDropTable(Database db) {
 //        
 //    }
 }

@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2014 Adrián Romero Corchado.
+//    Copyright (C) 2014-2015 Adrian Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -17,10 +17,10 @@
 
 package com.adr.datasql;
 
-import java.sql.Connection;
-import java.sql.SQLException;
+import com.adr.datasql.link.DataLink;
+import com.adr.datasql.link.DataLinkException;
+import com.adr.datasql.link.DataLinkFactory;
 import java.util.List;
-import javax.sql.DataSource;
 
 /**
  * A Session with a specific database. All functionality provided by Data SQL is
@@ -46,16 +46,16 @@ public class Session implements AutoCloseable {
     /**
      * Database connection instance 
      */
-    private final Connection c;
+    private final DataLink link;
     
    
     /**
      *
-     * @param ds
-     * @throws java.sql.SQLException
+     * @param factory
+     * @throws DataLinkException
      */
-    public Session(DataSource ds) throws SQLException {
-        this.c = ds.getConnection();
+    public Session(DataLinkFactory factory) throws DataLinkException {
+        link = factory.getDataLink();
     }
 
     /**
@@ -63,10 +63,10 @@ public class Session implements AutoCloseable {
      * @param statement The 
      * @return Either the row count for update statements or 0 for statements
      * that return nothing
-     * @throws SQLException
+     * @throws DataLinkException
      */
-    public final int exec(StatementExec<?> statement) throws SQLException {
-        return statement.exec(c, null);
+    public final int exec(StatementExec<?> statement) throws DataLinkException {
+        return statement.exec(link, null);
     }
     
     /**
@@ -75,10 +75,10 @@ public class Session implements AutoCloseable {
      * @param statement
      * @param params
      * @return
-     * @throws SQLException
+     * @throws DataLinkException
      */
-    public final <P> int exec(StatementExec<P[]> statement, P... params) throws SQLException {       
-        return statement.exec(c, params);
+    public final <P> int exec(StatementExec<P[]> statement, P... params) throws DataLinkException {       
+        return statement.exec(link, params);
     }
     
     /**
@@ -87,10 +87,10 @@ public class Session implements AutoCloseable {
      * @param statement
      * @param params
      * @return
-     * @throws SQLException
+     * @throws DataLinkException
      */
-    public final <P> int exec(StatementExec<P> statement, P params) throws SQLException {
-        return statement.exec(c, params);
+    public final <P> int exec(StatementExec<P> statement, P params) throws DataLinkException {
+        return statement.exec(link, params);
     }
     
     /**
@@ -98,23 +98,10 @@ public class Session implements AutoCloseable {
      * @param <R>
      * @param statement
      * @return
-     * @throws SQLException
+     * @throws DataLinkException
      */
-    public final <R> R find(StatementFind<R, ?> statement) throws SQLException {
-        return statement.find(c, null);
-    }
-    
-    /**
-     *
-     * @param <R>
-     * @param <P>
-     * @param statement
-     * @param params
-     * @return
-     * @throws SQLException
-     */
-    public final <R, P> R find(StatementFind<R, P[]> statement, P... params) throws SQLException {
-        return statement.find(c, params);
+    public final <R> R find(StatementFind<R, ?> statement) throws DataLinkException {
+        return statement.find(link, null);
     }
     
     /**
@@ -124,10 +111,23 @@ public class Session implements AutoCloseable {
      * @param statement
      * @param params
      * @return
-     * @throws SQLException
+     * @throws DataLinkException
      */
-    public final <R, P> R find(StatementFind<R, P> statement, P params) throws SQLException {
-        return statement.find(c, params);
+    public final <R, P> R find(StatementFind<R, P[]> statement, P... params) throws DataLinkException {
+        return statement.find(link, params);
+    }
+    
+    /**
+     *
+     * @param <R>
+     * @param <P>
+     * @param statement
+     * @param params
+     * @return
+     * @throws DataLinkException
+     */
+    public final <R, P> R find(StatementFind<R, P> statement, P params) throws DataLinkException {
+        return statement.find(link, params);
     }
 
     /**
@@ -135,10 +135,10 @@ public class Session implements AutoCloseable {
      * @param <R>
      * @param statement
      * @return
-     * @throws SQLException
+     * @throws DataLinkException
      */
-    public final <R> List<R> query(StatementQuery<R, ?> statement) throws SQLException {
-        return statement.query(c, null);
+    public final <R> List<R> query(StatementQuery<R, ?> statement) throws DataLinkException {
+        return statement.query(link, null);
     }
     
     /**
@@ -148,10 +148,10 @@ public class Session implements AutoCloseable {
      * @param statement
      * @param params
      * @return
-     * @throws SQLException
+     * @throws DataLinkException
      */
-    public final <R, P> List<R> query(StatementQuery<R, P[]> statement, P... params) throws SQLException {
-        return statement.query(c, params);
+    public final <R, P> List<R> query(StatementQuery<R, P[]> statement, P... params) throws DataLinkException {
+        return statement.query(link, params);
     }
     
     /**
@@ -161,14 +161,14 @@ public class Session implements AutoCloseable {
      * @param statement
      * @param params
      * @return
-     * @throws SQLException
+     * @throws DataLinkException
      */
-    public final <R, P> List<R> query(StatementQuery<R, P> statement, P params) throws SQLException {
-        return statement.query(c, params);
+    public final <R, P> List<R> query(StatementQuery<R, P> statement, P params) throws DataLinkException {
+        return statement.query(link, params);
     }
 
     @Override
-    public final void close() throws SQLException {
-        c.close();
+    public final void close() throws DataLinkException {
+        link.close();
     }  
 }

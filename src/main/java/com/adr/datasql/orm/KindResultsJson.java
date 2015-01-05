@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2014 Adrián Romero Corchado.
+//    Copyright (C) 2014-2015 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -19,10 +19,10 @@ package com.adr.datasql.orm;
 
 import com.adr.datasql.KindResults;
 import com.adr.datasql.data.MetaData;
+import com.adr.datasql.link.DataLinkException;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -43,55 +43,55 @@ public final class KindResultsJson implements KindResults {
     }
     
     @Override
-    public Integer getInt(int columnIndex) throws SQLException {
+    public Integer getInt(int columnIndex) throws DataLinkException {
         return getInt(Integer.toString(columnIndex -1));
     }
     @Override
-    public Integer getInt(String columnName) throws SQLException {
+    public Integer getInt(String columnName) throws DataLinkException {
         JsonElement element = json.get(columnName);
         return element == null || element.isJsonNull() 
                 ? null 
                 : element.getAsInt();
     }
     @Override
-    public String getString(int columnIndex) throws SQLException {
+    public String getString(int columnIndex) throws DataLinkException {
         return getString(Integer.toString(columnIndex -1));
     }
     @Override
-    public String getString(String columnName) throws SQLException {
+    public String getString(String columnName) throws DataLinkException {
         JsonElement element = json.get(columnName);
         return element == null || element.isJsonNull() 
                 ? null 
                 : element.getAsString();
     }
     @Override
-    public Double getDouble(int columnIndex) throws SQLException {
+    public Double getDouble(int columnIndex) throws DataLinkException {
         return getDouble(Integer.toString(columnIndex -1));
     }
     @Override
-    public Double getDouble(String columnName) throws SQLException {
+    public Double getDouble(String columnName) throws DataLinkException {
         JsonElement element = json.get(columnName);
         return element == null || element.isJsonNull() 
                 ? null 
                 : element.getAsDouble();
     }
     @Override
-    public BigDecimal getBigDecimal(int columnIndex) throws SQLException {
+    public BigDecimal getBigDecimal(int columnIndex) throws DataLinkException {
         return getBigDecimal(Integer.toString(columnIndex -1));
     }
     @Override
-    public BigDecimal getBigDecimal(String columnName) throws SQLException {
+    public BigDecimal getBigDecimal(String columnName) throws DataLinkException {
         JsonElement element = json.get(columnName);
         return element == null || element.isJsonNull() 
                 ? null 
                 : element.getAsBigDecimal();
     }
     @Override
-    public Boolean getBoolean(int columnIndex) throws SQLException {
+    public Boolean getBoolean(int columnIndex) throws DataLinkException {
         return getBoolean(Integer.toString(columnIndex -1));
     }
     @Override
-    public Boolean getBoolean(String columnName) throws SQLException {
+    public Boolean getBoolean(String columnName) throws DataLinkException {
         JsonElement element = json.get(columnName);
         return element == null || element.isJsonNull() 
                 ? null 
@@ -99,22 +99,22 @@ public final class KindResultsJson implements KindResults {
 
     }
     @Override
-    public java.util.Date getTimestamp(int columnIndex) throws SQLException {
+    public java.util.Date getTimestamp(int columnIndex) throws DataLinkException {
         return getTimestamp(Integer.toString(columnIndex -1));
     }
     @Override
-    public java.util.Date getTimestamp(String columnName) throws SQLException {
+    public java.util.Date getTimestamp(String columnName) throws DataLinkException {
         JsonElement element = json.get(columnName);
         return element == null || element.isJsonNull() 
                 ? null 
                 : new Date(Instant.parse(element.getAsString()).toEpochMilli());
     }
     @Override
-    public java.util.Date getDate(int columnIndex) throws SQLException {
+    public java.util.Date getDate(int columnIndex) throws DataLinkException {
         return getDate(Integer.toString(columnIndex -1));
     }
     @Override
-    public java.util.Date getDate(String columnName) throws SQLException {
+    public java.util.Date getDate(String columnName) throws DataLinkException {
         JsonElement element = json.get(columnName);
         return element == null || element.isJsonNull() 
                 ? null 
@@ -122,33 +122,33 @@ public final class KindResultsJson implements KindResults {
 
     }
     @Override
-    public java.util.Date getTime(int columnIndex) throws SQLException {
+    public java.util.Date getTime(int columnIndex) throws DataLinkException {
         return getTime(Integer.toString(columnIndex -1));
     }
     @Override
-    public java.util.Date getTime(String columnName) throws SQLException {
+    public java.util.Date getTime(String columnName) throws DataLinkException {
         JsonElement element = json.get(columnName);
         return element == null || element.isJsonNull() 
                 ? null 
                 : new Date(LocalTime.parse(element.getAsString()).atDate(LocalDate.ofEpochDay(0L)).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
     }        
     @Override
-    public byte[] getBytes(int columnIndex) throws SQLException {
+    public byte[] getBytes(int columnIndex) throws DataLinkException {
         return getBytes(Integer.toString(columnIndex -1));
     }
     @Override
-    public byte[] getBytes(String columnName) throws SQLException {
+    public byte[] getBytes(String columnName) throws DataLinkException {
         JsonElement element = json.get(columnName);
         return element == null || element.isJsonNull() 
                 ? null 
                 : Base64.getDecoder().decode(element.getAsString());
     }
     @Override
-    public Object getObject(int columnIndex) throws SQLException {
+    public Object getObject(int columnIndex) throws DataLinkException {
         return getObject(Integer.toString(columnIndex -1));
     }
     @Override
-    public Object getObject(String columnName) throws SQLException {
+    public Object getObject(String columnName) throws DataLinkException {
         JsonElement element = json.get(columnName);
         return element == null || element.isJsonNull() 
                 ? null 
@@ -156,7 +156,7 @@ public final class KindResultsJson implements KindResults {
     }
     
     @Override
-    public MetaData[] getMetaData() throws SQLException {
+    public MetaData[] getMetaData() throws DataLinkException {
         throw new UnsupportedOperationException("Not supported.");
     }    
 }

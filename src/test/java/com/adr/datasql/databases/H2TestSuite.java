@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2014 Adrián Romero Corchado.
+//    Copyright (C) 2014-2015 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -17,8 +17,9 @@
 
 package com.adr.datasql.databases;
 
+import com.adr.datasql.link.DataLinkException;
+import com.adr.datasql.link.SQLDataLinkFactory;
 import com.adr.datasql.orm.ORMSession;
-import java.sql.SQLException;
 import javax.sql.DataSource;
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.junit.After;
@@ -62,8 +63,8 @@ public class H2TestSuite {
         return cpds; 
     }
     
-    public static ORMSession newSession() throws SQLException {
-        return new ORMSession(cpds); 
+    public static ORMSession newSession() throws DataLinkException {
+        return new ORMSession(new SQLDataLinkFactory(cpds)); 
     }
 
     @Before

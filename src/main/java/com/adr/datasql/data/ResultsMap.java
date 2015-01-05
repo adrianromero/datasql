@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2014 Adrián Romero Corchado.
+//    Copyright (C) 2014-2015 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -19,7 +19,7 @@ package com.adr.datasql.data;
 
 import com.adr.datasql.KindResults;
 import com.adr.datasql.Results;
-import java.sql.SQLException;
+import com.adr.datasql.link.DataLinkException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +36,7 @@ public class ResultsMap  implements Results<Map<String, Object>> {
     }
     
     @Override
-    public Map<String, Object> read(KindResults kr) throws SQLException {        
+    public Map<String, Object> read(KindResults kr) throws DataLinkException {        
         Map<String, Object> result = new HashMap<String, Object>();
         for(int i = 0; i < metadatas.length; i++) {
             result.put(metadatas[i].getName(), metadatas[i].getKind().get(kr, i + 1));

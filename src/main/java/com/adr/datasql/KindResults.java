@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2012-2014 Adrián Romero Corchado.
+//    Copyright (C) 2012-2015 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -18,8 +18,8 @@
 package com.adr.datasql;
 
 import com.adr.datasql.data.MetaData;
+import com.adr.datasql.link.DataLinkException;
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.util.Date;
 
 /**
@@ -28,26 +28,26 @@ import java.util.Date;
  */
 public interface KindResults {
 
-    public Integer getInt(int columnIndex) throws SQLException;
-    public Integer getInt(String columnName) throws SQLException;
-    public String getString(int columnIndex) throws SQLException;
-    public String getString(String columnName) throws SQLException;
-    public Double getDouble(int columnIndex) throws SQLException;
-    public Double getDouble(String columnName) throws SQLException;
-    public BigDecimal getBigDecimal(int columnIndex) throws SQLException;
-    public BigDecimal getBigDecimal(String columnName) throws SQLException;
-    public Boolean getBoolean(int columnIndex) throws SQLException;
-    public Boolean getBoolean(String columnName) throws SQLException;
-    public Date getTimestamp(int columnIndex) throws SQLException;
-    public Date getTimestamp(String columnName) throws SQLException;
-    public Date getDate(int columnIndex) throws SQLException;
-    public Date getDate(String columnName) throws SQLException;
-    public Date getTime(int columnIndex) throws SQLException;
-    public Date getTime(String columnName) throws SQLException;
-    public byte[] getBytes(int columnIndex) throws SQLException;
-    public byte[] getBytes(String columnName) throws SQLException;
-    public Object getObject(int columnIndex) throws SQLException;
-    public Object getObject(String columnName) throws SQLException;
+    public Integer getInt(int columnIndex) throws DataLinkException;
+    public Integer getInt(String columnName) throws DataLinkException;
+    public String getString(int columnIndex) throws DataLinkException;
+    public String getString(String columnName) throws DataLinkException;
+    public Double getDouble(int columnIndex) throws DataLinkException;
+    public Double getDouble(String columnName) throws DataLinkException;
+    public BigDecimal getBigDecimal(int columnIndex) throws DataLinkException;
+    public BigDecimal getBigDecimal(String columnName) throws DataLinkException;
+    public Boolean getBoolean(int columnIndex) throws DataLinkException;
+    public Boolean getBoolean(String columnName) throws DataLinkException;
+    public Date getTimestamp(int columnIndex) throws DataLinkException;
+    public Date getTimestamp(String columnName) throws DataLinkException;
+    public Date getDate(int columnIndex) throws DataLinkException;
+    public Date getDate(String columnName) throws DataLinkException;
+    public Date getTime(int columnIndex) throws DataLinkException;
+    public Date getTime(String columnName) throws DataLinkException;
+    public byte[] getBytes(int columnIndex) throws DataLinkException;
+    public byte[] getBytes(String columnName) throws DataLinkException;
+    public Object getObject(int columnIndex) throws DataLinkException;
+    public Object getObject(String columnName) throws DataLinkException;
     
-    public MetaData[] getMetaData() throws SQLException;
+    public MetaData[] getMetaData() throws DataLinkException;
 }

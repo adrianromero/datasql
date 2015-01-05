@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2014 Adrián Romero Corchado.
+//    Copyright (C) 2014-2015 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -22,9 +22,9 @@ import com.adr.datasql.StatementExec;
 import com.adr.datasql.QueryArray;
 import com.adr.datasql.Session;
 import com.adr.datasql.databases.DataBase;
+import com.adr.datasql.link.DataLinkException;
 import com.adr.datasql.orm.ORMSession;
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
@@ -44,7 +44,7 @@ import org.junit.Test;
 public class ORMTest {
 
     @Test
-    public void InsertPojo() throws SQLException {
+    public void InsertPojo() throws DataLinkException {
 
         try (ORMSession session = DataBase.newSession()) {  
             
@@ -69,7 +69,7 @@ public class ORMTest {
     }  
     
     @Test
-    public void findPojo() throws SQLException {
+    public void findPojo() throws DataLinkException {
         
         try (ORMSession session = DataBase.newSession()) {        
 
@@ -82,7 +82,7 @@ public class ORMTest {
     }  
     
     @Test
-    public void listPojo() throws SQLException {      
+    public void listPojo() throws DataLinkException {      
 
         try (ORMSession session = DataBase.newSession()) { 
                                      
@@ -93,7 +93,7 @@ public class ORMTest {
     }  
     
     @Test
-    public void filterPojo() throws SQLException {
+    public void filterPojo() throws DataLinkException {
         
         try (ORMSession session = DataBase.newSession()) { 
                              
@@ -108,7 +108,7 @@ public class ORMTest {
     }
     
     @Test
-    public void pojoStatements() throws SQLException {
+    public void pojoStatements() throws DataLinkException {
         
         try (ORMSession session = DataBase.newSession()) {
             // Defining a new SamplePojo
@@ -129,7 +129,7 @@ public class ORMTest {
         }  
     }      
     @BeforeClass
-    public static void setUpClass() throws SQLException {   
+    public static void setUpClass() throws DataLinkException {   
    
         try (Session session = DataBase.newSession()) { 
             

@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2014 Adrián Romero Corchado.
+//    Copyright (C) 2014-2015 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -18,8 +18,8 @@
 package com.adr.datasql.orm;
 
 import com.adr.datasql.data.MetaData;
+import com.adr.datasql.link.DataLinkException;
 import com.google.gson.JsonObject;
-import java.sql.SQLException;
 
 /**
  *
@@ -28,17 +28,17 @@ import java.sql.SQLException;
 public class RecordJson extends RecordAbstract<JsonObject> {
 
     @Override
-    public Object getValue(MetaData md, JsonObject param) throws SQLException {
+    public Object getValue(MetaData md, JsonObject param) throws DataLinkException {
         return md.getKind().get(new KindResultsJson(param), md.getName());  
     }        
 
     @Override
-    public void setValue(MetaData md, JsonObject param, Object value) throws SQLException {
+    public void setValue(MetaData md, JsonObject param, Object value) throws DataLinkException {
         md.getKind().set(new KindParametersJson(param), md.getName(), value);
     }
 
     @Override
-    public JsonObject create() throws SQLException {
+    public JsonObject create() throws DataLinkException {
         return new JsonObject();
     }
 }

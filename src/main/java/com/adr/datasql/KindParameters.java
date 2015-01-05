@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2012-2014 Adrián Romero Corchado.
+//    Copyright (C) 2012-2015 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -18,8 +18,8 @@
 package com.adr.datasql;
 
 import com.adr.datasql.data.MetaData;
+import com.adr.datasql.link.DataLinkException;
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.util.Date;
 
 /**
@@ -28,26 +28,26 @@ import java.util.Date;
  */
 public interface KindParameters {
 
-    public void setInt(int paramIndex, Integer iValue) throws SQLException;
-    public void setInt(String paramName, Integer iValue) throws SQLException;
-    public void setString(int paramIndex, String sValue) throws SQLException;
-    public void setString(String paramName, String sValue) throws SQLException;
-    public void setDouble(int paramIndex, Double dValue) throws SQLException;
-    public void setDouble(String paramName, Double dValue) throws SQLException;
-    public void setBigDecimal(int paramIndex, BigDecimal value) throws SQLException;
-    public void setBigDecimal(String paramName, BigDecimal value) throws SQLException;
-    public void setBoolean(int paramIndex, Boolean bValue) throws SQLException;
-    public void setBoolean(String paramName, Boolean bValue) throws SQLException;
-    public void setTimestamp(int paramIndex, Date dValue) throws SQLException;
-    public void setTimestamp(String paramName, Date dValue) throws SQLException;
-    public void setDate(int paramIndex, Date dValue) throws SQLException;
-    public void setDate(String paramName, Date dValue) throws SQLException;
-    public void setTime(int paramIndex, Date dValue) throws SQLException;
-    public void setTime(String paramName, Date dValue) throws SQLException;
-    public void setBytes(int paramIndex, byte[] value) throws SQLException;
-    public void setBytes(String paramName, byte[] value) throws SQLException;
-    public void setObject(int paramIndex, Object value) throws SQLException;
-    public void setObject(String paramName, Object value) throws SQLException;
+    public void setInt(int paramIndex, Integer iValue) throws DataLinkException;
+    public void setInt(String paramName, Integer iValue) throws DataLinkException;
+    public void setString(int paramIndex, String sValue) throws DataLinkException;
+    public void setString(String paramName, String sValue) throws DataLinkException;
+    public void setDouble(int paramIndex, Double dValue) throws DataLinkException;
+    public void setDouble(String paramName, Double dValue) throws DataLinkException;
+    public void setBigDecimal(int paramIndex, BigDecimal value) throws DataLinkException;
+    public void setBigDecimal(String paramName, BigDecimal value) throws DataLinkException;
+    public void setBoolean(int paramIndex, Boolean bValue) throws DataLinkException;
+    public void setBoolean(String paramName, Boolean bValue) throws DataLinkException;
+    public void setTimestamp(int paramIndex, Date dValue) throws DataLinkException;
+    public void setTimestamp(String paramName, Date dValue) throws DataLinkException;
+    public void setDate(int paramIndex, Date dValue) throws DataLinkException;
+    public void setDate(String paramName, Date dValue) throws DataLinkException;
+    public void setTime(int paramIndex, Date dValue) throws DataLinkException;
+    public void setTime(String paramName, Date dValue) throws DataLinkException;
+    public void setBytes(int paramIndex, byte[] value) throws DataLinkException;
+    public void setBytes(String paramName, byte[] value) throws DataLinkException;
+    public void setObject(int paramIndex, Object value) throws DataLinkException;
+    public void setObject(String paramName, Object value) throws DataLinkException;
     
-    public MetaData[] getMetaData() throws SQLException;
+    public MetaData[] getMetaData() throws DataLinkException;
 }

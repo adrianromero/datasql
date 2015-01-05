@@ -1,7 +1,7 @@
-//    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2014 Adrián Romero Corchado.
+//    Data Command is a light JDBC wrapper.
+//    Copyright (C) 2014-2015 Adrián Romero Corchado.
 //
-//    This file is part of Data SQL
+//    This file is part of Data Command
 //
 //     Licensed under the Apache License, Version 2.0 (the "License");
 //     you may not use this file except in compliance with the License.
@@ -17,14 +17,9 @@
 
 package com.adr.datasql;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
+import com.adr.datasql.link.DataLink;
+import com.adr.datasql.link.DataLinkException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -33,79 +28,33 @@ import java.util.logging.Logger;
  * @param <P>
  */
 public class Query<R, P> implements StatementExec<P>, StatementFind<R, P>, StatementQuery<R, P> {
-    
-    private static final Logger logger = Logger.getLogger(Query.class.getName()); 
 
-    private final SQL sql;
+    private final Command command;
     
     private Parameters<P> parameters = null;
     private Results<R> results = null;
 
-    public Query(SQL sql) {
-        this.sql = sql;
+    public Query(Command command) {
+        this.command = command;
     }
     
-    public Query(String sql, String... paramnames) {
-        this.sql = new SQL(sql, paramnames);
-    }
-    
-    @Override
-    public final int exec(Connection c, P params) throws SQLException {
-        logger.log(Level.INFO, "Executing prepared SQL: {0}", sql);
-
-        try (PreparedStatement stmt = c.prepareStatement(sql.getSQL())) {
-            KindParameters kp = new KindParametersSQL(stmt, sql.getParamNames());
-
-            if (parameters != null) {
-                parameters.write(kp, params);
-            }  
-            return stmt.executeUpdate();
-        }
-    }
-
-    @Override
-    public R find(Connection c, P params) throws SQLException {
-        
-        logger.log(Level.INFO, "Executing prepared SQL: {0}", sql);
-
-        try (PreparedStatement stmt = c.prepareStatement(sql.getSQL())) {
-            KindParameters kp = new KindParametersSQL(stmt, sql.getParamNames());
-
-            if (parameters != null) {
-                parameters.write(kp, params);
-            }  
-            try (ResultSet resultset = stmt.executeQuery()) {
-                KindResults kr = new KindResultsSQL(resultset);
-                
-                if (resultset.next()) {
-                    return results.read(kr);
-                } else {
-                    return null;
-                }
-            }
-        } 
+    public Query(String command, String... paramnames) {
+        this.command = new Command(command, paramnames);
     }
     
     @Override
-    public List<R> query(Connection c, P params) throws SQLException {
-        logger.log(Level.INFO, "Executing prepared SQL: {0}", sql);
+    public final int exec(DataLink link, P params) throws DataLinkException {
+        return link.exec(command, parameters, params);
+    }
 
-        try (PreparedStatement stmt = c.prepareStatement(sql.getSQL())) {
-            KindParameters kp = new KindParametersSQL(stmt, sql.getParamNames());
-
-            if (parameters != null) {
-                parameters.write(kp, params);
-            }  
-            try (ResultSet resultset = stmt.executeQuery()) {
-                KindResults kr = new KindResultsSQL(resultset);
-                
-                List<R> l = new ArrayList<R>();
-                while (resultset.next()) {
-                    l.add(results.read(kr));
-                }
-                return l;
-            }
-        }
+    @Override
+    public final R find(DataLink link, P params) throws DataLinkException {
+        return link.find(command, results, parameters, params);
+    }
+    
+    @Override
+    public final List<R> query(DataLink link, P params) throws DataLinkException {
+        return link.query(command, results, parameters, params);
     }  
 
     /**

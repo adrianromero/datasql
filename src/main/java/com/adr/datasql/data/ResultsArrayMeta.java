@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2014 Adrián Romero Corchado.
+//    Copyright (C) 2014-2015 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -19,7 +19,7 @@ package com.adr.datasql.data;
 
 import com.adr.datasql.KindResults;
 import com.adr.datasql.Results;
-import java.sql.SQLException;
+import com.adr.datasql.link.DataLinkException;
 
 /**
  *
@@ -40,7 +40,7 @@ public class ResultsArrayMeta  implements Results<Object[]> {
     }
         
     @Override
-    public Object[] read(KindResults kr) throws SQLException {
+    public Object[] read(KindResults kr) throws DataLinkException {
         Results<Object[]> results = new ResultsArray(kr.getMetaData());
         return results.read(kr);
     }   

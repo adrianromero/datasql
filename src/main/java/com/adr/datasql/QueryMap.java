@@ -1,7 +1,7 @@
-//    Data SQL is a light JDBC wrapper.
+//    Data Command is a light JDBC wrapper.
 //    Copyright (C) 2014 Adrián Romero Corchado.
 //
-//    This file is part of Data SQL
+//    This file is part of Data Command
 //
 //     Licensed under the Apache License, Version 2.0 (the "License");
 //     you may not use this file except in compliance with the License.
@@ -31,13 +31,13 @@ import java.util.Map;
 
 public class QueryMap extends Query<Map<String, Object>, Map<String, Object>> {
 
-    public QueryMap(String sql, String... paramnames) {
-        super(sql, paramnames);
+    public QueryMap(String command, String... paramnames) {
+        super(command, paramnames);
         init();
     }
 
-    public QueryMap(SQL sql) {
-        super(sql);
+    public QueryMap(Command command) {
+        super(command);
         init();
     }
     

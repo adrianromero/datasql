@@ -15,34 +15,12 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql.data;
-
-import com.adr.datasql.KindResults;
-import com.adr.datasql.Results;
-import com.adr.datasql.link.DataLinkException;
-import java.util.Map;
+package com.adr.datasql.link;
 
 /**
  *
  * @author adrian
  */
-public class ResultsMapMeta  implements Results<Map<String, Object>> {
-    
-    private static ResultsMapMeta instance = null;
-    
-    public static ResultsMapMeta getInstance() {
-        if (instance == null) {
-            instance = new ResultsMapMeta();
-        }
-        return instance;
-    }
-    
-    private ResultsMapMeta() {
-    }
-    
-    @Override
-    public Map<String, Object> read(KindResults kr) throws DataLinkException {
-        Results<Map<String, Object>> results = new ResultsMap(kr.getMetaData());
-        return results.read(kr);
-    }
+public interface DataLinkFactory {
+    public DataLink getDataLink() throws DataLinkException;
 }

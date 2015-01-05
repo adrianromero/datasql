@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2014 Adrián Romero Corchado.
+//    Copyright (C) 2014-2015 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -18,9 +18,9 @@
 package com.adr.datasql.orm;
 
 import com.adr.datasql.StatementExec;
+import com.adr.datasql.link.DataLink;
+import com.adr.datasql.link.DataLinkException;
 import com.adr.datasql.meta.SourceTable;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 /**
  *
@@ -39,11 +39,11 @@ public class StatementUpsert<P> implements StatementExec<P> {
     }
 
     @Override
-    public int exec(Connection c, P params) throws SQLException {
+    public int exec(DataLink link, P params) throws DataLinkException {
         
-        int i = queryupdate.exec(c, params);
+        int i = queryupdate.exec(link, params);
         if (i == 0) {
-            return queryinsert.exec(c, params);
+            return queryinsert.exec(link, params);
         } else {
             return i;
         }

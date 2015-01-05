@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2014 Adrián Romero Corchado.
+//    Copyright (C) 2014-2015 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -19,9 +19,9 @@ package com.adr.datasql.orm;
 
 import com.adr.datasql.KindParameters;
 import com.adr.datasql.data.MetaData;
+import com.adr.datasql.link.DataLinkException;
 import com.google.gson.JsonObject;
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -40,88 +40,88 @@ public class KindParametersJson implements KindParameters {
     }
 
     @Override
-    public void setInt(int paramIndex, Integer iValue) throws SQLException {
+    public void setInt(int paramIndex, Integer iValue) throws DataLinkException {
         setInt(Integer.toString(paramIndex - 1), iValue); 
     }
     @Override
-    public void setInt(String paramName, Integer iValue) throws SQLException {
+    public void setInt(String paramName, Integer iValue) throws DataLinkException {
         json.addProperty(paramName, iValue); 
     }
     @Override
-    public void setString(int paramIndex, String sValue) throws SQLException {
+    public void setString(int paramIndex, String sValue) throws DataLinkException {
         setString(Integer.toString(paramIndex - 1), sValue); 
     }
     @Override
-    public void setString(String paramName, String sValue) throws SQLException {
+    public void setString(String paramName, String sValue) throws DataLinkException {
         json.addProperty(paramName, sValue);             
     }
     @Override
-    public void setDouble(int paramIndex, Double dValue) throws SQLException {
+    public void setDouble(int paramIndex, Double dValue) throws DataLinkException {
         setDouble(Integer.toString(paramIndex - 1), dValue); 
     }
     @Override
-    public void setDouble(String paramName, Double dValue) throws SQLException {
+    public void setDouble(String paramName, Double dValue) throws DataLinkException {
         json.addProperty(paramName, dValue);            
     }
     @Override
-    public void setBigDecimal(int paramIndex, BigDecimal value) throws SQLException {
+    public void setBigDecimal(int paramIndex, BigDecimal value) throws DataLinkException {
         setBigDecimal(Integer.toString(paramIndex - 1), value); 
     }
     @Override
-    public void setBigDecimal(String paramName, BigDecimal value) throws SQLException {
+    public void setBigDecimal(String paramName, BigDecimal value) throws DataLinkException {
         json.addProperty(paramName, value);             
     }
     @Override
-    public void setBoolean(int paramIndex, Boolean bValue) throws SQLException {
+    public void setBoolean(int paramIndex, Boolean bValue) throws DataLinkException {
         setBoolean(Integer.toString(paramIndex - 1), bValue); 
     }
     @Override
-    public void setBoolean(String paramName, Boolean bValue) throws SQLException {
+    public void setBoolean(String paramName, Boolean bValue) throws DataLinkException {
         json.addProperty(paramName, bValue);            
     }
     @Override
-    public void setTimestamp(int paramIndex, java.util.Date dValue) throws SQLException {
+    public void setTimestamp(int paramIndex, java.util.Date dValue) throws DataLinkException {
         setTimestamp(Integer.toString(paramIndex - 1), dValue); 
     }
     @Override
-    public void setTimestamp(String paramName, java.util.Date dValue) throws SQLException {
+    public void setTimestamp(String paramName, java.util.Date dValue) throws DataLinkException {
         json.addProperty(paramName, Instant.ofEpochMilli(dValue.getTime()).toString()); 
     }
     @Override
-    public void setDate(int paramIndex, java.util.Date dValue) throws SQLException {
+    public void setDate(int paramIndex, java.util.Date dValue) throws DataLinkException {
         setDate(Integer.toString(paramIndex - 1), dValue);      
     }
     @Override
-    public void setDate(String paramName, java.util.Date dValue) throws SQLException {
+    public void setDate(String paramName, java.util.Date dValue) throws DataLinkException {
         json.addProperty(paramName, LocalDate.from(Instant.ofEpochMilli(dValue.getTime())).toString());          
     }
     @Override
-    public void setTime(int paramIndex, java.util.Date dValue) throws SQLException {
+    public void setTime(int paramIndex, java.util.Date dValue) throws DataLinkException {
         setTime(Integer.toString(paramIndex - 1), dValue);
     }
     @Override
-    public void setTime(String paramName, java.util.Date dValue) throws SQLException {
+    public void setTime(String paramName, java.util.Date dValue) throws DataLinkException {
         json.addProperty(paramName, LocalTime.from(Instant.ofEpochMilli(dValue.getTime())).toString());          
     }        
     @Override
-    public void setBytes(int paramIndex, byte[] value) throws SQLException {
+    public void setBytes(int paramIndex, byte[] value) throws DataLinkException {
         setBytes(Integer.toString(paramIndex - 1), value);
     }
     @Override
-    public void setBytes(String paramName, byte[] value) throws SQLException {
+    public void setBytes(String paramName, byte[] value) throws DataLinkException {
         json.addProperty(paramName, Base64.getEncoder().encodeToString(value));
     }
     @Override
-    public void setObject(int paramIndex, Object value) throws SQLException {
+    public void setObject(int paramIndex, Object value) throws DataLinkException {
         setObject(Integer.toString(paramIndex - 1), value);
     }
     @Override
-    public void setObject(String paramName, Object value) throws SQLException {
+    public void setObject(String paramName, Object value) throws DataLinkException {
         json.addProperty(paramName, value == null ? null : value.toString());
     }
 
     @Override
-    public MetaData[] getMetaData() throws SQLException {
+    public MetaData[] getMetaData() throws DataLinkException {
         throw new UnsupportedOperationException("Not supported.");
     }
 }

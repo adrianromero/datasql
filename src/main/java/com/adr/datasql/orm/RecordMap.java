@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2014 Adrián Romero Corchado.
+//    Copyright (C) 2014-2015 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -18,7 +18,7 @@
 package com.adr.datasql.orm;
 
 import com.adr.datasql.data.MetaData;
-import java.sql.SQLException;
+import com.adr.datasql.link.DataLinkException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,17 +29,17 @@ import java.util.Map;
 public class RecordMap extends RecordAbstract<Map<String, Object>> {
 
     @Override
-    public Object getValue(MetaData md, Map<String, Object> param) throws SQLException {
+    public Object getValue(MetaData md, Map<String, Object> param) throws DataLinkException {
         return param.get(md.getName());      
     }        
 
     @Override
-    public void setValue(MetaData md, Map<String, Object> param, Object value) throws SQLException {
+    public void setValue(MetaData md, Map<String, Object> param, Object value) throws DataLinkException {
         param.put(md.getName(), value);
     }
 
     @Override
-    public Map<String, Object> create() throws SQLException {
-        return new HashMap<String, Object>();
+    public Map<String, Object> create() throws DataLinkException {
+        return new HashMap<>();
     }
 }

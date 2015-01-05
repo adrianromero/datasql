@@ -1,7 +1,7 @@
-//    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2014 Adrián Romero Corchado.
+//    Data Command is a light JDBC wrapper.
+//    Copyright (C) 2014-2015 Adrián Romero Corchado.
 //
-//    This file is part of Data SQL
+//    This file is part of Data Command
 //
 //     Licensed under the Apache License, Version 2.0 (the "License");
 //     you may not use this file except in compliance with the License.
@@ -21,25 +21,25 @@ package com.adr.datasql;
  *
  * @author adrian
  */
-public class SQL {
+public class Command {
 
-    private String sql;
+    private String command;
     private String[] paramnames;  
     
-    public SQL(String sql, String... paramnames) {
-        init(sql, paramnames);
+    public Command(String command, String... paramnames) {
+        init(command, paramnames);
     }
     
-    protected SQL() {
+    protected Command() {
     }
     
-    protected final void init(String sql, String... paramnames) {
-        this.sql = sql;
+    protected final void init(String command, String... paramnames) {
+        this.command = command;
         this.paramnames = paramnames == null ? new String[0] : paramnames;        
     }
     
-    public final String getSQL() {
-        return sql;
+    public final String getCommand() {
+        return command;
     }
 
     public final String[] getParamNames() {
@@ -49,7 +49,7 @@ public class SQL {
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
-        s.append(getSQL());
+        s.append(getCommand());
         s.append('[');
         for(int i = 0; i < getParamNames().length; i++) {
             if (i > 0) {

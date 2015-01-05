@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2014 Adrián Romero Corchado.
+//    Copyright (C) 2014-2015 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -20,7 +20,7 @@ package com.adr.datasql.data;
 import com.adr.datasql.Kind;
 import com.adr.datasql.KindParameters;
 import com.adr.datasql.Parameters;
-import java.sql.SQLException;
+import com.adr.datasql.link.DataLinkException;
 
 /**
  *
@@ -34,7 +34,7 @@ public class ParametersString implements Parameters<String> {
     }
     
     @Override
-    public void write(KindParameters dp, String param) throws SQLException {
+    public void write(KindParameters dp, String param) throws DataLinkException {
         Kind.STRING.set(dp, 1, param);
     }
 }

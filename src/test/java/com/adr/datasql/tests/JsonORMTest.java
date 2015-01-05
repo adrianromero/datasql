@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2014 Adrián Romero Corchado.
+//    Copyright (C) 2014-2015 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -23,6 +23,7 @@ import com.adr.datasql.QueryArray;
 import com.adr.datasql.Session;
 import com.adr.datasql.data.MetaData;
 import com.adr.datasql.databases.DataBase;
+import com.adr.datasql.link.DataLinkException;
 import com.adr.datasql.meta.Entity;
 import com.adr.datasql.meta.Field;
 import com.adr.datasql.meta.SourceList;
@@ -32,7 +33,6 @@ import com.adr.datasql.orm.RecordArray;
 import com.adr.datasql.orm.RecordJson;
 import com.google.gson.JsonObject;
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
@@ -64,7 +64,7 @@ public class JsonORMTest {
     //public final static SourceTable<JsonObject> SOURCETABLE = ENTITY.createSourceTable(new RecordJson());
     
     @Test
-    public void insertJson() throws SQLException {
+    public void insertJson() throws DataLinkException {
         
         try (ORMSession session = DataBase.newSession()) {  
            
@@ -88,7 +88,7 @@ public class JsonORMTest {
     }
     
     @Test
-    public void filterJsonObject() throws SQLException {
+    public void filterJsonObject() throws DataLinkException {
         try (ORMSession session = DataBase.newSession()) { 
             
             SourceList<JsonObject, Object[]> source = ENTITY.createSourceList(new RecordJson(), new RecordArray());
@@ -102,7 +102,7 @@ public class JsonORMTest {
     }
     
     @BeforeClass
-    public static void setUpClass() throws SQLException {   
+    public static void setUpClass() throws DataLinkException {   
    
         try (Session session = DataBase.newSession()) { 
             session.exec(new QueryArray("drop table if exists samplejson"));

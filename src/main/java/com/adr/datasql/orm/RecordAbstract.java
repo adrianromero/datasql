@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2014 Adrián Romero Corchado.
+//    Copyright (C) 2014-2015 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -22,7 +22,7 @@ import com.adr.datasql.KindResults;
 import com.adr.datasql.Parameters;
 import com.adr.datasql.Results;
 import com.adr.datasql.data.MetaData;
-import java.sql.SQLException;
+import com.adr.datasql.link.DataLinkException;
 
 /**
  *
@@ -31,9 +31,9 @@ import java.sql.SQLException;
  */
 public abstract class RecordAbstract<P> implements Record<P> {
 
-    public abstract Object getValue(MetaData f, P param) throws SQLException;
-    public abstract void setValue(MetaData f, P param, Object value) throws SQLException;
-    public abstract P create() throws SQLException;
+    public abstract Object getValue(MetaData f, P param) throws DataLinkException;
+    public abstract void setValue(MetaData f, P param, Object value) throws DataLinkException;
+    public abstract P create() throws DataLinkException;
     
     @Override
     public final Results<P> createResults(MetaData[] metadatas) {
@@ -53,7 +53,7 @@ public abstract class RecordAbstract<P> implements Record<P> {
         }
         
         @Override
-        public final P read(KindResults dp) throws SQLException {
+        public final P read(KindResults dp) throws DataLinkException {
             P param = create();
             for (MetaData md : metadatas) {    
                 setValue(md, param, md.getKind().get(dp, md.getName()));              
@@ -61,7 +61,7 @@ public abstract class RecordAbstract<P> implements Record<P> {
             return param;
         }    
         @Override
-        public final void write(KindParameters dp, P param) throws SQLException {
+        public final void write(KindParameters dp, P param) throws DataLinkException {
             for (MetaData md : metadatas) {           
                 md.getKind().set(dp, md.getName(), getValue(md, param));              
             }

@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2014-2015 Adrián Romero Corchado.
+//    Copyright (C) 2015 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -15,26 +15,28 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql.data;
-
-import com.adr.datasql.Kind;
-import com.adr.datasql.KindResults;
-import com.adr.datasql.Results;
-import com.adr.datasql.link.DataLinkException;
+package com.adr.datasql.link;
 
 /**
  *
  * @author adrian
  */
-public class ResultsDouble implements Results<Number> {
+public class DataLinkException extends Exception {
 
-    public static final Results<Number> INSTANCE = new ResultsDouble();
-
-    private ResultsDouble() {
+    /**
+     * Creates a new instance of <code>DataLinkException</code> without detail
+     * message.
+     */
+    public DataLinkException() {
     }
 
-    @Override
-    public Number read(KindResults kr) throws DataLinkException {
-        return Kind.DOUBLE.get(kr, 1);
+    public DataLinkException(String msg) {
+        super(msg);
     }
+    public DataLinkException(Throwable t) {
+        super(t);
+    }
+    public DataLinkException(String msg, Throwable t) {
+        super(msg, t);
+    }   
 }
