@@ -166,11 +166,6 @@ public class Entity implements SourceTableFactory, SourceListFactory {
         public StatementExec<R> getStatementInsert() {
             return Entity.getStatementInsert(record, entity.getName(), entity.defProjection(), entity.defProjectionKeys());
         }
-
-        @Override
-        public R createNew() {
-            return Entity.createNew(record, entity.getName(), entity.defProjection(), entity.defProjectionKeys());
-        }
     }
     
     public static <P> StatementExec<P> getStatementDelete(RecordParameters<P> parameters, String name, MetaData[] projection, MetaData[] keys) {
@@ -228,7 +223,7 @@ public class Entity implements SourceTableFactory, SourceListFactory {
         
         StringBuilder sentence = new StringBuilder();
         StringBuilder values = new StringBuilder();
-        ArrayList<String> fieldslist = new ArrayList<String>();
+        ArrayList<String> fieldslist = new ArrayList<>();
         
         sentence.append("INSERT INTO ");
         sentence.append(name);
@@ -256,7 +251,7 @@ public class Entity implements SourceTableFactory, SourceListFactory {
     private static <R, P> Query<R, P> getStatementList(RecordResults<R> results, RecordParameters<P> parameters, String name, MetaData[] projection, MetaData[] criteria, StatementOrder[] order) {
         
         StringBuilder sqlsent = new StringBuilder();
-        List<String> fieldslist = new ArrayList<String>();
+        List<String> fieldslist = new ArrayList<>();
         
         sqlsent.append("SELECT ");
         boolean comma = false;
@@ -315,15 +310,6 @@ public class Entity implements SourceTableFactory, SourceListFactory {
         // build statement
         Command sql = new Command(sqlsent.toString(), fieldslist.toArray(new String[fieldslist.size()]));     
         return new Query<R, P>(sql).setResults(results.createResults(projection)).setParameters(parameters.createParams(criteria));
-    }
-    
-    public static <R> R createNew(RecordResults<R> record, String name, MetaData[] projection, MetaData[] keys) {
-        try {
-            Results<R> r = record.createResults(projection);
-            return r.read(new KindResultsNew(projection, keys));
-        } catch (DataLinkException e) {         
-            throw new RuntimeException(e); // Never happens with the instanciated objects
-        }
     }
      
 //    

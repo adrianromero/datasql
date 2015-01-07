@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2014 Adrián Romero Corchado.
+//    Copyright (C) 2014-2105 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -31,5 +31,4 @@ public interface SourceTable<R> {
     public StatementExec<R> getStatementDelete();
     public StatementExec<R> getStatementUpdate();
     public StatementExec<R> getStatementInsert();    
-    public R createNew();
 }
