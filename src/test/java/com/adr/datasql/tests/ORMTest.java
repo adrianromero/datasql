@@ -20,10 +20,9 @@ package com.adr.datasql.tests;
 import com.adr.datasql.Kind;
 import com.adr.datasql.StatementExec;
 import com.adr.datasql.QueryArray;
-import com.adr.datasql.Session;
 import com.adr.datasql.databases.DataBase;
+import com.adr.datasql.link.DataLink;
 import com.adr.datasql.link.DataLinkException;
-import com.adr.datasql.orm.ORMSession;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Date;
@@ -46,16 +45,16 @@ public class ORMTest {
     @Test
     public void InsertPojo() throws DataLinkException {
 
-        try (ORMSession session = DataBase.newSession()) {  
+        try (DataLink link = DataBase.getDataLink()) {  
             
             SamplePojo pojo = new SamplePojo();
             pojo.setId("pojoid");
             pojo.setCode("pojocode");
             pojo.setName("pojoname");
             
-            session.insert(pojo);   
+            link.insert(pojo);   
             
-            SamplePojo returnpojo = session.get(SamplePojo.class, "pojoid");
+            SamplePojo returnpojo = link.get(SamplePojo.class, "pojoid");
             
             Assert.assertEquals(returnpojo.getId(), pojo.getId());  
             Assert.assertEquals(returnpojo.getCode(), pojo.getCode());  
@@ -71,9 +70,9 @@ public class ORMTest {
     @Test
     public void findPojo() throws DataLinkException {
         
-        try (ORMSession session = DataBase.newSession()) {        
+        try (DataLink link = DataBase.getDataLink()) {        
 
-            SamplePojo pojo = session.get(SamplePojo.class, "a");   
+            SamplePojo pojo = link.get(SamplePojo.class, "a");   
             
             Assert.assertEquals("a", pojo.getId());  
             Assert.assertEquals("code 1", pojo.getCode());             
@@ -84,9 +83,9 @@ public class ORMTest {
     @Test
     public void listPojo() throws DataLinkException {      
 
-        try (ORMSession session = DataBase.newSession()) { 
+        try (DataLink link = DataBase.getDataLink()) { 
                                      
-            List<SamplePojo> pojos = session.list(SamplePojo.class);   
+            List<SamplePojo> pojos = link.list(SamplePojo.class);   
             
             System.out.println(pojos);              
         }        
@@ -95,12 +94,12 @@ public class ORMTest {
     @Test
     public void filterPojo() throws DataLinkException {
         
-        try (ORMSession session = DataBase.newSession()) { 
+        try (DataLink link = DataBase.getDataLink()) { 
                              
             Map<String, Object> filter = new HashMap<String, Object>();
             filter.put("code", "code x");
             
-            List<SamplePojo> pojos = session.list(SamplePojo.class, filter);   
+            List<SamplePojo> pojos = link.list(SamplePojo.class, filter);   
             
             System.out.println("filter pojos " + pojos);          
             Assert.assertEquals("Sample pojos codex", 4, pojos.size());
@@ -110,7 +109,7 @@ public class ORMTest {
     @Test
     public void pojoStatements() throws DataLinkException {
         
-        try (ORMSession session = DataBase.newSession()) {
+        try (DataLink link = DataBase.getDataLink()) {
             // Defining a new SamplePojo
             SamplePojo pojo = new SamplePojo();
             pojo.setId("id-99");
@@ -118,9 +117,9 @@ public class ORMTest {
             pojo.setLine(10);
             pojo.setWeight(50.0);
             // Insert
-            session.insert(pojo);  
+            link.insert(pojo);  
             // Get an instance
-            SamplePojo returnpojo = session.get(SamplePojo.class, "id-99");
+            SamplePojo returnpojo = link.get(SamplePojo.class, "id-99");
             
             Assert.assertEquals(pojo.getId(), returnpojo.getId());
             Assert.assertEquals(pojo.getName(), returnpojo.getName());
@@ -131,10 +130,10 @@ public class ORMTest {
     @BeforeClass
     public static void setUpClass() throws DataLinkException {   
    
-        try (Session session = DataBase.newSession()) { 
+        try (DataLink link = DataBase.getDataLink()) { 
             
-            session.exec(new QueryArray("drop table if exists samplepojo"));
-            session.exec(new QueryArray("create table samplepojo("
+            link.exec(new QueryArray("drop table if exists samplepojo"));
+            link.exec(new QueryArray("create table samplepojo("
                     + "id varchar(32), "
                     + "code varchar(128), "
                     + "name varchar(1024), "
@@ -147,11 +146,11 @@ public class ORMTest {
             StatementExec<Object[]> insertMyTest = new QueryArray("insert into samplepojo(id, code, name, startdate, weight, amount, line, active) values (?, ?, ?, ?, ?, ?, ?, ?)")
                     .setParameters(Kind.STRING, Kind.STRING, Kind.STRING, Kind.TIMESTAMP, Kind.DOUBLE, Kind.DECIMAL, Kind.INT, Kind.BOOLEAN);
             
-            session.exec(insertMyTest, "a", "code 1", "name a", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);
-            session.exec(insertMyTest, "b", "code x", "name b", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);
-            session.exec(insertMyTest, "c", "code x", "name c", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);
-            session.exec(insertMyTest, "d", "code x", "name d", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);
-            session.exec(insertMyTest, "e", "code x", "name e", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);                      
+            link.exec(insertMyTest, "a", "code 1", "name a", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);
+            link.exec(insertMyTest, "b", "code x", "name b", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);
+            link.exec(insertMyTest, "c", "code x", "name c", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);
+            link.exec(insertMyTest, "d", "code x", "name d", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);
+            link.exec(insertMyTest, "e", "code x", "name e", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);                      
         }
     }
     

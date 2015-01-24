@@ -17,9 +17,9 @@
 
 package com.adr.datasql.databases;
 
+import com.adr.datasql.link.DataLink;
 import com.adr.datasql.link.DataLinkException;
-import com.adr.datasql.link.SQLDataLinkFactory;
-import com.adr.datasql.orm.ORMSession;
+import com.adr.datasql.link.DataLinkFactory;
 
 /**
  *
@@ -27,17 +27,17 @@ import com.adr.datasql.orm.ORMSession;
  */
 public class DataBase {
     
-    private static javax.sql.DataSource cpds; 
+    private static DataLinkFactory linkfactory; 
     
-    public static void setDataSource(javax.sql.DataSource cpds) {
-        DataBase.cpds = cpds;
+    public static void setDataLinkFactory(DataLinkFactory linkfactory) {
+        DataBase.linkfactory = linkfactory;
     }
     
-    public static javax.sql.DataSource getDataSource() {
-        return cpds; 
-    }
+    public static DataLinkFactory getDataLinkFactory() {
+        return linkfactory; 
+    }   
     
-    public static ORMSession newSession() throws DataLinkException {
-        return new ORMSession(new SQLDataLinkFactory(cpds)); 
-    }    
+    public static DataLink getDataLink() throws DataLinkException {
+        return linkfactory.getDataLink();
+    }
 }

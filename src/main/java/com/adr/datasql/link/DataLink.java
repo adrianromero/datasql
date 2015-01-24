@@ -20,16 +20,254 @@ package com.adr.datasql.link;
 import com.adr.datasql.Command;
 import com.adr.datasql.Parameters;
 import com.adr.datasql.Results;
+import com.adr.datasql.StatementExec;
+import com.adr.datasql.StatementFind;
+import com.adr.datasql.StatementQuery;
+import com.adr.datasql.data.MetaData;
+import com.adr.datasql.meta.SourceList;
+import com.adr.datasql.meta.SourceListFactory;
+import com.adr.datasql.meta.SourceTable;
+import com.adr.datasql.meta.SourceTableFactory;
+import com.adr.datasql.meta.StatementOrder;
+import com.adr.datasql.orm.RecordMap;
+import com.adr.datasql.orm.RecordPojo;
+import com.adr.datasql.orm.StatementUpsert;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  *
  * @author adrian
  */
-public interface DataLink extends AutoCloseable {
-    public <P> int exec(Command command, Parameters<P> parameters, P params) throws DataLinkException;
-    public <R,P> R find(Command command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException;
-    public <R,P> List<R> query(Command command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException;
+public abstract class DataLink implements AutoCloseable {
+    public abstract <P> int exec(Command command, Parameters<P> parameters, P params) throws DataLinkException;
+    public abstract <R,P> R find(Command command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException;
+    public abstract <R,P> List<R> query(Command command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException;
+    
     @Override
-    public void close() throws DataLinkException;
+    public abstract void close() throws DataLinkException;
+    
+    /**
+     *
+     * @param statement The 
+     * @return Either the row count for update statements or 0 for statements
+     * that return nothing
+     * @throws DataLinkException
+     */
+    public final int exec(StatementExec<?> statement) throws DataLinkException {
+        return statement.exec(this, null);
+    }
+    
+    /**
+     *
+     * @param <P>
+     * @param statement
+     * @param params
+     * @return
+     * @throws DataLinkException
+     */
+    public final <P> int exec(StatementExec<P[]> statement, P... params) throws DataLinkException {       
+        return statement.exec(this, params);
+    }
+    
+    /**
+     *
+     * @param <P>
+     * @param statement
+     * @param params
+     * @return
+     * @throws DataLinkException
+     */
+    public final <P> int exec(StatementExec<P> statement, P params) throws DataLinkException {
+        return statement.exec(this, params);
+    }
+    
+    /**
+     *
+     * @param <R>
+     * @param statement
+     * @return
+     * @throws DataLinkException
+     */
+    public final <R> R find(StatementFind<R, ?> statement) throws DataLinkException {
+        return statement.find(this, null);
+    }
+    
+    /**
+     *
+     * @param <R>
+     * @param <P>
+     * @param statement
+     * @param params
+     * @return
+     * @throws DataLinkException
+     */
+    public final <R, P> R find(StatementFind<R, P[]> statement, P... params) throws DataLinkException {
+        return statement.find(this, params);
+    }
+    
+    /**
+     *
+     * @param <R>
+     * @param <P>
+     * @param statement
+     * @param params
+     * @return
+     * @throws DataLinkException
+     */
+    public final <R, P> R find(StatementFind<R, P> statement, P params) throws DataLinkException {
+        return statement.find(this, params);
+    }
+
+    /**
+     *
+     * @param <R>
+     * @param statement
+     * @return
+     * @throws DataLinkException
+     */
+    public final <R> List<R> query(StatementQuery<R, ?> statement) throws DataLinkException {
+        return statement.query(this, null);
+    }
+    
+    /**
+     *
+     * @param <R>
+     * @param <P>
+     * @param statement
+     * @param params
+     * @return
+     * @throws DataLinkException
+     */
+    public final <R, P> List<R> query(StatementQuery<R, P[]> statement, P... params) throws DataLinkException {
+        return statement.query(this, params);
+    }
+    
+    /**
+     *
+     * @param <R>
+     * @param <P>
+     * @param statement
+     * @param params
+     * @return
+     * @throws DataLinkException
+     */
+    public final <R, P> List<R> query(StatementQuery<R, P> statement, P params) throws DataLinkException {
+        return statement.query(this, params);
+    } 
+    
+    
+    private static <P> SourceTable<P> getSourceTable(Class<? extends P> clazz) throws DataLinkException {
+        try {
+            return ((SourceTableFactory) clazz.getField("SOURCEFACTORY").get(null))
+                    .createSourceTable(new RecordPojo(clazz));
+        } catch (NoSuchFieldException 
+                |IllegalArgumentException
+                |IllegalAccessException
+                |SecurityException ex) {
+            throw new DataLinkException(ex);
+        }
+    }
+    
+    private static SourceListFactory getSourceListFactory(Class<?> clazz) throws DataLinkException {
+        try {
+            return ((SourceListFactory) clazz.getField("SOURCEFACTORY").get(null));
+        } catch (NoSuchFieldException 
+                |IllegalArgumentException
+                |IllegalAccessException
+                |SecurityException ex) {
+            throw new DataLinkException(ex);
+        }
+    }
+    
+    private static MetaData[] getMetaDatas(MetaData[] metadatas, Set<String> fieldsname) {
+        ArrayList<MetaData> keys = new ArrayList<>();
+        for (MetaData m: metadatas) {
+            if (fieldsname.contains(m.getName())) {
+                keys.add(m);
+            }
+        }        
+        return keys.toArray(new MetaData[keys.size()]);
+    }    
+    
+    public final <P> int insert(P value) throws DataLinkException {  
+        return insert(getSourceTable((Class<? extends P>) value.getClass()), value);
+    }
+    
+    public final <P> int delete(P value) throws DataLinkException {
+        return delete(getSourceTable((Class<? extends P>) value.getClass()), value);
+    }
+    
+    public final <P> int upsert(P value) throws DataLinkException {
+        return upsert(getSourceTable((Class<? extends P>) value.getClass()), value);
+    }
+    
+    public final <P> int update(P value) throws DataLinkException {
+        return update(getSourceTable((Class<? extends P>) value.getClass()), value); 
+    }
+    
+    public final <P> P get(Class<? extends P> clazz, Object... key) throws DataLinkException {      
+        return get(getSourceTable(clazz), key);
+    }
+    
+    public final <P> List<P> list(Class<? extends P> clazz) throws DataLinkException {
+        SourceListFactory sourcelistfactory = getSourceListFactory(clazz);
+        SourceList<P, Map<String, Object>> sourcelist = sourcelistfactory.createSourceList(new RecordPojo(clazz), new RecordMap());
+        sourcelist.setCriteria(null);
+        return list(sourcelist);
+    }  
+    
+    public final <P> List<P> list(Class<? extends P> clazz, StatementOrder[] order) throws DataLinkException {
+        SourceListFactory sourcelistfactory = getSourceListFactory(clazz);
+        SourceList<P, Map<String, Object>> sourcelist = sourcelistfactory.createSourceList(new RecordPojo(clazz), new RecordMap());
+        sourcelist.setCriteria(null);
+        sourcelist.setOrder(order);
+        return list(sourcelist);
+    }  
+    
+    public final <P> List<P> list(Class<? extends P> clazz, Map<String, Object> filter) throws DataLinkException {
+        SourceListFactory sourcelistfactory = getSourceListFactory(clazz);
+        SourceList<P, Map<String, Object>> sourcelist = sourcelistfactory.createSourceList(new RecordPojo(clazz), new RecordMap());
+        sourcelist.setCriteria(getMetaDatas(sourcelistfactory.defProjection(), filter.keySet()));
+        return list(sourcelist, filter);
+    }  
+    
+    public final <P> List<P> list(Class<? extends P> clazz, Map<String, Object> filter, StatementOrder[] order) throws DataLinkException {
+        SourceListFactory sourcelistfactory = getSourceListFactory(clazz);
+        SourceList<P, Map<String, Object>> sourcelist = sourcelistfactory.createSourceList(new RecordPojo(clazz), new RecordMap());
+        sourcelist.setCriteria(getMetaDatas(sourcelistfactory.defProjection(), filter.keySet()));
+        sourcelist.setOrder(order);
+        return list(sourcelist, filter);
+    }  
+    
+    public final <P> int insert(SourceTable<P> sourcetable, P value) throws DataLinkException {
+        return exec(sourcetable.getStatementInsert(), value);
+    }
+    
+    public final <P> int delete(SourceTable<P> sourcetable, P value) throws DataLinkException {
+        return exec(sourcetable.getStatementDelete(), value);
+    }
+    
+    public final <P> int upsert(SourceTable<P> sourcetable, P value) throws DataLinkException {
+        return exec(new StatementUpsert<P>(sourcetable), value);
+    }
+    
+    public final <P> int update(SourceTable<P> sourcetable, P value) throws DataLinkException {
+        return exec(sourcetable.getStatementUpdate(), value);
+    }
+    
+    public final <P> P get(SourceTable<P> sourcetable, Object... key) throws DataLinkException { 
+        return find(sourcetable.getStatementGet(), key);
+    }
+    
+    public final <P> List<P> list(SourceList<P, ?> sourcelist) throws DataLinkException {
+        return query(sourcelist.getStatementList());
+    } 
+
+    
+    public final <P, F> List<P> list(SourceList<P, F> sourcelist, F filter) throws DataLinkException {
+        return query(sourcelist.getStatementList(), filter);
+    }
 }

@@ -35,7 +35,7 @@ import java.util.logging.Logger;
  *
  * @author adrian
  */
-class SQLDataLink implements DataLink {
+class SQLDataLink extends DataLink {
     
     private static final Logger logger = Logger.getLogger(SQLDataLink.class.getName());  
     private final Connection c;

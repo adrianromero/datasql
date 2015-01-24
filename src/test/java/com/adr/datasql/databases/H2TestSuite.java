@@ -17,9 +17,7 @@
 
 package com.adr.datasql.databases;
 
-import com.adr.datasql.link.DataLinkException;
 import com.adr.datasql.link.SQLDataLinkFactory;
-import com.adr.datasql.orm.ORMSession;
 import javax.sql.DataSource;
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.junit.After;
@@ -47,7 +45,7 @@ public class H2TestSuite {
     @BeforeClass
     public static void setUpClass() throws Exception {       
         cpds = JdbcConnectionPool.create("jdbc:h2:~/h2testdb", "sa", "");     
-        DataBase.setDataSource(cpds);
+        DataBase.setDataLinkFactory(new SQLDataLinkFactory(cpds));
     }
 
     @AfterClass
@@ -55,16 +53,12 @@ public class H2TestSuite {
         if (cpds != null) {        
             cpds.dispose();
             cpds = null;
-            DataBase.setDataSource(cpds);
+            DataBase.setDataLinkFactory(null);
         }        
     }
     
     public static DataSource getDataSource() {
         return cpds; 
-    }
-    
-    public static ORMSession newSession() throws DataLinkException {
-        return new ORMSession(new SQLDataLinkFactory(cpds)); 
     }
 
     @Before

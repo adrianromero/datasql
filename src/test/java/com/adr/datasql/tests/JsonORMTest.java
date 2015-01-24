@@ -20,15 +20,14 @@ package com.adr.datasql.tests;
 import com.adr.datasql.Kind;
 import com.adr.datasql.StatementExec;
 import com.adr.datasql.QueryArray;
-import com.adr.datasql.Session;
 import com.adr.datasql.data.MetaData;
 import com.adr.datasql.databases.DataBase;
+import com.adr.datasql.link.DataLink;
 import com.adr.datasql.link.DataLinkException;
 import com.adr.datasql.meta.Entity;
 import com.adr.datasql.meta.Field;
 import com.adr.datasql.meta.SourceList;
 import com.adr.datasql.meta.SourceTable;
-import com.adr.datasql.orm.ORMSession;
 import com.adr.datasql.orm.RecordArray;
 import com.adr.datasql.orm.RecordJson;
 import com.google.gson.JsonObject;
@@ -66,7 +65,7 @@ public class JsonORMTest {
     @Test
     public void insertJson() throws DataLinkException {
         
-        try (ORMSession session = DataBase.newSession()) {  
+        try (DataLink link = DataBase.getDataLink()) {  
            
             JsonObject value = new JsonObject();
             value.addProperty("id", "John");
@@ -77,9 +76,9 @@ public class JsonORMTest {
 
             SourceTable<JsonObject> source = ENTITY.createSourceTable(new RecordJson());
             
-            session.upsert(source, value);
+            link.upsert(source, value);
             
-            JsonObject returnvalue = session.get(source, "John");
+            JsonObject returnvalue = link.get(source, "John");
             
             Assert.assertEquals(
                     "{\"id\":\"John\",\"code\":\"Smith\",\"name\":\"pepeto\",\"startdate\":\"2014-01-01T18:00:32.212Z\",\"weight\":12.4,\"amount\":null,\"line\":null,\"active\":null}", 
@@ -89,12 +88,12 @@ public class JsonORMTest {
     
     @Test
     public void filterJsonObject() throws DataLinkException {
-        try (ORMSession session = DataBase.newSession()) { 
+        try (DataLink link = DataBase.getDataLink()) { 
             
             SourceList<JsonObject, Object[]> source = ENTITY.createSourceList(new RecordJson(), new RecordArray());
             source.setCriteria(new MetaData[] {new MetaData("code", Kind.STRING)});
             
-            List<JsonObject> results = session.list(source, new Object[]{"code x"});
+            List<JsonObject> results = link.list(source, new Object[]{"code x"});
             
             System.out.println(results);
             Assert.assertEquals("size of list ", 4, results.size());
@@ -104,9 +103,9 @@ public class JsonORMTest {
     @BeforeClass
     public static void setUpClass() throws DataLinkException {   
    
-        try (Session session = DataBase.newSession()) { 
-            session.exec(new QueryArray("drop table if exists samplejson"));
-            session.exec(new QueryArray("create table samplejson("
+        try (DataLink link = DataBase.getDataLink()) { 
+            link.exec(new QueryArray("drop table if exists samplejson"));
+            link.exec(new QueryArray("create table samplejson("
                     + "id varchar(32), "
                     + "code varchar(128), "
                     + "name varchar(1024), "
@@ -119,11 +118,11 @@ public class JsonORMTest {
             StatementExec<Object[]> insertMyTest = new QueryArray("insert into samplejson(id, code, name, startdate, weight, amount, line, active) values (?, ?, ?, ?, ?, ?, ?, ?)")
                     .setParameters(Kind.STRING, Kind.STRING, Kind.STRING, Kind.TIMESTAMP, Kind.DOUBLE, Kind.DECIMAL, Kind.INT, Kind.BOOLEAN);
             
-            session.exec(insertMyTest, "a", "code 1", "name a", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);
-            session.exec(insertMyTest, "b", "code x", "name b", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);
-            session.exec(insertMyTest, "c", "code x", "name c", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);
-            session.exec(insertMyTest, "d", "code x", "name d", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);
-            session.exec(insertMyTest, "e", "code x", "name e", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);                      
+            link.exec(insertMyTest, "a", "code 1", "name a", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);
+            link.exec(insertMyTest, "b", "code x", "name b", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);
+            link.exec(insertMyTest, "c", "code x", "name c", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);
+            link.exec(insertMyTest, "d", "code x", "name d", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);
+            link.exec(insertMyTest, "e", "code x", "name e", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);                      
             
         }
     }
