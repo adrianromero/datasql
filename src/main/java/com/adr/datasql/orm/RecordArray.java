@@ -30,12 +30,12 @@ import com.adr.datasql.data.ResultsArray;
 public class RecordArray implements RecordParameters<Object[]>, RecordResults<Object[]> {
 
     @Override
-    public Parameters<Object[]> createParams(MetaData[] metadatas) {
+    public Parameters<Object[]> createParams(MetaData... metadatas) {
         return new ParametersArray(metadatas);
     }
 
     @Override
-    public Results<Object[]> createResults(MetaData[] metadatas) {
+    public Results<Object[]> createResults(MetaData... metadatas) {
         return new ResultsArray(metadatas);
     }
     

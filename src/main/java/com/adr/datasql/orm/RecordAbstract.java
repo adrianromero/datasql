@@ -36,19 +36,19 @@ public abstract class RecordAbstract<P> implements Record<P> {
     public abstract P create() throws DataLinkException;
     
     @Override
-    public final Results<P> createResults(MetaData[] metadatas) {
+    public final Results<P> createResults(MetaData... metadatas) {
         return metadatas == null ? null : new RecordParametersResults(metadatas);
     }
     
     @Override
-    public final Parameters<P> createParams(MetaData[] metadatas) {
+    public final Parameters<P> createParams(MetaData... metadatas) {
         return metadatas == null ? null : new RecordParametersResults(metadatas);
     }
     
     private class RecordParametersResults implements Parameters<P>, Results<P> {
         private final MetaData[] metadatas;
 
-        public RecordParametersResults(MetaData[] metadatas) {
+        public RecordParametersResults(MetaData... metadatas) {
             this.metadatas = metadatas;
         }
         

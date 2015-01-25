@@ -26,5 +26,5 @@ import com.adr.datasql.data.MetaData;
  * @param <P>
  */
 public interface RecordParameters<P> {
-    public Parameters<P> createParams(MetaData[] metadatas);
+    public Parameters<P> createParams(MetaData... metadatas);
 }
