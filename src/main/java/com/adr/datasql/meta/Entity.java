@@ -17,14 +17,13 @@
 
 package com.adr.datasql.meta;
 
+import com.adr.datasql.Batch;
 import com.adr.datasql.data.MetaData;
 import com.adr.datasql.Query;
-import com.adr.datasql.Results;
 import com.adr.datasql.Command;
 import com.adr.datasql.StatementExec;
 import com.adr.datasql.StatementFind;
 import com.adr.datasql.StatementQuery;
-import com.adr.datasql.link.DataLinkException;
 import com.adr.datasql.orm.Record;
 import com.adr.datasql.orm.RecordArray;
 import com.adr.datasql.orm.RecordParameters;
@@ -248,7 +247,7 @@ public class Entity implements SourceTableFactory, SourceListFactory {
         return new Query<Void, P>(sql).setParameters(parameters.createParams(projection));
     }
 
-    private static <R, P> Query<R, P> getStatementList(RecordResults<R> results, RecordParameters<P> parameters, String name, MetaData[] projection, MetaData[] criteria, StatementOrder[] order) {
+    private static <R, P> Batch<R, P> getStatementList(RecordResults<R> results, RecordParameters<P> parameters, String name, MetaData[] projection, MetaData[] criteria, StatementOrder[] order) {
         
         StringBuilder sqlsent = new StringBuilder();
         List<String> fieldslist = new ArrayList<>();

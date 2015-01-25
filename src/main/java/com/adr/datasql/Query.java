@@ -27,12 +27,9 @@ import java.util.List;
  * @param <R>
  * @param <P>
  */
-public class Query<R, P> implements StatementExec<P>, StatementFind<R, P>, StatementQuery<R, P> {
+public class Query<R, P> extends Batch<R, P> {
 
     private final Command command;
-    
-    private Parameters<P> parameters = null;
-    private Results<R> results = null;
 
     public Query(Command command) {
         this.command = command;
@@ -44,48 +41,16 @@ public class Query<R, P> implements StatementExec<P>, StatementFind<R, P>, State
     
     @Override
     public final int exec(DataLink link, P params) throws DataLinkException {
-        return link.exec(command, parameters, params);
+        return link.exec(command, getParameters(), params);
     }
 
     @Override
     public final R find(DataLink link, P params) throws DataLinkException {
-        return link.find(command, results, parameters, params);
+        return link.find(command, getResults(), getParameters(), params);
     }
     
     @Override
     public final List<R> query(DataLink link, P params) throws DataLinkException {
-        return link.query(command, results, parameters, params);
+        return link.query(command, getResults(), getParameters(), params);
     }  
-
-    /**
-     * @return the parameters
-     */
-    public Parameters<P> getParameters() {
-        return parameters;
-    }
-
-    /**
-     * @param parameters the parameters to set
-     * @return 
-     */
-    public Query<R, P> setParameters(Parameters<P> parameters) {
-        this.parameters = parameters;
-        return this;
-    }
-
-    /**
-     * @return the results
-     */
-    public Results<R> getResults() {
-        return results;
-    }
-
-    /**
-     * @param results the results to set
-     * @return 
-     */
-    public Query<R, P> setResults(Results<R> results) {
-        this.results = results;
-        return this;
-    }      
 }
