@@ -18,6 +18,7 @@
 package com.adr.datasql.data;
 
 import com.adr.datasql.Kind;
+import java.util.Arrays;
 
 /**
  *
@@ -68,5 +69,11 @@ public class MetaData {
             metadatas[i] = new MetaData(kinds[i]);
         }
         return metadatas;
+    }
+    
+    public static String[] getNames(MetaData[] metadatas) {
+        return Arrays.stream(metadatas)
+                .map(m -> m.getName())
+                .toArray(i -> new String[i]);
     }
 }
