@@ -17,7 +17,6 @@
 
 package com.adr.datasql.link;
 
-import com.adr.datasql.Command;
 import com.adr.datasql.Parameters;
 import com.adr.datasql.Results;
 import com.adr.datasql.StatementExec;
@@ -42,9 +41,16 @@ import java.util.Set;
  * @author adrian
  */
 public abstract class DataLink implements AutoCloseable {
-    public abstract <P> int exec(Command command, Parameters<P> parameters, P params) throws DataLinkException;
-    public abstract <R,P> R find(Command command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException;
-    public abstract <R,P> List<R> query(Command command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException;
+    
+    public <P> int exec(Object command, Parameters<P> parameters, P params) throws DataLinkException {
+        throw new DataLinkException("Command type not supported: " + command.getClass().getName());
+    }
+    public <R,P> R find(Object command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
+        throw new DataLinkException("Command type not supported: " + command.getClass().getName());
+    }
+    public <R,P> List<R> query(Object command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
+        throw new DataLinkException("Command type not supported: " + command.getClass().getName());
+    }
     
     @Override
     public abstract void close() throws DataLinkException;

@@ -17,8 +17,8 @@
 
 package com.adr.datasql.tests;
 
-import com.adr.datasql.CommandNamed;
-import com.adr.datasql.CommandFilter;
+import com.adr.datasql.link.SQLCommandNamed;
+import com.adr.datasql.link.SQLCommandFilter;
 import java.text.ParseException;
 import org.junit.Assert;
 import org.junit.Test;
@@ -36,13 +36,13 @@ public class NSQLTest {
     public void testQueries() throws ParseException {
         
         Assert.assertEquals("select * from table where name = ? and surname = ?[name, surname]", 
-                new CommandNamed("select * from table where name = :name and surname = :surname").toString());
+                new SQLCommandNamed("select * from table where name = :name and surname = :surname").toString());
         Assert.assertEquals("select * from table where date > ? and date < ?[mydate, mydate]", 
-                new CommandNamed("select * from table where date > :mydate and date < :mydate").toString());
+                new SQLCommandNamed("select * from table where date > :mydate and date < :mydate").toString());
         Assert.assertEquals("select * from table where date > ':mydate' and date < ?[mydate]", 
-                new CommandNamed("select * from table where date > ':mydate' and date < :mydate").toString());
+                new SQLCommandNamed("select * from table where date > ':mydate' and date < :mydate").toString());
         try {
-            new CommandNamed("select * from table where date > :mydate and date < :").toString();
+            new SQLCommandNamed("select * from table where date > :mydate and date < :").toString();
         } catch (ParseException e) {
            Assert.assertEquals(e.getMessage(), 53, e.getErrorOffset());
         }
@@ -52,9 +52,9 @@ public class NSQLTest {
     public void testSQLFilter() throws ParseException {
  
         Assert.assertEquals("select * from table where (field1 = :field1 AND field2 = :field2)[field1, field2]",
-                new CommandFilter("select * from table where :(filter)", "field1", "field2").toString());
+                new SQLCommandFilter("select * from table where :(filter)", "field1", "field2").toString());
         
         Assert.assertEquals("select * from table where (1 = 1)[]",
-                new CommandFilter("select * from table where :(filter)").toString());       
+                new SQLCommandFilter("select * from table where :(filter)").toString());       
     }  
 }

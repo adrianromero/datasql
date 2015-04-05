@@ -17,7 +17,6 @@
 
 package com.adr.datasql.link;
 
-import com.adr.datasql.Command;
 import com.adr.datasql.KindParameters;
 import com.adr.datasql.KindResults;
 import com.adr.datasql.Parameters;
@@ -45,70 +44,85 @@ class SQLDataLink extends DataLink {
     }
     
     @Override
-    public final <P> int exec(Command command, Parameters<P> parameters, P params) throws DataLinkException {
+    public final <P> int exec(Object command, Parameters<P> parameters, P params) throws DataLinkException {
         
-        logger.log(Level.INFO, "Executing prepared SQL: {0}", command);
+        if (command instanceof SQLCommand) { 
+            SQLCommand sql = (SQLCommand) command;
+            logger.log(Level.INFO, "Executing prepared SQL: {0}", command);
 
-        try (PreparedStatement stmt = c.prepareStatement(command.getCommand())) {
-            KindParameters kp = new SQLKindParameters(stmt, command.getParamNames());
+            try (PreparedStatement stmt = c.prepareStatement(sql.getCommand())) {
+                KindParameters kp = new SQLKindParameters(stmt, sql.getParamNames());
 
-            if (parameters != null) {
-                parameters.write(kp, params);
-            }  
-            return stmt.executeUpdate();
-        } catch (SQLException ex) {
-            throw new DataLinkException(ex);
-        }      
+                if (parameters != null) {
+                    parameters.write(kp, params);
+                }  
+                return stmt.executeUpdate();
+            } catch (SQLException ex) {
+                throw new DataLinkException(ex);
+            }              
+        } else {
+            throw new DataLinkException("Command type not supported: " + command.getClass().getName());
+        }
     }   
     
     @Override
-    public final <R,P> R find(Command command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
+    public final <R,P> R find(Object command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
         
-        logger.log(Level.INFO, "Executing prepared SQL: {0}", command);
+        if (command instanceof SQLCommand) { 
+            SQLCommand sql = (SQLCommand) command;        
+            logger.log(Level.INFO, "Executing prepared SQL: {0}", command);
 
-        try (PreparedStatement stmt = c.prepareStatement(command.getCommand())) {
-            KindParameters kp = new SQLKindParameters(stmt, command.getParamNames());
+            try (PreparedStatement stmt = c.prepareStatement(sql.getCommand())) {
+                KindParameters kp = new SQLKindParameters(stmt, sql.getParamNames());
 
-            if (parameters != null) {
-                parameters.write(kp, params);
-            }  
-            try (ResultSet resultset = stmt.executeQuery()) {
-                KindResults kr = new SQLKindResults(resultset);
-                
-                if (resultset.next()) {
-                    return results.read(kr);
-                } else {
-                    return null;
+                if (parameters != null) {
+                    parameters.write(kp, params);
+                }  
+                try (ResultSet resultset = stmt.executeQuery()) {
+                    KindResults kr = new SQLKindResults(resultset);
+
+                    if (resultset.next()) {
+                        return results.read(kr);
+                    } else {
+                        return null;
+                    }
                 }
+            } catch (SQLException ex) {
+                throw new DataLinkException(ex);            
             }
-        } catch (SQLException ex) {
-            throw new DataLinkException(ex);            
-        }
+        } else {
+            throw new DataLinkException("Command type not supported: " + command.getClass().getName());
+        }            
     }
     
     @Override
-    public final <R,P> List<R> query(Command command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
+    public final <R,P> List<R> query(Object command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
         
-        logger.log(Level.INFO, "Executing prepared SQL: {0}", command);
+        if (command instanceof SQLCommand) { 
+            SQLCommand sql = (SQLCommand) command;   
+            logger.log(Level.INFO, "Executing prepared SQL: {0}", command);
 
-        try (PreparedStatement stmt = c.prepareStatement(command.getCommand())) {
-            KindParameters kp = new SQLKindParameters(stmt, command.getParamNames());
+            try (PreparedStatement stmt = c.prepareStatement(sql.getCommand())) {
+                KindParameters kp = new SQLKindParameters(stmt, sql.getParamNames());
 
-            if (parameters != null) {
-                parameters.write(kp, params);
-            }  
-            try (ResultSet resultset = stmt.executeQuery()) {
-                KindResults kr = new SQLKindResults(resultset);
-                
-                List<R> l = new ArrayList<>();
-                while (resultset.next()) {
-                    l.add(results.read(kr));
+                if (parameters != null) {
+                    parameters.write(kp, params);
+                }  
+                try (ResultSet resultset = stmt.executeQuery()) {
+                    KindResults kr = new SQLKindResults(resultset);
+
+                    List<R> l = new ArrayList<>();
+                    while (resultset.next()) {
+                        l.add(results.read(kr));
+                    }
+                    return l;
                 }
-                return l;
+            } catch (SQLException ex) {
+                throw new DataLinkException(ex);             
             }
-        } catch (SQLException ex) {
-            throw new DataLinkException(ex);             
-        }
+        } else {
+            throw new DataLinkException("Command type not supported: " + command.getClass().getName());
+        }                  
     }
     
     @Override

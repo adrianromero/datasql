@@ -1,7 +1,7 @@
-//    Data Command is a light JDBC wrapper.
+//    Data SQLCommand is a light JDBC wrapper.
 //    Copyright (C) 2014-2015 Adrián Romero Corchado.
 //
-//    This file is part of Data Command
+//    This file is part of Data SQLCommand
 //
 //     Licensed under the Apache License, Version 2.0 (the "License");
 //     you may not use this file except in compliance with the License.
@@ -15,22 +15,22 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql;
+package com.adr.datasql.link;
 
 /**
  *
  * @author adrian
  */
-public class Command {
+public class SQLCommand {
 
     private String command;
     private String[] paramnames;  
     
-    public Command(String command, String... paramnames) {
+    public SQLCommand(String command, String... paramnames) {
         init(command, paramnames);
     }
     
-    protected Command() {
+    protected SQLCommand() {
     }
     
     protected final void init(String command, String... paramnames) {

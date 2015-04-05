@@ -1,7 +1,7 @@
-//    Data Command is a light JDBC wrapper.
+//    Data SQLCommand is a light JDBC wrapper.
 //    Copyright (C) 2014-2015 Adrián Romero Corchado.
 //
-//    This file is part of Data Command
+//    This file is part of Data SQLCommand
 //
 //     Licensed under the Apache License, Version 2.0 (the "License");
 //     you may not use this file except in compliance with the License.
@@ -29,14 +29,10 @@ import java.util.List;
  */
 public class Query<R, P> extends Batch<R, P> {
 
-    private final Command command;
+    private final Object command;
 
-    public Query(Command command) {
+    public Query(Object command) {
         this.command = command;
-    }
-    
-    public Query(String command, String... paramnames) {
-        this.command = new Command(command, paramnames);
     }
     
     @Override

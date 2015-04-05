@@ -1,7 +1,7 @@
-//    Data Command is a light JDBC wrapper.
+//    Data SQLCommand is a light JDBC wrapper.
 //    Copyright (C) 2012-2015 Adrián Romero Corchado.
 //
-//    This file is part of Data Command
+//    This file is part of Data SQLCommand
 //
 //     Licensed under the Apache License, Version 2.0 (the "License");
 //     you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ package com.adr.datasql.meta;
 import com.adr.datasql.Batch;
 import com.adr.datasql.data.MetaData;
 import com.adr.datasql.Query;
-import com.adr.datasql.Command;
+import com.adr.datasql.link.SQLCommand;
 import com.adr.datasql.StatementExec;
 import com.adr.datasql.StatementFind;
 import com.adr.datasql.StatementQuery;
@@ -185,7 +185,7 @@ public class Entity implements SourceTableFactory, SourceListFactory {
         }
         sentence.append(sentencefilter);
             
-        Command sql = new Command(sentence.toString(), keyfields.toArray(new String[keyfields.size()]));  
+        SQLCommand sql = new SQLCommand(sentence.toString(), keyfields.toArray(new String[keyfields.size()]));  
         return new Query<Void, P>(sql).setParameters(parameters.createParams(projection));
     }
     
@@ -215,7 +215,7 @@ public class Entity implements SourceTableFactory, SourceListFactory {
                 filter = true;
         }  
             
-        Command sql =  new Command(sentence.toString(), keyfields.toArray(new String[keyfields.size()]));   
+        SQLCommand sql =  new SQLCommand(sentence.toString(), keyfields.toArray(new String[keyfields.size()]));   
         return new Query<Void, P>(sql).setParameters(parameters.createParams(projection));
     }
     
@@ -244,7 +244,7 @@ public class Entity implements SourceTableFactory, SourceListFactory {
         sentence.append(values);
         sentence.append(")");
             
-        Command sql = new Command(sentence.toString(), fieldslist.toArray(new String[fieldslist.size()]));     
+        SQLCommand sql = new SQLCommand(sentence.toString(), fieldslist.toArray(new String[fieldslist.size()]));     
         return new Query<Void, P>(sql).setParameters(parameters.createParams(projection));
     }
 
@@ -308,16 +308,16 @@ public class Entity implements SourceTableFactory, SourceListFactory {
         }
 
         // build statement
-        Command sql = new Command(sqlsent.toString(), fieldslist.toArray(new String[fieldslist.size()]));     
+        SQLCommand sql = new SQLCommand(sqlsent.toString(), fieldslist.toArray(new String[fieldslist.size()]));     
         return new Query<R, P>(sql).setResults(results.createResults(projection)).setParameters(parameters.createParams(criteria));
     }
      
 //    
-//    public Command getStatementCreateTable(Database db) {
+//    public SQLCommand getStatementCreateTable(Database db) {
 //        
 //    }
 //    
-//    public Command getStatementDropTable(Database db) {
+//    public SQLCommand getStatementDropTable(Database db) {
 //        
 //    }
 }
