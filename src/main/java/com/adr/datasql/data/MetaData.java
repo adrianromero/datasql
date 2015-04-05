@@ -26,8 +26,8 @@ import java.util.Arrays;
  */
 public class MetaData {
     
-    private Kind kind;
-    private String name;
+    protected Kind kind;
+    protected String name;
     
     public MetaData() {
         this(null, Kind.STRING);

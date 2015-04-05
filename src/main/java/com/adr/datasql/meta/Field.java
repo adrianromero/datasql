@@ -17,29 +17,48 @@
 
 package com.adr.datasql.meta;
 
-import com.adr.datasql.data.MetaData;
 import com.adr.datasql.Kind;
 
 /**
  *
  * @author adrian
  */
-public class Field extends MetaData {
+public class Field {
     
-    private boolean key = false;
+    protected Kind kind;
+    protected String name;
+    protected boolean key;
     
-    public Field() {    
+    public Field() {
+        this(null, null, false);
     }
     
     public Field(String name, Kind kind) {
-        super(name, kind);
+        this(name, kind, false);
     }    
     
     public Field(String name, Kind kind, boolean key) {
-        super(name, kind);
+        this.name = name;
+        this.kind = kind;
         this.key = key;
     }
-
+    
+    public final String getName() {
+        return name;
+    }
+    
+    public final void setName(String name) {
+        this.name = name;
+    }
+    
+    public final Kind getKind() {
+        return kind;
+    } 
+    
+    public final void setKind(Kind kind) {
+        this.kind = kind;
+    }
+    
     public boolean isKey() {
         return key;
     }

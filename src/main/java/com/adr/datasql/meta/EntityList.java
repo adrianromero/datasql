@@ -67,7 +67,8 @@ public class EntityList implements SourceListFactory {
     @Override
     public MetaData[] defProjection() {
         if (projection == null) {
-            projection = fields.toArray(new MetaData[fields.size()]);
+            List<MetaData> l =  fields.stream().map(f -> new MetaData(f.getName(), f.getKind())).collect(Collectors.toList()); 
+            projection = l.toArray(new MetaData[l.size()]);
         }
         return projection;
     }
@@ -76,7 +77,7 @@ public class EntityList implements SourceListFactory {
     @Override
     public MetaData[] defProjectionKeys() {
         if (projectionkeys == null) {            
-            List<Field> l = fields.stream().filter(f -> f.isKey()).collect(Collectors.toList());    
+            List<MetaData> l = fields.stream().filter(f -> f.isKey()).map(f -> new MetaData(f.getName(), f.getKind())).collect(Collectors.toList());    
             projectionkeys = l.toArray(new MetaData[l.size()]);
         }
         return projectionkeys;

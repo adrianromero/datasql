@@ -67,12 +67,13 @@ public class Entity implements SourceTableFactory, SourceListFactory {
     public String toString() {
         return "Entity {name: " + Objects.toString(name) + ", fields: " + Objects.toString(fields) + "}";
     }
-    
+
     private MetaData[] projection = null;
     @Override
     public MetaData[] defProjection() {
         if (projection == null) {
-            projection = fields.toArray(new MetaData[fields.size()]);
+            List<MetaData> l =  fields.stream().map(f -> new MetaData(f.getName(), f.getKind())).collect(Collectors.toList()); 
+            projection = l.toArray(new MetaData[l.size()]);
         }
         return projection;
     }
@@ -81,11 +82,11 @@ public class Entity implements SourceTableFactory, SourceListFactory {
     @Override
     public MetaData[] defProjectionKeys() {
         if (projectionkeys == null) {            
-            List<Field> l = fields.stream().filter(f -> f.isKey()).collect(Collectors.toList());    
+            List<MetaData> l = fields.stream().filter(f -> f.isKey()).map(f -> new MetaData(f.getName(), f.getKind())).collect(Collectors.toList());    
             projectionkeys = l.toArray(new MetaData[l.size()]);
         }
         return projectionkeys;
-    }
+    } 
     
     @Override
     public <R, F> SourceList<R, F> createSourceList(RecordResults<R> record, RecordParameters<F> filter) {
