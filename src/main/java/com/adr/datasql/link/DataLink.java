@@ -45,10 +45,9 @@ import java.util.Set;
  */
 public abstract class DataLink implements AutoCloseable {
     
-    public final <P> int exec(Object command, Parameters<P> parameters, P params) throws DataLinkException {
-        
+    public final <P> int exec(Object command, Parameters<P> parameters, P params) throws DataLinkException {        
         try {
-            MethodHandle mh = MethodHandles.lookup().findVirtual(this.getClass(),"_exec", MethodType.methodType(int.class, command.getClass(), Parameters.class, Object.class));
+            MethodHandle mh = MethodHandles.lookup().findVirtual(this.getClass(), "_exec", MethodType.methodType(int.class, command.getClass(), Parameters.class, Object.class));
             return (int) mh.invoke(this, command, parameters, params);
         } catch (DataLinkException ex) {
             throw ex;  
@@ -58,11 +57,29 @@ public abstract class DataLink implements AutoCloseable {
             throw new DataLinkException("Exception thrown: " + command.getClass().getName(), ex);
         }
     }
-    public <R,P> R find(Object command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
-        throw new DataLinkException("Command type not supported: " + command.getClass().getName());
+    public final <R, P> R find(Object command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
+        try {
+            MethodHandle mh = MethodHandles.lookup().findVirtual(this.getClass(), "_find", MethodType.methodType(Object.class, command.getClass(), Results.class, Parameters.class, Object.class));
+            return (R) mh.invoke(this, command, results, parameters, params);
+        } catch (DataLinkException ex) {
+            throw ex;  
+        } catch (NoSuchMethodException | IllegalAccessException ex) {
+            throw new DataLinkException("Command type not supported: " + command.getClass().getName(), ex);
+        } catch (Throwable ex) {
+            throw new DataLinkException("Exception thrown: " + command.getClass().getName(), ex);
+        }
     }
-    public <R,P> List<R> query(Object command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
-        throw new DataLinkException("Command type not supported: " + command.getClass().getName());
+    public final <R, P> List<R> query(Object command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
+        try {
+            MethodHandle mh = MethodHandles.lookup().findVirtual(this.getClass(), "_query", MethodType.methodType(List.class, command.getClass(), Results.class, Parameters.class, Object.class));
+            return (List<R>) mh.invoke(this, command, results, parameters, params);
+        } catch (DataLinkException ex) {
+            throw ex;  
+        } catch (NoSuchMethodException | IllegalAccessException ex) {
+            throw new DataLinkException("Command type not supported: " + command.getClass().getName(), ex);
+        } catch (Throwable ex) {
+            throw new DataLinkException("Exception thrown: " + command.getClass().getName(), ex);
+        }
     }
     
     @Override

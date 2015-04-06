@@ -50,13 +50,13 @@ class SQLDataLink extends DataLink {
     }
 
     <P> int _exec(CommandEntityInsert command, Parameters<P> parameters, P params) throws DataLinkException {
-        return _exec(transform(command), parameters, params);        
+        return _exec(buildSQLCommand(command), parameters, params);        
     }
     <P> int _exec(CommandEntityUpdate command, Parameters<P> parameters, P params) throws DataLinkException {
-        return _exec(transform(command), parameters, params);        
+        return _exec(SQLDataLink.this.buildSQLCommand(command), parameters, params);        
     }
     <P> int _exec(CommandEntityDelete command, Parameters<P> parameters, P params) throws DataLinkException {
-        return _exec(transform(command), parameters, params);    
+        return _exec(SQLDataLink.this.buildSQLCommand(command), parameters, params);    
     }
     <P> int _exec(String command, Parameters<P> parameters, P params) throws DataLinkException {
         return _exec(new SQLCommand(command), parameters, params);    
@@ -79,46 +79,19 @@ class SQLDataLink extends DataLink {
         }     
     }
     
-    @Override
-    public final <R,P> R find(Object command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
-        
-        if (command instanceof CommandEntityGet) { 
-            return find(transform((CommandEntityGet) command), results, parameters, params);
-        } else if (command instanceof CommandEntityList) { 
-            return find(transform((CommandEntityList) command), results, parameters, params);
-        } else if (command instanceof SQLCommand) { 
-            return find((SQLCommand) command, results, parameters, params);
-        } else if (command instanceof String) { 
-            return find(new SQLCommand((String) command), results, parameters, params);
-        } else {
-            throw new DataLinkException("Command type not supported: " + command.getClass().getName());
-        }            
-    }
-    
-    @Override
-    public final <R,P> List<R> query(Object command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
-        
-        if (command instanceof SQLCommand) { 
-            return query((SQLCommand) command, results, parameters, params);   
-        } else if (command instanceof CommandEntityList) { 
-            return query(transform((CommandEntityList) command), results, parameters, params);   
-        } else if (command instanceof String) { 
-            return query(new SQLCommand((String) command), results, parameters, params);
-        } else {
-            throw new DataLinkException("Command type not supported: " + command.getClass().getName());
-        }                  
-    }
-
-    @Override
-    public final void close() throws DataLinkException {
-        try {
-            c.close();
-        } catch (SQLException ex) {
-            throw new DataLinkException(ex);
-        }
-    }
-    
-    private <R,P> R find(SQLCommand command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
+    <R, P> R _find(CommandEntityGet command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException { 
+        return _find(buildSQLCommand(command), results, parameters, params);
+    }  
+    <R, P> R _find(CommandEntityList command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {        
+        return _find(buildSQLCommand(command), results, parameters, params);
+    }  
+    <R, P> R _find(String command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {        
+        return _find(new SQLCommand(command), results, parameters, params);
+    }  
+    <R, P> R _find(SQLCommandNamed command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {        
+        return _find((SQLCommand) command, results, parameters, params);
+    }  
+    <R, P> R _find(SQLCommand command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
         logger.log(Level.INFO, "Executing prepared SQL: {0}", command);
 
         try (PreparedStatement stmt = c.prepareStatement(command.getCommand())) {
@@ -139,9 +112,18 @@ class SQLDataLink extends DataLink {
         } catch (SQLException ex) {
             throw new DataLinkException(ex);            
         }        
-    }
+    }    
     
-    private <R, P> List<R> query(SQLCommand command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
+    <R, P> List<R> _query(CommandEntityList command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
+        return _query(buildSQLCommand(command), results, parameters, params);
+    }
+    <R, P> List<R> _query(String command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
+        return _query(new SQLCommand(command), results, parameters, params);
+    }
+    <R, P> List<R> _query(SQLCommandNamed command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
+        return _query((SQLCommand) command, results, parameters, params);
+    }
+    <R, P> List<R> _query(SQLCommand command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
         logger.log(Level.INFO, "Executing prepared SQL: {0}", command);
 
         try (PreparedStatement stmt = c.prepareStatement(command.getCommand())) {
@@ -162,9 +144,18 @@ class SQLDataLink extends DataLink {
         } catch (SQLException ex) {
             throw new DataLinkException(ex);             
         }        
+    }    
+
+    @Override
+    public final void close() throws DataLinkException {
+        try {
+            c.close();
+        } catch (SQLException ex) {
+            throw new DataLinkException(ex);
+        }
     }
-    
-    public SQLCommand transform(CommandEntityInsert command) {
+       
+    private SQLCommand buildSQLCommand(CommandEntityInsert command) {
         
         StringBuilder sentence = new StringBuilder();
         StringBuilder values = new StringBuilder();
@@ -192,7 +183,7 @@ class SQLDataLink extends DataLink {
         return new SQLCommand(sentence.toString(), fieldslist.toArray(new String[fieldslist.size()]));        
     }
     
-    public SQLCommand transform(CommandEntityDelete command) {
+    private SQLCommand buildSQLCommand(CommandEntityDelete command) {
         
         StringBuilder sentence = new StringBuilder();
         StringBuilder sentencefilter = new StringBuilder();
@@ -212,7 +203,7 @@ class SQLDataLink extends DataLink {
         return new SQLCommand(sentence.toString(), keyfields.toArray(new String[keyfields.size()]));          
     }
     
-    public SQLCommand transform(CommandEntityUpdate command) {
+    private SQLCommand buildSQLCommand(CommandEntityUpdate command) {
         
         StringBuilder sentence = new StringBuilder();
         ArrayList<String> keyfields = new ArrayList<String>();
@@ -241,11 +232,11 @@ class SQLDataLink extends DataLink {
         return new SQLCommand(sentence.toString(), keyfields.toArray(new String[keyfields.size()]));         
     }
     
-    public SQLCommand transform(CommandEntityGet command) {
-        return transform(new CommandEntityList(command.getName(), command.getFields(), command.getKeys(), null));
+    private SQLCommand buildSQLCommand(CommandEntityGet command) {
+        return SQLDataLink.this.buildSQLCommand(new CommandEntityList(command.getName(), command.getFields(), command.getKeys(), null));
     }
 
-    public SQLCommand transform(CommandEntityList command) {
+    private SQLCommand buildSQLCommand(CommandEntityList command) {
         
         StringBuilder sqlsent = new StringBuilder();
         List<String> fieldslist = new ArrayList<>();
