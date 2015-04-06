@@ -48,24 +48,36 @@ class SQLDataLink extends DataLink {
     SQLDataLink(Connection c) {
         this.c = c;
     }
-    
-    @Override
-    public final <P> int exec(Object command, Parameters<P> parameters, P params) throws DataLinkException {
-        
-        if (command instanceof CommandEntityInsert) {
-            return exec(transform((CommandEntityInsert) command), parameters, params);
-        } else if (command instanceof CommandEntityUpdate) {
-            return exec(transform((CommandEntityUpdate) command), parameters, params);
-        } else if (command instanceof CommandEntityDelete) {
-            return exec(transform((CommandEntityDelete) command), parameters, params);
-        } else if (command instanceof SQLCommand) { 
-            return exec((SQLCommand) command, parameters, params);
-        } else if (command instanceof String) { 
-            return exec(new SQLCommand((String) command), parameters, params);
-        } else {
-            throw new DataLinkException("Command type not supported: " + command.getClass().getName());
-        }
+
+    <P> int _exec(CommandEntityInsert command, Parameters<P> parameters, P params) throws DataLinkException {
+        return _exec(transform(command), parameters, params);        
+    }
+    <P> int _exec(CommandEntityUpdate command, Parameters<P> parameters, P params) throws DataLinkException {
+        return _exec(transform(command), parameters, params);        
+    }
+    <P> int _exec(CommandEntityDelete command, Parameters<P> parameters, P params) throws DataLinkException {
+        return _exec(transform(command), parameters, params);    
+    }
+    <P> int _exec(String command, Parameters<P> parameters, P params) throws DataLinkException {
+        return _exec(new SQLCommand(command), parameters, params);    
     }   
+    <P> int _exec(SQLCommandNamed command, Parameters<P> parameters, P params) throws DataLinkException {
+        return _exec((SQLCommand) command, parameters, params); // Casting needed to invoke the right method
+    }
+    <P> int _exec(SQLCommand command, Parameters<P> parameters, P params) throws DataLinkException {
+        logger.log(Level.INFO, "Executing prepared SQL: {0}", command);
+
+        try (PreparedStatement stmt = c.prepareStatement(command.getCommand())) {
+            KindParameters kp = new SQLKindParameters(stmt, command.getParamNames());
+
+            if (parameters != null) {
+                parameters.write(kp, params);
+            }  
+            return stmt.executeUpdate();
+        } catch (SQLException ex) {
+            throw new DataLinkException(ex);
+        }     
+    }
     
     @Override
     public final <R,P> R find(Object command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
@@ -106,21 +118,6 @@ class SQLDataLink extends DataLink {
         }
     }
     
-    private <P> int exec(SQLCommand command, Parameters<P> parameters, P params) throws DataLinkException {
-        logger.log(Level.INFO, "Executing prepared SQL: {0}", command);
-
-        try (PreparedStatement stmt = c.prepareStatement(command.getCommand())) {
-            KindParameters kp = new SQLKindParameters(stmt, command.getParamNames());
-
-            if (parameters != null) {
-                parameters.write(kp, params);
-            }  
-            return stmt.executeUpdate();
-        } catch (SQLException ex) {
-            throw new DataLinkException(ex);
-        }     
-    }
- 
     private <R,P> R find(SQLCommand command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
         logger.log(Level.INFO, "Executing prepared SQL: {0}", command);
 

@@ -31,6 +31,9 @@ import com.adr.datasql.meta.StatementOrder;
 import com.adr.datasql.orm.RecordMap;
 import com.adr.datasql.orm.RecordPojo;
 import com.adr.datasql.orm.StatementUpsert;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -42,8 +45,18 @@ import java.util.Set;
  */
 public abstract class DataLink implements AutoCloseable {
     
-    public <P> int exec(Object command, Parameters<P> parameters, P params) throws DataLinkException {
-        throw new DataLinkException("Command type not supported: " + command.getClass().getName());
+    public final <P> int exec(Object command, Parameters<P> parameters, P params) throws DataLinkException {
+        
+        try {
+            MethodHandle mh = MethodHandles.lookup().findVirtual(this.getClass(),"_exec", MethodType.methodType(int.class, command.getClass(), Parameters.class, Object.class));
+            return (int) mh.invoke(this, command, parameters, params);
+        } catch (DataLinkException ex) {
+            throw ex;  
+        } catch (NoSuchMethodException | IllegalAccessException ex) {
+            throw new DataLinkException("Command type not supported: " + command.getClass().getName(), ex);
+        } catch (Throwable ex) {
+            throw new DataLinkException("Exception thrown: " + command.getClass().getName(), ex);
+        }
     }
     public <R,P> R find(Object command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
         throw new DataLinkException("Command type not supported: " + command.getClass().getName());
