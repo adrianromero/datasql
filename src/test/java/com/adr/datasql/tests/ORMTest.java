@@ -23,6 +23,7 @@ import com.adr.datasql.QueryArray;
 import com.adr.datasql.databases.DataBase;
 import com.adr.datasql.link.DataLink;
 import com.adr.datasql.link.DataLinkException;
+import com.adr.datasql.link.SQLCommand;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Date;

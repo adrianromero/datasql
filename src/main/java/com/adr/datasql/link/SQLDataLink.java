@@ -21,6 +21,12 @@ import com.adr.datasql.KindParameters;
 import com.adr.datasql.KindResults;
 import com.adr.datasql.Parameters;
 import com.adr.datasql.Results;
+import com.adr.datasql.meta.CommandEntityDelete;
+import com.adr.datasql.meta.CommandEntityGet;
+import com.adr.datasql.meta.CommandEntityInsert;
+import com.adr.datasql.meta.CommandEntityList;
+import com.adr.datasql.meta.CommandEntityUpdate;
+import com.adr.datasql.meta.StatementOrder;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -46,20 +52,16 @@ class SQLDataLink extends DataLink {
     @Override
     public final <P> int exec(Object command, Parameters<P> parameters, P params) throws DataLinkException {
         
-        if (command instanceof SQLCommand) { 
-            SQLCommand sql = (SQLCommand) command;
-            logger.log(Level.INFO, "Executing prepared SQL: {0}", command);
-
-            try (PreparedStatement stmt = c.prepareStatement(sql.getCommand())) {
-                KindParameters kp = new SQLKindParameters(stmt, sql.getParamNames());
-
-                if (parameters != null) {
-                    parameters.write(kp, params);
-                }  
-                return stmt.executeUpdate();
-            } catch (SQLException ex) {
-                throw new DataLinkException(ex);
-            }              
+        if (command instanceof CommandEntityInsert) {
+            return exec(transform((CommandEntityInsert) command), parameters, params);
+        } else if (command instanceof CommandEntityUpdate) {
+            return exec(transform((CommandEntityUpdate) command), parameters, params);
+        } else if (command instanceof CommandEntityDelete) {
+            return exec(transform((CommandEntityDelete) command), parameters, params);
+        } else if (command instanceof SQLCommand) { 
+            return exec((SQLCommand) command, parameters, params);
+        } else if (command instanceof String) { 
+            return exec(new SQLCommand((String) command), parameters, params);
         } else {
             throw new DataLinkException("Command type not supported: " + command.getClass().getName());
         }
@@ -68,28 +70,14 @@ class SQLDataLink extends DataLink {
     @Override
     public final <R,P> R find(Object command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
         
-        if (command instanceof SQLCommand) { 
-            SQLCommand sql = (SQLCommand) command;        
-            logger.log(Level.INFO, "Executing prepared SQL: {0}", command);
-
-            try (PreparedStatement stmt = c.prepareStatement(sql.getCommand())) {
-                KindParameters kp = new SQLKindParameters(stmt, sql.getParamNames());
-
-                if (parameters != null) {
-                    parameters.write(kp, params);
-                }  
-                try (ResultSet resultset = stmt.executeQuery()) {
-                    KindResults kr = new SQLKindResults(resultset);
-
-                    if (resultset.next()) {
-                        return results.read(kr);
-                    } else {
-                        return null;
-                    }
-                }
-            } catch (SQLException ex) {
-                throw new DataLinkException(ex);            
-            }
+        if (command instanceof CommandEntityGet) { 
+            return find(transform((CommandEntityGet) command), results, parameters, params);
+        } else if (command instanceof CommandEntityList) { 
+            return find(transform((CommandEntityList) command), results, parameters, params);
+        } else if (command instanceof SQLCommand) { 
+            return find((SQLCommand) command, results, parameters, params);
+        } else if (command instanceof String) { 
+            return find(new SQLCommand((String) command), results, parameters, params);
         } else {
             throw new DataLinkException("Command type not supported: " + command.getClass().getName());
         }            
@@ -99,32 +87,16 @@ class SQLDataLink extends DataLink {
     public final <R,P> List<R> query(Object command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
         
         if (command instanceof SQLCommand) { 
-            SQLCommand sql = (SQLCommand) command;   
-            logger.log(Level.INFO, "Executing prepared SQL: {0}", command);
-
-            try (PreparedStatement stmt = c.prepareStatement(sql.getCommand())) {
-                KindParameters kp = new SQLKindParameters(stmt, sql.getParamNames());
-
-                if (parameters != null) {
-                    parameters.write(kp, params);
-                }  
-                try (ResultSet resultset = stmt.executeQuery()) {
-                    KindResults kr = new SQLKindResults(resultset);
-
-                    List<R> l = new ArrayList<>();
-                    while (resultset.next()) {
-                        l.add(results.read(kr));
-                    }
-                    return l;
-                }
-            } catch (SQLException ex) {
-                throw new DataLinkException(ex);             
-            }
+            return query((SQLCommand) command, results, parameters, params);   
+        } else if (command instanceof CommandEntityList) { 
+            return query(transform((CommandEntityList) command), results, parameters, params);   
+        } else if (command instanceof String) { 
+            return query(new SQLCommand((String) command), results, parameters, params);
         } else {
             throw new DataLinkException("Command type not supported: " + command.getClass().getName());
         }                  
     }
-    
+
     @Override
     public final void close() throws DataLinkException {
         try {
@@ -133,4 +105,210 @@ class SQLDataLink extends DataLink {
             throw new DataLinkException(ex);
         }
     }
+    
+    private <P> int exec(SQLCommand command, Parameters<P> parameters, P params) throws DataLinkException {
+        logger.log(Level.INFO, "Executing prepared SQL: {0}", command);
+
+        try (PreparedStatement stmt = c.prepareStatement(command.getCommand())) {
+            KindParameters kp = new SQLKindParameters(stmt, command.getParamNames());
+
+            if (parameters != null) {
+                parameters.write(kp, params);
+            }  
+            return stmt.executeUpdate();
+        } catch (SQLException ex) {
+            throw new DataLinkException(ex);
+        }     
+    }
+ 
+    private <R,P> R find(SQLCommand command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
+        logger.log(Level.INFO, "Executing prepared SQL: {0}", command);
+
+        try (PreparedStatement stmt = c.prepareStatement(command.getCommand())) {
+            KindParameters kp = new SQLKindParameters(stmt, command.getParamNames());
+
+            if (parameters != null) {
+                parameters.write(kp, params);
+            }  
+            try (ResultSet resultset = stmt.executeQuery()) {
+                KindResults kr = new SQLKindResults(resultset);
+
+                if (resultset.next()) {
+                    return results.read(kr);
+                } else {
+                    return null;
+                }
+            }
+        } catch (SQLException ex) {
+            throw new DataLinkException(ex);            
+        }        
+    }
+    
+    private <R, P> List<R> query(SQLCommand command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
+        logger.log(Level.INFO, "Executing prepared SQL: {0}", command);
+
+        try (PreparedStatement stmt = c.prepareStatement(command.getCommand())) {
+            KindParameters kp = new SQLKindParameters(stmt, command.getParamNames());
+
+            if (parameters != null) {
+                parameters.write(kp, params);
+            }  
+            try (ResultSet resultset = stmt.executeQuery()) {
+                KindResults kr = new SQLKindResults(resultset);
+
+                List<R> l = new ArrayList<>();
+                while (resultset.next()) {
+                    l.add(results.read(kr));
+                }
+                return l;
+            }
+        } catch (SQLException ex) {
+            throw new DataLinkException(ex);             
+        }        
+    }
+    
+    public SQLCommand transform(CommandEntityInsert command) {
+        
+        StringBuilder sentence = new StringBuilder();
+        StringBuilder values = new StringBuilder();
+        ArrayList<String> fieldslist = new ArrayList<>();
+        
+        sentence.append("INSERT INTO ");
+        sentence.append(command.getName());
+        sentence.append("(");
+               
+        boolean filter = false;
+        for (String f: command.getFields()) {
+            sentence.append(filter ? ", " : "");
+            sentence.append(f);
+
+            values.append(filter ? ", ?": "?");
+            fieldslist.add(f);
+
+            filter = true;
+        }  
+        
+        sentence.append(") VALUES (");
+        sentence.append(values);
+        sentence.append(")");
+            
+        return new SQLCommand(sentence.toString(), fieldslist.toArray(new String[fieldslist.size()]));        
+    }
+    
+    public SQLCommand transform(CommandEntityDelete command) {
+        
+        StringBuilder sentence = new StringBuilder();
+        StringBuilder sentencefilter = new StringBuilder();
+        ArrayList<String> keyfields = new ArrayList<>();
+        
+        sentence.append("DELETE FROM ");
+        sentence.append(command.getName());
+        
+        for (String f: command.getKeys()) {
+                sentencefilter.append(sentencefilter.length() == 0 ? " WHERE " : " AND ");
+                sentencefilter.append(f);
+                sentencefilter.append(" = ?");
+                keyfields.add(f);
+        }
+        sentence.append(sentencefilter);
+            
+        return new SQLCommand(sentence.toString(), keyfields.toArray(new String[keyfields.size()]));          
+    }
+    
+    public SQLCommand transform(CommandEntityUpdate command) {
+        
+        StringBuilder sentence = new StringBuilder();
+        ArrayList<String> keyfields = new ArrayList<String>();
+        
+        sentence.append("UPDATE ");
+        sentence.append(command.getName());
+               
+        boolean filter = false;
+        for (String f: command.getFields()) {
+            sentence.append(filter ? ", " : " SET ");
+            sentence.append(f);
+            sentence.append(" = ?");    
+            keyfields.add(f);
+            filter = true;
+        }  
+        
+        filter = false;
+        for (String f: command.getKeys()) {
+            sentence.append(filter ? " AND " : " WHERE ");
+            sentence.append(f);
+            sentence.append(" = ?");
+            keyfields.add(f);
+            filter = true;
+        }  
+            
+        return new SQLCommand(sentence.toString(), keyfields.toArray(new String[keyfields.size()]));         
+    }
+    
+    public SQLCommand transform(CommandEntityGet command) {
+        return transform(new CommandEntityList(command.getName(), command.getFields(), command.getKeys(), null));
+    }
+
+    public SQLCommand transform(CommandEntityList command) {
+        
+        StringBuilder sqlsent = new StringBuilder();
+        List<String> fieldslist = new ArrayList<>();
+        
+        sqlsent.append("SELECT ");
+        boolean comma = false;
+        for (String f: command.getFields()) {
+            if (comma) {
+                sqlsent.append(", ");
+            } else {
+                comma = true;       
+            }
+            sqlsent.append(f); 
+        }    
+        
+        sqlsent.append(" FROM ");       
+        sqlsent.append(command.getName());
+        
+        // WHERE CLAUSE
+        if (command.getCriteria() != null) {
+            comma = false;
+            for (String f: command.getCriteria()) {
+                if (comma) {
+                    sqlsent.append(" AND ");
+                } else {
+                    sqlsent.append(" WHERE ");
+                    comma = true;
+                }
+                
+                String realname;
+                if (f.endsWith("_LIKE")) {
+                    realname = f.substring(0, f.length() - 5);
+                    sqlsent.append(realname);
+                    sqlsent.append(" LIKE ? {escape '$'}");
+                    fieldslist.add(f);                      
+                } else {
+                    sqlsent.append(f);
+                    sqlsent.append(" = ?");
+                    fieldslist.add(f);    
+                }
+            }
+        }
+        
+        // ORDER BY CLAUSE
+        if (command.getOrder() != null) {
+            comma = false;
+            for (StatementOrder o: command.getOrder()) {
+                if (comma) {
+                    sqlsent.append(", ");
+                } else {
+                    sqlsent.append(" ORDER BY ");
+                    comma = true;
+                }           
+                sqlsent.append(o.getName());
+                sqlsent.append(o.getOrder().toSQL());               
+            }
+        }
+
+        // build statement
+        return new SQLCommand(sqlsent.toString(), fieldslist.toArray(new String[fieldslist.size()]));           
+    }
+    
 }

@@ -17,10 +17,8 @@
 
 package com.adr.datasql.meta;
 
-import com.adr.datasql.Batch;
 import com.adr.datasql.data.MetaData;
 import com.adr.datasql.Query;
-import com.adr.datasql.link.SQLCommand;
 import com.adr.datasql.StatementExec;
 import com.adr.datasql.StatementFind;
 import com.adr.datasql.StatementQuery;
@@ -133,7 +131,8 @@ public class Entity implements SourceTableFactory, SourceListFactory {
         
         @Override
         public StatementQuery<R, F> getStatementList() {
-            return Entity.getStatementList(record, filter, entity.getName(), projection, criteria, order);
+            CommandEntityList command = new CommandEntityList(entity.getName(), MetaData.getNames(projection), MetaData.getNames(criteria), order);
+            return new Query<R, F>(command).setResults(record.createResults(projection)).setParameters(filter.createParams(criteria));
         }  
     }
     
@@ -149,176 +148,27 @@ public class Entity implements SourceTableFactory, SourceListFactory {
         
         @Override
         public StatementFind<R, Object[]> getStatementGet() {
-            return Entity.getStatementList(record, new RecordArray(), entity.getName(), entity.defProjection(), entity.defProjectionKeys(), null);           
+            CommandEntityGet command = new CommandEntityGet(entity.getName(), MetaData.getNames(entity.defProjectionKeys()), MetaData.getNames(entity.defProjection()));
+            return new Query<R, Object[]>(command).setResults(record.createResults(entity.defProjection())).setParameters(new RecordArray().createParams(entity.defProjectionKeys()));
         }
 
         @Override
         public StatementExec<R> getStatementDelete() {
-            return Entity.getStatementDelete(record, entity.getName(), entity.defProjection(), entity.defProjectionKeys());
+            CommandEntityDelete command = new CommandEntityDelete(entity.getName(), MetaData.getNames(entity.defProjectionKeys()), MetaData.getNames(entity.defProjection()));
+            return new Query<Void, R>(command).setParameters(record.createParams(entity.defProjection()));
         }
 
         @Override
         public StatementExec<R> getStatementUpdate() {
-            return Entity.getStatementUpdate(record, entity.getName(), entity.defProjection(), entity.defProjectionKeys());
+            CommandEntityUpdate command = new CommandEntityUpdate(entity.getName(), MetaData.getNames(entity.defProjectionKeys()), MetaData.getNames(entity.defProjection()));
+            return new Query<Void, R>(command).setParameters(record.createParams(entity.defProjection()));            
         }
 
         @Override
         public StatementExec<R> getStatementInsert() {
-            return Entity.getStatementInsert(record, entity.getName(), entity.defProjection(), entity.defProjectionKeys());
+            CommandEntityInsert command = new CommandEntityInsert(entity.getName(), MetaData.getNames(entity.defProjectionKeys()), MetaData.getNames(entity.defProjection()));
+            return new Query<Void, R>(command).setParameters(record.createParams(entity.defProjection()));            
         }
     }
-    
-    public static <P> StatementExec<P> getStatementDelete(RecordParameters<P> parameters, String name, MetaData[] projection, MetaData[] keys) {
-        
-        StringBuilder sentence = new StringBuilder();
-        StringBuilder sentencefilter = new StringBuilder();
-        ArrayList<String> keyfields = new ArrayList<>();
-        
-        sentence.append("DELETE FROM ");
-        sentence.append(name);
-        
-        for (MetaData m: keys) {
-                sentencefilter.append(sentencefilter.length() == 0 ? " WHERE " : " AND ");
-                sentencefilter.append(m.getName());
-                sentencefilter.append(" = ?");
-                keyfields.add(m.getName());
-        }
-        sentence.append(sentencefilter);
-            
-        SQLCommand sql = new SQLCommand(sentence.toString(), keyfields.toArray(new String[keyfields.size()]));  
-        return new Query<Void, P>(sql).setParameters(parameters.createParams(projection));
-    }
-    
-    public static <P> StatementExec<P> getStatementUpdate(RecordParameters<P> parameters, String name, MetaData[] projection, MetaData[] keys) {
-        
-        StringBuilder sentence = new StringBuilder();
-        ArrayList<String> keyfields = new ArrayList<String>();
-        
-        sentence.append("UPDATE ");
-        sentence.append(name);
-               
-        boolean filter = false;
-        for (MetaData m: projection) {
-            sentence.append(filter ? ", " : " SET ");
-            sentence.append(m.getName());
-            sentence.append(" = ?");    
-            keyfields.add(m.getName());
-            filter = true;
-        }  
-        
-        filter = false;
-        for (MetaData m: keys) {
-                sentence.append(filter ? " AND " : " WHERE ");
-                sentence.append(m.getName());
-                sentence.append(" = ?");
-                keyfields.add(m.getName());
-                filter = true;
-        }  
-            
-        SQLCommand sql =  new SQLCommand(sentence.toString(), keyfields.toArray(new String[keyfields.size()]));   
-        return new Query<Void, P>(sql).setParameters(parameters.createParams(projection));
-    }
-    
-    public static <P> StatementExec<P> getStatementInsert(RecordParameters<P> parameters, String name, MetaData[] projection, MetaData[] keys) {
-        
-        StringBuilder sentence = new StringBuilder();
-        StringBuilder values = new StringBuilder();
-        ArrayList<String> fieldslist = new ArrayList<>();
-        
-        sentence.append("INSERT INTO ");
-        sentence.append(name);
-        sentence.append("(");
-               
-        boolean filter = false;
-        for (MetaData m: projection) {
-            sentence.append(filter ? ", " : "");
-            sentence.append(m.getName());
-
-            values.append(filter ? ", ?": "?");
-            fieldslist.add(m.getName());
-
-            filter = true;
-        }  
-        
-        sentence.append(") VALUES (");
-        sentence.append(values);
-        sentence.append(")");
-            
-        SQLCommand sql = new SQLCommand(sentence.toString(), fieldslist.toArray(new String[fieldslist.size()]));     
-        return new Query<Void, P>(sql).setParameters(parameters.createParams(projection));
-    }
-
-    private static <R, P> Batch<R, P> getStatementList(RecordResults<R> results, RecordParameters<P> parameters, String name, MetaData[] projection, MetaData[] criteria, StatementOrder[] order) {
-        
-        StringBuilder sqlsent = new StringBuilder();
-        List<String> fieldslist = new ArrayList<>();
-        
-        sqlsent.append("SELECT ");
-        boolean comma = false;
-        for (MetaData m: projection) {
-            if (comma) {
-                sqlsent.append(", ");
-            } else {
-                comma = true;       
-            }
-            sqlsent.append(m.getName()); 
-        }    
-        
-        sqlsent.append(" FROM ");       
-        sqlsent.append(name);
-        
-        // WHERE CLAUSE
-        if (criteria != null) {
-            comma = false;
-            for (MetaData m: criteria) {
-                if (comma) {
-                    sqlsent.append(" AND ");
-                } else {
-                    sqlsent.append(" WHERE ");
-                    comma = true;
-                }
-                
-                String realname;
-                if (m.getName().endsWith("_LIKE")) {
-                    realname = m.getName().substring(0, m.getName().length() - 5);
-                    sqlsent.append(realname);
-                    sqlsent.append(" LIKE ? {escape '$'}");
-                    fieldslist.add(m.getName());                      
-                } else {
-                    sqlsent.append(m.getName());
-                    sqlsent.append(" = ?");
-                    fieldslist.add(m.getName());    
-                }
-            }
-        }
-        
-        // ORDER BY CLAUSE
-        if (order != null) {
-            comma = false;
-            for (StatementOrder o: order) {
-                if (comma) {
-                    sqlsent.append(", ");
-                } else {
-                    sqlsent.append(" ORDER BY ");
-                    comma = true;
-                }           
-                sqlsent.append(o.getName());
-                sqlsent.append(o.getOrder().toSQL());               
-            }
-        }
-
-        // build statement
-        SQLCommand sql = new SQLCommand(sqlsent.toString(), fieldslist.toArray(new String[fieldslist.size()]));     
-        return new Query<R, P>(sql).setResults(results.createResults(projection)).setParameters(parameters.createParams(criteria));
-    }
-     
-//    
-//    public SQLCommand getStatementCreateTable(Database db) {
-//        
-//    }
-//    
-//    public SQLCommand getStatementDropTable(Database db) {
-//        
-//    }
 }
 

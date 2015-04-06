@@ -72,8 +72,12 @@ public class MetaData {
     }
     
     public static String[] getNames(MetaData[] metadatas) {
-        return Arrays.stream(metadatas)
-                .map(m -> m.getName())
-                .toArray(i -> new String[i]);
+        if (metadatas == null) {
+            return null;
+        } else {
+            return Arrays.stream(metadatas)
+                    .map(m -> m.getName())
+                    .toArray(i -> new String[i]);
+        }
     }
 }
