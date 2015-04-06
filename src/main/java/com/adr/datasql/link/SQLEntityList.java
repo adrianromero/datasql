@@ -15,12 +15,16 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql.meta;
+package com.adr.datasql.link;
 
 import com.adr.datasql.data.MetaData;
 import com.adr.datasql.Query;
 import com.adr.datasql.link.SQLCommand;
 import com.adr.datasql.StatementQuery;
+import com.adr.datasql.meta.Field;
+import com.adr.datasql.meta.SourceList;
+import com.adr.datasql.meta.SourceListFactory;
+import com.adr.datasql.meta.StatementOrder;
 import com.adr.datasql.orm.RecordParameters;
 import com.adr.datasql.orm.RecordResults;
 import java.util.ArrayList;
@@ -33,15 +37,15 @@ import java.util.stream.Collectors;
  *
  * @author adrian
  */
-public class EntityList implements SourceListFactory {
+public class SQLEntityList implements SourceListFactory {
     
     private String sentence = null;
     private final List<Field> fields = new ArrayList<>();
     
-    public EntityList() {        
+    public SQLEntityList() {        
     }
     
-    public EntityList(String sentence, Field... fields) {
+    public SQLEntityList(String sentence, Field... fields) {
         this.sentence = sentence;
         this.fields.addAll(Arrays.asList(fields));
     }
@@ -90,14 +94,14 @@ public class EntityList implements SourceListFactory {
     
     private static class EntityListSourceList<R, F> implements SourceList<R, F> {
         
-        private final EntityList entitylist;
+        private final SQLEntityList entitylist;
         private final RecordResults<R> record;
         private final RecordParameters<F> filter;
         private MetaData[] projection;
         private MetaData[] criteria;
         private StatementOrder[] order;
         
-        public EntityListSourceList(EntityList entitylist, RecordResults<R> record, RecordParameters<F> filter) {
+        public EntityListSourceList(SQLEntityList entitylist, RecordResults<R> record, RecordParameters<F> filter) {
             this.entitylist = entitylist;
             this.record = record;
             this.filter = filter;
@@ -123,7 +127,7 @@ public class EntityList implements SourceListFactory {
         
         @Override
         public StatementQuery<R, F> getStatementList() {
-            return EntityList.getStatementList(record, filter, entitylist.getSentence(), projection, criteria, order);
+            return SQLEntityList.getStatementList(record, filter, entitylist.getSentence(), projection, criteria, order);
         }  
     }  
     
@@ -143,7 +147,7 @@ public class EntityList implements SourceListFactory {
                 comma = true;
             }           
             sqlsent.append(o.getName());
-            sqlsent.append(o.getOrder().toSQL());               
+            sqlsent.append(o.getOrder() == StatementOrder.Order.ASC ? " ASC" : " DESC");               
         }
 
         // build statement

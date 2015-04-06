@@ -24,20 +24,8 @@ package com.adr.datasql.meta;
 public class StatementOrder {
     
     public static enum Order {
-        ASC(" ASC"),
-        DESC(" DESC");
-        
-        private final String sql;
-        Order(String sql) {
-            this.sql = sql;
-        }
-        public String toSQL() {
-            return sql;
-        }
-        @Override
-        public String toString() {
-            return sql;
-        }  
+        ASC(),
+        DESC();
     }
     
     private final String name;

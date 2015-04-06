@@ -303,12 +303,11 @@ class SQLDataLink extends DataLink {
                     comma = true;
                 }           
                 sqlsent.append(o.getName());
-                sqlsent.append(o.getOrder().toSQL());               
+                sqlsent.append(o.getOrder() == StatementOrder.Order.ASC ? " ASC" : " DESC");               
             }
         }
 
         // build statement
         return new SQLCommand(sqlsent.toString(), fieldslist.toArray(new String[fieldslist.size()]));           
     }
-    
 }

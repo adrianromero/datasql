@@ -272,7 +272,6 @@ public abstract class DataLink implements AutoCloseable {
         return query(sourcelist.getStatementList());
     } 
 
-    
     public final <P, F> List<P> list(SourceList<P, F> sourcelist, F filter) throws DataLinkException {
         return query(sourcelist.getStatementList(), filter);
     }
