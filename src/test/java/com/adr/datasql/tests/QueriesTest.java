@@ -19,10 +19,10 @@ package com.adr.datasql.tests;
 
 import com.adr.datasql.meta.BasicStatementFind;
 import com.adr.datasql.Kind;
-import com.adr.datasql.adaptor.sql.SQLCommandNamed;
+import com.adr.datasql.adaptor.sql.SQLCommandSQLNamed;
 import com.adr.datasql.meta.StatementExec;
 import com.adr.datasql.meta.StatementFind;
-import com.adr.datasql.adaptor.sql.SQLCommand;
+import com.adr.datasql.meta.CommandSQL;
 import com.adr.datasql.adaptor.sql.SQLStatement;
 import com.adr.datasql.adaptor.sql.SQLStatementArray;
 import com.adr.datasql.adaptor.sql.SQLStatementMap;
@@ -63,7 +63,7 @@ public class QueriesTest {
             parameters.put("id", "two");
             parameters.put("code", "two code");
             parameters.put("name", "two name");
-            link.exec(new SQLStatementMap(new SQLCommandNamed("insert into mytest(id, code, name) values (:id, :code, :name)")), parameters);
+            link.exec(new SQLStatementMap(new SQLCommandSQLNamed("insert into mytest(id, code, name) values (:id, :code, :name)")), parameters);
 
             Object[] result = link.find(new SQLStatementArray("select id, code, name from mytest where id = ?"), "two");
             Assert.assertEquals("[two, two code, two name]", Arrays.toString(result));
@@ -134,7 +134,7 @@ public class QueriesTest {
         try (DataLink link = DataBase.getDataLink()) {
             // Count records
             StatementFind<Number, Number> countTestTable = new BasicStatementFind<Number, Number> (
-                new SQLCommand("select count(*) from mytest where amount > ?"))
+                new CommandSQL("select count(*) from mytest where amount > ?"))
                 .setParameters(ParametersDouble.INSTANCE)
                 .setResults(ResultsInteger.INSTANCE);       
             int countrows = link.find(countTestTable, 10.0).intValue();   

@@ -1,7 +1,7 @@
-//    Data SQLCommand is a light JDBC wrapper.
+//    Data CommandSQL is a light JDBC wrapper.
 //    Copyright (C) 2014-2015 Adrián Romero Corchado.
 //
-//    This file is part of Data SQLCommand
+//    This file is part of Data CommandSQL
 //
 //     Licensed under the Apache License, Version 2.0 (the "License");
 //     you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 
 package com.adr.datasql.adaptor.sql;
 
+import com.adr.datasql.meta.CommandSQL;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ import java.util.List;
  *
  * @author adrian
  */
-public class SQLCommandNamed extends SQLCommand {
+public class SQLCommandSQLNamed extends CommandSQL {
     
     private static final char CHAR_ETX = '\u0003';
     
@@ -35,7 +36,7 @@ public class SQLCommandNamed extends SQLCommand {
     private static final int STATE_PARAMETERSTART = 3;
     private static final int STATE_PARAMETERPART = 4;
 
-    public SQLCommandNamed(String command) throws ParseException {
+    public SQLCommandSQLNamed(String command) throws ParseException {
         
         StringBuilder parsedcommand = new StringBuilder();
         StringBuilder parametername = new StringBuilder();

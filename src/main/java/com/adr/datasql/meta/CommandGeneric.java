@@ -1,7 +1,7 @@
-//    Data SQLCommand is a light JDBC wrapper.
-//    Copyright (C) 2014-2015 Adrián Romero Corchado.
+//    Data Command is a light JDBC wrapper.
+//    Copyright (C) 2015 Adrián Romero Corchado.
 //
-//    This file is part of Data SQLCommand
+//    This file is part of Data Command
 //
 //     Licensed under the Apache License, Version 2.0 (the "License");
 //     you may not use this file except in compliance with the License.
@@ -15,45 +15,39 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql.adaptor.sql;
+package com.adr.datasql.meta;
 
 import com.adr.datasql.Parameters;
 import com.adr.datasql.Results;
 import com.adr.datasql.link.DataLink;
 import com.adr.datasql.link.DataLinkException;
-import com.adr.datasql.meta.CommandExec;
-import com.adr.datasql.meta.CommandFind;
-import com.adr.datasql.meta.CommandQuery;
 import java.util.List;
 
 /**
  *
  * @author adrian
  */
-public class SQLCommand implements CommandQuery, CommandFind, CommandExec {
+public class CommandGeneric implements CommandQuery, CommandFind, CommandExec {
 
-    private String command;
-    private String[] paramnames;  
+    private final String command;
+    private final int type;  
     
-    public SQLCommand(String command, String... paramnames) {
-        init(command, paramnames);
-    }
-    
-    protected SQLCommand() {
-    }
-    
-    protected final void init(String command, String... paramnames) {
+    public CommandGeneric(String command, int type) {
         this.command = command;
-        this.paramnames = paramnames == null ? new String[0] : paramnames;        
+        this.type = type;
+    }
+    
+    public CommandGeneric(String command) {
+        this(command, 0);
     }
     
     public final String getCommand() {
         return command;
     }
-
-    public final String[] getParamNames() {
-        return paramnames;
-    } 
+    
+    public final int getType() {
+        return type;
+    }
 
     @Override
     public <R, P> List<R> query(DataLink link, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
@@ -70,18 +64,4 @@ public class SQLCommand implements CommandQuery, CommandFind, CommandExec {
         return link.exec(this, parameters, params);
     }
     
-    @Override
-    public String toString() {
-        StringBuilder s = new StringBuilder();
-        s.append(getCommand());
-        s.append('[');
-        for(int i = 0; i < getParamNames().length; i++) {
-            if (i > 0) {
-                s.append(", ");
-            }
-            s.append(getParamNames()[i]);
-        }
-        s.append(']');
-        return s.toString();
-    }         
 }

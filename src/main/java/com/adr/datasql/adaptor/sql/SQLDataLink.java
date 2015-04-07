@@ -17,6 +17,7 @@
 
 package com.adr.datasql.adaptor.sql;
 
+import com.adr.datasql.meta.CommandSQL;
 import com.adr.datasql.KindParameters;
 import com.adr.datasql.KindResults;
 import com.adr.datasql.Parameters;
@@ -64,7 +65,7 @@ class SQLDataLink extends DataLink {
         return exec(SQLDataLink.this.buildSQLCommand(command), parameters, params);    
     }
     @Override
-    public <P> int exec(SQLCommand command, Parameters<P> parameters, P params) throws DataLinkException {
+    public <P> int exec(CommandSQL command, Parameters<P> parameters, P params) throws DataLinkException {
         logger.log(Level.INFO, "Executing prepared SQL: {0}", command);
 
         try (PreparedStatement stmt = c.prepareStatement(command.getCommand())) {
@@ -87,7 +88,7 @@ class SQLDataLink extends DataLink {
         return find(buildSQLCommand(command), results, parameters, params);
     }  
     @Override
-    public <R, P> R find(SQLCommand command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
+    public <R, P> R find(CommandSQL command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
         logger.log(Level.INFO, "Executing prepared SQL: {0}", command);
 
         try (PreparedStatement stmt = c.prepareStatement(command.getCommand())) {
@@ -114,7 +115,7 @@ class SQLDataLink extends DataLink {
         return query(buildSQLCommand(command), results, parameters, params);
     }
     @Override
-    public <R, P> List<R> query(SQLCommand command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
+    public <R, P> List<R> query(CommandSQL command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
         logger.log(Level.INFO, "Executing prepared SQL: {0}", command);
 
         try (PreparedStatement stmt = c.prepareStatement(command.getCommand())) {
@@ -146,7 +147,7 @@ class SQLDataLink extends DataLink {
         }
     }
        
-    private SQLCommand buildSQLCommand(CommandEntityInsert command) {
+    private CommandSQL buildSQLCommand(CommandEntityInsert command) {
         
         StringBuilder sentence = new StringBuilder();
         StringBuilder values = new StringBuilder();
@@ -171,10 +172,10 @@ class SQLDataLink extends DataLink {
         sentence.append(values);
         sentence.append(")");
             
-        return new SQLCommand(sentence.toString(), fieldslist.toArray(new String[fieldslist.size()]));        
+        return new CommandSQL(sentence.toString(), fieldslist.toArray(new String[fieldslist.size()]));        
     }
     
-    private SQLCommand buildSQLCommand(CommandEntityDelete command) {
+    private CommandSQL buildSQLCommand(CommandEntityDelete command) {
         
         StringBuilder sentence = new StringBuilder();
         StringBuilder sentencefilter = new StringBuilder();
@@ -191,10 +192,10 @@ class SQLDataLink extends DataLink {
         }
         sentence.append(sentencefilter);
             
-        return new SQLCommand(sentence.toString(), keyfields.toArray(new String[keyfields.size()]));          
+        return new CommandSQL(sentence.toString(), keyfields.toArray(new String[keyfields.size()]));          
     }
     
-    private SQLCommand buildSQLCommand(CommandEntityUpdate command) {
+    private CommandSQL buildSQLCommand(CommandEntityUpdate command) {
         
         StringBuilder sentence = new StringBuilder();
         ArrayList<String> keyfields = new ArrayList<String>();
@@ -220,14 +221,14 @@ class SQLDataLink extends DataLink {
             filter = true;
         }  
             
-        return new SQLCommand(sentence.toString(), keyfields.toArray(new String[keyfields.size()]));         
+        return new CommandSQL(sentence.toString(), keyfields.toArray(new String[keyfields.size()]));         
     }
     
-    private SQLCommand buildSQLCommand(CommandEntityGet command) {
+    private CommandSQL buildSQLCommand(CommandEntityGet command) {
         return SQLDataLink.this.buildSQLCommand(new CommandEntityList(command.getName(), command.getFields(), command.getKeys(), null));
     }
 
-    private SQLCommand buildSQLCommand(CommandEntityList command) {
+    private CommandSQL buildSQLCommand(CommandEntityList command) {
         
         StringBuilder sqlsent = new StringBuilder();
         List<String> fieldslist = new ArrayList<>();
@@ -287,6 +288,6 @@ class SQLDataLink extends DataLink {
         }
 
         // build statement
-        return new SQLCommand(sqlsent.toString(), fieldslist.toArray(new String[fieldslist.size()]));           
+        return new CommandSQL(sqlsent.toString(), fieldslist.toArray(new String[fieldslist.size()]));           
     }
 }

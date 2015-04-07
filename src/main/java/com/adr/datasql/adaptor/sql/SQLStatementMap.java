@@ -17,6 +17,7 @@
 
 package com.adr.datasql.adaptor.sql;
 
+import com.adr.datasql.meta.CommandSQL;
 import com.adr.datasql.data.MetaData;
 import com.adr.datasql.data.ParametersMap;
 import com.adr.datasql.data.ParametersMapMeta;
@@ -35,7 +36,7 @@ public class SQLStatementMap extends SQLStatement<Map<String, Object>, Map<Strin
         init();
     }
 
-    public SQLStatementMap(SQLCommand command) {
+    public SQLStatementMap(CommandSQL command) {
         super(command);
         init();
     }

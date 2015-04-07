@@ -17,6 +17,7 @@
 
 package com.adr.datasql.adaptor.sql;
 
+import com.adr.datasql.meta.CommandSQL;
 import com.adr.datasql.Kind;
 import com.adr.datasql.data.MetaData;
 import com.adr.datasql.data.ParametersArray;
@@ -35,7 +36,7 @@ public class SQLStatementArray extends SQLStatement<Object[], Object[]> {
         init();
     }
 
-    public SQLStatementArray(SQLCommand command) {
+    public SQLStatementArray(CommandSQL command) {
         super(command);
         init();
     }

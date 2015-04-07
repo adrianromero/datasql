@@ -17,6 +17,7 @@
 
 package com.adr.datasql.adaptor.sql;
 
+import com.adr.datasql.meta.CommandSQL;
 import com.adr.datasql.Parameters;
 import com.adr.datasql.Results;
 import com.adr.datasql.meta.StatementExec;
@@ -34,14 +35,14 @@ public class SQLStatement<R, P> implements StatementFind<R, P>, StatementQuery<R
    
     private Parameters<P> parameters = null;
     private Results<R> results = null;    
-    private final SQLCommand command; 
+    private final CommandSQL command; 
     
-    public SQLStatement(SQLCommand command) {
+    public SQLStatement(CommandSQL command) {
         this.command = command;
     }
     
     public SQLStatement(String command, String... paramnames) {
-        this.command = new SQLCommand(command, paramnames);
+        this.command = new CommandSQL(command, paramnames);
     }    
     
     public Parameters<P> getParameters() {

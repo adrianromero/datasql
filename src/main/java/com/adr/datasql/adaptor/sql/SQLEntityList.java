@@ -1,7 +1,7 @@
-//    Data SQLCommand is a light JDBC wrapper.
+//    Data CommandSQL is a light JDBC wrapper.
 //    Copyright (C) 2014 Adrián Romero Corchado.
 //
-//    This file is part of Data SQLCommand
+//    This file is part of Data CommandSQL
 //
 //     Licensed under the Apache License, Version 2.0 (the "License");
 //     you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 
 package com.adr.datasql.adaptor.sql;
 
+import com.adr.datasql.meta.CommandSQL;
 import com.adr.datasql.meta.BasicStatementQuery;
 import com.adr.datasql.data.MetaData;
 import com.adr.datasql.meta.StatementQuery;
@@ -150,7 +151,7 @@ public class SQLEntityList implements SourceListFactory {
         }
 
         // build statement
-        SQLCommand sql = new SQLCommand(sqlsent.toString());     
+        CommandSQL sql = new CommandSQL(sqlsent.toString());     
         return new BasicStatementQuery<R, P>(sql).setResults(results.createResults(projection)).setParameters(parameters.createParams(criteria));
     }   
 }

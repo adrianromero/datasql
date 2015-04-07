@@ -22,13 +22,14 @@ import com.adr.datasql.Results;
 import com.adr.datasql.meta.StatementExec;
 import com.adr.datasql.meta.StatementFind;
 import com.adr.datasql.meta.StatementQuery;
-import com.adr.datasql.adaptor.sql.SQLCommand;
+import com.adr.datasql.meta.CommandSQL;
 import com.adr.datasql.data.MetaData;
 import com.adr.datasql.meta.CommandEntityDelete;
 import com.adr.datasql.meta.CommandEntityGet;
 import com.adr.datasql.meta.CommandEntityInsert;
 import com.adr.datasql.meta.CommandEntityList;
 import com.adr.datasql.meta.CommandEntityUpdate;
+import com.adr.datasql.meta.CommandGeneric;
 import com.adr.datasql.meta.SourceList;
 import com.adr.datasql.meta.SourceListFactory;
 import com.adr.datasql.meta.SourceTable;
@@ -56,8 +57,11 @@ public abstract class DataLink implements AutoCloseable {
     public <P> int exec(CommandEntityUpdate cmd, Parameters<P> parameters, P params) throws DataLinkException {
         throw new DataLinkException("CommandEntityUpdate not supported.");
     }
-    public <P> int exec(SQLCommand cmd, Parameters<P> parameters, P params) throws DataLinkException {
-        throw new DataLinkException("SQLCommand not supported.");
+    public <P> int exec(CommandSQL cmd, Parameters<P> parameters, P params) throws DataLinkException {
+        throw new DataLinkException("Command SQL not supported.");
+    }
+    public <P> int exec(CommandGeneric cmd, Parameters<P> parameters, P params) throws DataLinkException {
+        throw new DataLinkException("Command Generic not supported.");
     }
     public <R, P> R find(CommandEntityGet command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
         throw new DataLinkException("CommandEntityGet not supported.");
@@ -65,14 +69,20 @@ public abstract class DataLink implements AutoCloseable {
     public <R, P> R find(CommandEntityList command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
         throw new DataLinkException("CommandEntityList not supported.");
     }
-    public <R, P> R find(SQLCommand command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
-        throw new DataLinkException("SQLCommand not supported.");
+    public <R, P> R find(CommandSQL command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
+        throw new DataLinkException("Command SQL not supported.");
+    }
+    public <R, P> R find(CommandGeneric command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
+        throw new DataLinkException("CommandGeneric not supported.");
     }
     public <R, P> List<R> query(CommandEntityList command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
         throw new DataLinkException("CommandEntityList not supported.");
     }
-    public <R, P> List<R> query(SQLCommand command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
-        throw new DataLinkException("SQLCommand not supported.");
+    public <R, P> List<R> query(CommandSQL command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
+        throw new DataLinkException("Command SQL not supported.");
+    }           
+    public <R, P> List<R> query(CommandGeneric command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
+        throw new DataLinkException("CommandGeneric not supported.");
     }           
     
     @Override
