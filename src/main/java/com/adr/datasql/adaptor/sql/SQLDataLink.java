@@ -64,10 +64,6 @@ class SQLDataLink extends DataLink {
         return exec(SQLDataLink.this.buildSQLCommand(command), parameters, params);    
     }
     @Override
-    public <P> int exec(String command, Parameters<P> parameters, P params) throws DataLinkException {
-        return exec(new SQLCommand(command), parameters, params);    
-    }   
-    @Override
     public <P> int exec(SQLCommand command, Parameters<P> parameters, P params) throws DataLinkException {
         logger.log(Level.INFO, "Executing prepared SQL: {0}", command);
 
@@ -89,10 +85,6 @@ class SQLDataLink extends DataLink {
     @Override    
     public <R, P> R find(CommandEntityList command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {        
         return find(buildSQLCommand(command), results, parameters, params);
-    }  
-    @Override
-    public <R, P> R find(String command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {        
-        return find(new SQLCommand(command), results, parameters, params);
     }  
     @Override
     public <R, P> R find(SQLCommand command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
@@ -120,10 +112,6 @@ class SQLDataLink extends DataLink {
     @Override    
     public <R, P> List<R> query(CommandEntityList command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
         return query(buildSQLCommand(command), results, parameters, params);
-    }
-    @Override
-    public <R, P> List<R> query(String command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
-        return query(new SQLCommand(command), results, parameters, params);
     }
     @Override
     public <R, P> List<R> query(SQLCommand command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {

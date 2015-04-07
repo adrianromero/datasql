@@ -59,26 +59,17 @@ public abstract class DataLink implements AutoCloseable {
     public <P> int exec(SQLCommand cmd, Parameters<P> parameters, P params) throws DataLinkException {
         throw new DataLinkException("SQLCommand not supported.");
     }
-    public <P> int exec(String cmd, Parameters<P> parameters, P params) throws DataLinkException {
-        throw new DataLinkException("SQL String command command not supported.");
-    }
     public <R, P> R find(CommandEntityGet command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
         throw new DataLinkException("CommandEntityGet not supported.");
     }
     public <R, P> R find(CommandEntityList command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
         throw new DataLinkException("CommandEntityList not supported.");
     }
-    public <R, P> R find(String command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
-        throw new DataLinkException("SQL String command not supported.");
-    }
     public <R, P> R find(SQLCommand command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
         throw new DataLinkException("SQLCommand not supported.");
     }
     public <R, P> List<R> query(CommandEntityList command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
         throw new DataLinkException("CommandEntityList not supported.");
-    }
-    public <R, P> List<R> query(String command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
-        throw new DataLinkException("SQL String command not supported.");
     }
     public <R, P> List<R> query(SQLCommand command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
         throw new DataLinkException("SQLCommand not supported.");
