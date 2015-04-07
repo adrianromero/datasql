@@ -17,19 +17,20 @@
 
 package com.adr.datasql.tests;
 
+import com.adr.datasql.meta.BasicStatementFind;
 import com.adr.datasql.Kind;
-import com.adr.datasql.Query;
-import com.adr.datasql.link.SQLCommandNamed;
-import com.adr.datasql.StatementExec;
-import com.adr.datasql.StatementFind;
-import com.adr.datasql.QueryArray;
-import com.adr.datasql.QueryMap;
+import com.adr.datasql.adaptor.sql.SQLCommandNamed;
+import com.adr.datasql.meta.StatementExec;
+import com.adr.datasql.meta.StatementFind;
+import com.adr.datasql.adaptor.sql.SQLCommand;
+import com.adr.datasql.adaptor.sql.SQLStatement;
+import com.adr.datasql.adaptor.sql.SQLStatementArray;
+import com.adr.datasql.adaptor.sql.SQLStatementMap;
 import com.adr.datasql.data.ParametersDouble;
 import com.adr.datasql.data.ResultsInteger;
 import com.adr.datasql.databases.DataBase;
 import com.adr.datasql.link.DataLink;
 import com.adr.datasql.link.DataLinkException;
-import com.adr.datasql.link.SQLCommand;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.time.Instant;
@@ -62,9 +63,9 @@ public class QueriesTest {
             parameters.put("id", "two");
             parameters.put("code", "two code");
             parameters.put("name", "two name");
-            link.exec(new QueryMap(new SQLCommandNamed("insert into mytest(id, code, name) values (:id, :code, :name)")), parameters);
+            link.exec(new SQLStatementMap(new SQLCommandNamed("insert into mytest(id, code, name) values (:id, :code, :name)")), parameters);
 
-            Object[] result = link.find(new QueryArray("select id, code, name from mytest where id = ?"), "two");
+            Object[] result = link.find(new SQLStatementArray("select id, code, name from mytest where id = ?"), "two");
             Assert.assertEquals("[two, two code, two name]", Arrays.toString(result));
         }
     }     
@@ -72,7 +73,7 @@ public class QueriesTest {
     @Test
     public void query2Test() throws DataLinkException, ParseException {   
         try (DataLink link = DataBase.getDataLink()) {
-            StatementExec<Object[]> insertMYTEST = new QueryArray("insert into mytest(id, code, name) values (?, ?, ?)")
+            StatementExec<Object[]> insertMYTEST = new SQLStatementArray("insert into mytest(id, code, name) values (?, ?, ?)")
                     .setParameters(Kind.STRING, Kind.STRING, Kind.STRING);
             link.exec(insertMYTEST, "one", "code one", "name one");
         }
@@ -81,7 +82,7 @@ public class QueriesTest {
     @Test
     public void querySelectWithKinds() throws DataLinkException, ParseException {   
         try (DataLink link = DataBase.getDataLink()) {         
-           StatementFind<Object[], Object[]> selectMyTest = new QueryArray(
+           StatementFind<Object[], Object[]> selectMyTest = new SQLStatementArray(
                    "select id, code, name, startdate, weight, amount, line, active from mytest where code = ?")
                    .setParameters(Kind.STRING)
                    .setResults(Kind.STRING, Kind.STRING, Kind.STRING, Kind.TIMESTAMP, Kind.DOUBLE, Kind.DECIMAL, Kind.INT, Kind.BOOLEAN);       
@@ -93,7 +94,7 @@ public class QueriesTest {
     @Test
     public void querySelectMetadata() throws DataLinkException, ParseException {   
         try (DataLink link = DataBase.getDataLink()) {
-           StatementFind<Object[], Object[]> selectMyTest = new QueryArray(
+           StatementFind<Object[], Object[]> selectMyTest = new SQLStatementArray(
                    "select id, code, name, startdate, weight, amount, line, active from mytest where code = ?");
            Object[] result = link.find(selectMyTest, "code 1");
            System.out.println(Arrays.toString(result)); // [a, code 1, name a, Tue Feb 11 18:37:52 CET 2014, 12.23, 12.12, 1234, 1]
@@ -105,12 +106,12 @@ public class QueriesTest {
         
         try (DataLink link = DataBase.getDataLink()) {
             // Insert a record
-            link.exec(new QueryArray("insert into mytest(id, name, amount, line) values (?, ?, ?, ?)"),
+            link.exec(new SQLStatementArray("insert into mytest(id, name, amount, line) values (?, ?, ?, ?)"),
                 "record one", "name one", new BigDecimal("10.10"), 33);
             // Find a record
-            Object[] record = link.find(new QueryArray("select id, name, line, amount from mytest where name = ?"), "name one");
+            Object[] record = link.find(new SQLStatementArray("select id, name, line, amount from mytest where name = ?"), "name one");
             // List records
-            List<Object[]> records = link.query(new QueryArray("select id, name, line, amount from mytest"));
+            List<Object[]> records = link.query(new SQLStatementArray("select id, name, line, amount from mytest"));
         }    
     }
 
@@ -119,7 +120,7 @@ public class QueriesTest {
         
         try (DataLink link = DataBase.getDataLink())  {
             // Find a record specifying types
-            StatementFind<Object[], Object[]> selectTestTable = new QueryArray(
+            StatementFind<Object[], Object[]> selectTestTable = new SQLStatementArray(
                 "select id, name, line, amount from mytest where name = ?")
                 .setParameters(Kind.STRING)
                 .setResults(Kind.STRING, Kind.STRING, Kind.INT, Kind.DOUBLE);       
@@ -132,8 +133,8 @@ public class QueriesTest {
         
         try (DataLink link = DataBase.getDataLink()) {
             // Count records
-            StatementFind<Number, Number> countTestTable = new Query(
-                "select count(*) from mytest where amount > ?")
+            StatementFind<Number, Number> countTestTable = new BasicStatementFind<Number, Number> (
+                new SQLCommand("select count(*) from mytest where amount > ?"))
                 .setParameters(ParametersDouble.INSTANCE)
                 .setResults(ResultsInteger.INSTANCE);       
             int countrows = link.find(countTestTable, 10.0).intValue();   
@@ -144,9 +145,9 @@ public class QueriesTest {
     public static void setUpClass() throws DataLinkException {   
         try (DataLink link = DataBase.getDataLink()) {
         
-            link.exec(new QueryArray("drop table if exists mytest"));
+            link.exec(new SQLStatement("drop table if exists mytest"));
             
-            link.exec(new QueryArray("create table mytest("
+            link.exec(new SQLStatement("create table mytest("
                     + "id varchar(32), "
                     + "code varchar(128), "
                     + "name varchar(1024), "
@@ -156,7 +157,7 @@ public class QueriesTest {
                     + "line integer, "
                     + "active smallint,"
                     + "primary key (id))"));    
-            StatementExec<Object[]> insertMyTest = new QueryArray(
+            StatementExec<Object[]> insertMyTest = new SQLStatementArray(
                     "insert into mytest(id, code, name, startdate, weight, amount, line, active) values (?, ?, ?, ?, ?, ?, ?, ?)")
                     .setParameters(Kind.STRING, Kind.STRING, Kind.STRING, Kind.TIMESTAMP, Kind.DOUBLE, Kind.DECIMAL, Kind.INT, Kind.BOOLEAN);
             
@@ -167,7 +168,7 @@ public class QueriesTest {
             link.exec(insertMyTest, "e", "code x", "name five", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 50, true);            
         }
     }
-    
+  
     @AfterClass
     public static void tearDownClass() {
     }

@@ -1,7 +1,7 @@
-//    Data SQLCommand is a light JDBC wrapper.
-//    Copyright (C) 2014 Adrián Romero Corchado.
+//    Data SQL is a light JDBC wrapper.
+//    Copyright (C) 2015 Adrián Romero Corchado.
 //
-//    This file is part of Data SQLCommand
+//    This file is part of Data SQL
 //
 //     Licensed under the Apache License, Version 2.0 (the "License");
 //     you may not use this file except in compliance with the License.
@@ -15,8 +15,9 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql;
+package com.adr.datasql.adaptor.sql;
 
+import com.adr.datasql.Kind;
 import com.adr.datasql.data.MetaData;
 import com.adr.datasql.data.ParametersArray;
 import com.adr.datasql.data.ParametersArrayMeta;
@@ -27,9 +28,14 @@ import com.adr.datasql.data.ResultsArrayMeta;
  *
  * @author adrian
  */
-public class QueryArray extends Query<Object[], Object[]> {
+public class SQLStatementArray extends SQLStatement<Object[], Object[]> {
 
-    public QueryArray(Object command) {
+    public SQLStatementArray(String command, String... paramnames) {
+        super(command, paramnames);
+        init();
+    }
+
+    public SQLStatementArray(SQLCommand command) {
         super(command);
         init();
     }
@@ -39,22 +45,22 @@ public class QueryArray extends Query<Object[], Object[]> {
         this.setResults(ResultsArrayMeta.getInstance());    
     }
     
-    public QueryArray setParameters(Kind... kinds) {
+    public SQLStatementArray setParameters(Kind... kinds) {
         setParameters(new ParametersArray(kinds));
         return this;
     }    
     
-    public QueryArray setParameters(MetaData... metadatas) {
+    public SQLStatementArray setParameters(MetaData... metadatas) {
         setParameters(new ParametersArray(metadatas));
         return this;
     }       
     
-    public QueryArray setResults(Kind... kinds) {
+    public SQLStatementArray setResults(Kind... kinds) {
         setResults(new ResultsArray(kinds));
         return this;
     }    
     
-    public QueryArray setResults(MetaData... metadatas) {
+    public SQLStatementArray setResults(MetaData... metadatas) {
         setResults(new ResultsArray(metadatas));
         return this;
     }      

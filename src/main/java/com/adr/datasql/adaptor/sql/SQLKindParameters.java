@@ -15,10 +15,11 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql.link;
+package com.adr.datasql.adaptor.sql;
 
 import com.adr.datasql.KindParameters;
 import com.adr.datasql.data.MetaData;
+import com.adr.datasql.link.DataLinkException;
 import java.math.BigDecimal;
 import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;

@@ -15,9 +15,12 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql.link;
+package com.adr.datasql.adaptor.sql;
 
 import com.adr.datasql.Kind;
+import com.adr.datasql.link.DataLink;
+import com.adr.datasql.link.DataLinkException;
+import com.adr.datasql.link.DataLinkFactory;
 import java.sql.SQLException;
 import java.sql.Types;
 import javax.sql.DataSource;

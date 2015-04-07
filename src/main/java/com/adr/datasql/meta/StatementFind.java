@@ -15,37 +15,17 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql.orm;
+package com.adr.datasql.meta;
 
-import com.adr.datasql.StatementExec;
 import com.adr.datasql.link.DataLink;
 import com.adr.datasql.link.DataLinkException;
-import com.adr.datasql.meta.SourceTable;
 
 /**
  *
  * @author adrian
+ * @param <R>
  * @param <P>
  */
-public class StatementUpsert<P> implements StatementExec<P> {
-        
-    private final StatementExec<P> queryinsert;
-    private final StatementExec<P> queryupdate;
-    
-    public StatementUpsert(SourceTable<P> sourcetable) {
-        
-        queryinsert = sourcetable.getStatementInsert();       
-        queryupdate = sourcetable.getStatementUpdate();
-    }
-
-    @Override
-    public int exec(DataLink link, P params) throws DataLinkException {
-        
-        int i = queryupdate.exec(link, params);
-        if (i == 0) {
-            return queryinsert.exec(link, params);
-        } else {
-            return i;
-        }
-    }   
+public interface StatementFind<R, P> {
+    public R find(DataLink link, P params) throws DataLinkException;
 }

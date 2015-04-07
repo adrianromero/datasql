@@ -17,12 +17,21 @@
 
 package com.adr.datasql.meta;
 
+import com.adr.datasql.Parameters;
+import com.adr.datasql.link.DataLink;
+import com.adr.datasql.link.DataLinkException;
+
 /**
  *
  * @author adrian
  */
-public class CommandEntityUpdate extends CommandEntityAbstract {
+public class CommandEntityUpdate extends CommandEntityAbstract implements CommandExec {
     public CommandEntityUpdate(String name, String[] keys, String[] fields) {
         super(name, keys, fields);
     }       
+
+    @Override
+    public <P> int exec(DataLink link, Parameters<P> parameters, P params) throws DataLinkException {
+        return link.exec(this, parameters, params);
+    }   
 }

@@ -1,7 +1,7 @@
-//    Data Command is a light JDBC wrapper.
-//    Copyright (C) 2015 Adrián Romero Corchado.
+//    Data SQL is a light JDBC wrapper.
+//    Copyright (C) 2014-2015 Adrián Romero Corchado.
 //
-//    This file is part of Data Command
+//    This file is part of Data SQL
 //
 //     Licensed under the Apache License, Version 2.0 (the "License");
 //     you may not use this file except in compliance with the License.
@@ -15,11 +15,12 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql;
+package com.adr.datasql.meta;
 
+import com.adr.datasql.Parameters;
+import com.adr.datasql.Results;
 import com.adr.datasql.link.DataLink;
 import com.adr.datasql.link.DataLinkException;
-import java.util.List;
 
 /**
  *
@@ -27,55 +28,36 @@ import java.util.List;
  * @param <R>
  * @param <P>
  */
-public abstract class Batch <R, P> implements StatementExec<P>, StatementFind<R, P>, StatementQuery<R, P> {
+public class BasicStatementFind<R, P> implements StatementFind<R, P> {
     
     private Parameters<P> parameters = null;
     private Results<R> results = null;    
-    
-    @Override
-    public int exec(DataLink link, P params) throws DataLinkException {
-        throw new UnsupportedOperationException();
+    private final CommandFind command;
+
+    public BasicStatementFind(CommandFind command) {
+        this.command = command;
     }
 
     @Override
-    public R find(DataLink link, P params) throws DataLinkException {
-        throw new UnsupportedOperationException();
+    public final R find(DataLink link, P params) throws DataLinkException {
+        return command.find(link, results, parameters, params);
     }
-    
-    @Override
-    public List<R> query(DataLink link, P params) throws DataLinkException {
-        throw new UnsupportedOperationException();
-    }  
 
-    /**
-     * @return the parameters
-     */
     public Parameters<P> getParameters() {
         return parameters;
     }
 
-    /**
-     * @param parameters the parameters to set
-     * @return 
-     */
-    public Batch<R, P> setParameters(Parameters<P> parameters) {
+    public BasicStatementFind<R, P> setParameters(Parameters<P> parameters) {
         this.parameters = parameters;
         return this;
     }
 
-    /**
-     * @return the results
-     */
     public Results<R> getResults() {
         return results;
     }
 
-    /**
-     * @param results the results to set
-     * @return 
-     */
-    public Batch<R, P> setResults(Results<R> results) {
+    public BasicStatementFind<R, P> setResults(Results<R> results) {
         this.results = results;
         return this;
-    }      
+    }  
 }

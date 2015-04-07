@@ -18,12 +18,12 @@
 package com.adr.datasql.tests;
 
 import com.adr.datasql.Kind;
-import com.adr.datasql.StatementExec;
-import com.adr.datasql.QueryArray;
+import com.adr.datasql.meta.StatementExec;
+import com.adr.datasql.adaptor.sql.SQLStatement;
+import com.adr.datasql.adaptor.sql.SQLStatementArray;
 import com.adr.datasql.databases.DataBase;
 import com.adr.datasql.link.DataLink;
 import com.adr.datasql.link.DataLinkException;
-import com.adr.datasql.link.SQLCommand;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Date;
@@ -133,8 +133,8 @@ public class ORMTest {
    
         try (DataLink link = DataBase.getDataLink()) { 
             
-            link.exec(new QueryArray("drop table if exists samplepojo"));
-            link.exec(new QueryArray("create table samplepojo("
+            link.exec(new SQLStatement("drop table if exists samplepojo"));
+            link.exec(new SQLStatement("create table samplepojo("
                     + "id varchar(32), "
                     + "code varchar(128), "
                     + "name varchar(1024), "
@@ -144,7 +144,7 @@ public class ORMTest {
                     + "line integer, "
                     + "active smallint,"
                     + "primary key(id))"));    
-            StatementExec<Object[]> insertMyTest = new QueryArray("insert into samplepojo(id, code, name, startdate, weight, amount, line, active) values (?, ?, ?, ?, ?, ?, ?, ?)")
+            StatementExec<Object[]> insertMyTest = new SQLStatementArray("insert into samplepojo(id, code, name, startdate, weight, amount, line, active) values (?, ?, ?, ?, ?, ?, ?, ?)")
                     .setParameters(Kind.STRING, Kind.STRING, Kind.STRING, Kind.TIMESTAMP, Kind.DOUBLE, Kind.DECIMAL, Kind.INT, Kind.BOOLEAN);
             
             link.exec(insertMyTest, "a", "code 1", "name a", new Date(Instant.parse("2014-01-01T18:00:32.212Z").toEpochMilli()), 12.23d, new BigDecimal("12.12"), 1234, true);

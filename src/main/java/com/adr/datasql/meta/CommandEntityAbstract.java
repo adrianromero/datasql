@@ -53,5 +53,4 @@ public abstract class CommandEntityAbstract {
     public final String[] getFields() {
         return fields;
     }
-     
 }

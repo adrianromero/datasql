@@ -18,10 +18,6 @@
 package com.adr.datasql.meta;
 
 import com.adr.datasql.data.MetaData;
-import com.adr.datasql.Query;
-import com.adr.datasql.StatementExec;
-import com.adr.datasql.StatementFind;
-import com.adr.datasql.StatementQuery;
 import com.adr.datasql.orm.Record;
 import com.adr.datasql.orm.RecordArray;
 import com.adr.datasql.orm.RecordParameters;
@@ -132,7 +128,7 @@ public class Entity implements SourceTableFactory, SourceListFactory {
         @Override
         public StatementQuery<R, F> getStatementList() {
             CommandEntityList command = new CommandEntityList(entity.getName(), MetaData.getNames(projection), MetaData.getNames(criteria), order);
-            return new Query<R, F>(command).setResults(record.createResults(projection)).setParameters(filter.createParams(criteria));
+            return new BasicStatementQuery<R, F>(command).setResults(record.createResults(projection)).setParameters(filter.createParams(criteria));
         }  
     }
     
@@ -149,25 +145,25 @@ public class Entity implements SourceTableFactory, SourceListFactory {
         @Override
         public StatementFind<R, Object[]> getStatementGet() {
             CommandEntityGet command = new CommandEntityGet(entity.getName(), MetaData.getNames(entity.defProjectionKeys()), MetaData.getNames(entity.defProjection()));
-            return new Query<R, Object[]>(command).setResults(record.createResults(entity.defProjection())).setParameters(new RecordArray().createParams(entity.defProjectionKeys()));
+            return new BasicStatementFind<R, Object[]>(command).setResults(record.createResults(entity.defProjection())).setParameters(new RecordArray().createParams(entity.defProjectionKeys()));
         }
 
         @Override
         public StatementExec<R> getStatementDelete() {
             CommandEntityDelete command = new CommandEntityDelete(entity.getName(), MetaData.getNames(entity.defProjectionKeys()), MetaData.getNames(entity.defProjection()));
-            return new Query<Void, R>(command).setParameters(record.createParams(entity.defProjection()));
+            return new BasicStatementExec<R>(command).setParameters(record.createParams(entity.defProjection()));
         }
 
         @Override
         public StatementExec<R> getStatementUpdate() {
             CommandEntityUpdate command = new CommandEntityUpdate(entity.getName(), MetaData.getNames(entity.defProjectionKeys()), MetaData.getNames(entity.defProjection()));
-            return new Query<Void, R>(command).setParameters(record.createParams(entity.defProjection()));            
+            return new BasicStatementExec<R>(command).setParameters(record.createParams(entity.defProjection()));            
         }
 
         @Override
         public StatementExec<R> getStatementInsert() {
             CommandEntityInsert command = new CommandEntityInsert(entity.getName(), MetaData.getNames(entity.defProjectionKeys()), MetaData.getNames(entity.defProjection()));
-            return new Query<Void, R>(command).setParameters(record.createParams(entity.defProjection()));            
+            return new BasicStatementExec<R>(command).setParameters(record.createParams(entity.defProjection()));            
         }
     }
 }

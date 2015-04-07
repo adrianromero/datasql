@@ -17,10 +17,6 @@
 
 package com.adr.datasql.meta;
 
-
-import com.adr.datasql.StatementExec;
-import com.adr.datasql.StatementFind;
-
 /**
  *
  * @author adrian

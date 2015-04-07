@@ -15,12 +15,11 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql.link;
+package com.adr.datasql.adaptor.sql;
 
+import com.adr.datasql.meta.BasicStatementQuery;
 import com.adr.datasql.data.MetaData;
-import com.adr.datasql.Query;
-import com.adr.datasql.link.SQLCommand;
-import com.adr.datasql.StatementQuery;
+import com.adr.datasql.meta.StatementQuery;
 import com.adr.datasql.meta.Field;
 import com.adr.datasql.meta.SourceList;
 import com.adr.datasql.meta.SourceListFactory;
@@ -152,6 +151,6 @@ public class SQLEntityList implements SourceListFactory {
 
         // build statement
         SQLCommand sql = new SQLCommand(sqlsent.toString());     
-        return new Query<R, P>(sql).setResults(results.createResults(projection)).setParameters(parameters.createParams(criteria));
+        return new BasicStatementQuery<R, P>(sql).setResults(results.createResults(projection)).setParameters(parameters.createParams(criteria));
     }   
 }

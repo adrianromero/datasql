@@ -17,11 +17,17 @@
 
 package com.adr.datasql.meta;
 
+import com.adr.datasql.Parameters;
+import com.adr.datasql.Results;
+import com.adr.datasql.link.DataLink;
+import com.adr.datasql.link.DataLinkException;
+import java.util.List;
+
 /**
  *
  * @author adrian
  */
-public class CommandEntityList {
+public class CommandEntityList implements CommandQuery {
     
     private final String name;
     private final String[] fields;    
@@ -66,4 +72,9 @@ public class CommandEntityList {
     public StatementOrder[] getOrder() {
         return order;
     }
+    
+    @Override
+    public <R, P> List<R> query(DataLink link, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
+        return link.query(this, results, parameters, params);
+    }    
 }

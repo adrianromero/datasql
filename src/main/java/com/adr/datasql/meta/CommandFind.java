@@ -1,7 +1,7 @@
-//    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2014-2015 Adrián Romero Corchado.
+//    Data Command is a light JDBC wrapper.
+//    Copyright (C) 2015 Adrián Romero Corchado.
 //
-//    This file is part of Data SQL
+//    This file is part of Data Command
 //
 //     Licensed under the Apache License, Version 2.0 (the "License");
 //     you may not use this file except in compliance with the License.
@@ -15,16 +15,17 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql;
+package com.adr.datasql.meta;
 
+import com.adr.datasql.Parameters;
+import com.adr.datasql.Results;
 import com.adr.datasql.link.DataLink;
 import com.adr.datasql.link.DataLinkException;
 
 /**
  *
  * @author adrian
- * @param <P>
  */
-public interface StatementExec<P> {
-    public int exec(DataLink link, P params) throws DataLinkException; 
+public interface CommandFind {
+    public <R, P> R find(DataLink link, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException;    
 }

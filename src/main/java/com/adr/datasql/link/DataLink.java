@@ -19,10 +19,16 @@ package com.adr.datasql.link;
 
 import com.adr.datasql.Parameters;
 import com.adr.datasql.Results;
-import com.adr.datasql.StatementExec;
-import com.adr.datasql.StatementFind;
-import com.adr.datasql.StatementQuery;
+import com.adr.datasql.meta.StatementExec;
+import com.adr.datasql.meta.StatementFind;
+import com.adr.datasql.meta.StatementQuery;
+import com.adr.datasql.adaptor.sql.SQLCommand;
 import com.adr.datasql.data.MetaData;
+import com.adr.datasql.meta.CommandEntityDelete;
+import com.adr.datasql.meta.CommandEntityGet;
+import com.adr.datasql.meta.CommandEntityInsert;
+import com.adr.datasql.meta.CommandEntityList;
+import com.adr.datasql.meta.CommandEntityUpdate;
 import com.adr.datasql.meta.SourceList;
 import com.adr.datasql.meta.SourceListFactory;
 import com.adr.datasql.meta.SourceTable;
@@ -30,10 +36,6 @@ import com.adr.datasql.meta.SourceTableFactory;
 import com.adr.datasql.meta.StatementOrder;
 import com.adr.datasql.orm.RecordMap;
 import com.adr.datasql.orm.RecordPojo;
-import com.adr.datasql.orm.StatementUpsert;
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -44,46 +46,47 @@ import java.util.Set;
  * @author adrian
  */
 public abstract class DataLink implements AutoCloseable {
-    
-    public final <P> int exec(Object command, Parameters<P> parameters, P params) throws DataLinkException {        
-        try {
-            MethodHandle mh = MethodHandles.lookup().findVirtual(this.getClass(), "_exec", MethodType.methodType(int.class, command.getClass(), Parameters.class, Object.class));
-            return (int) mh.invoke(this, command, parameters, params);
-        } catch (DataLinkException ex) {
-            throw ex;  
-        } catch (NoSuchMethodException | IllegalAccessException ex) {
-            throw new DataLinkException("Command type not supported: " + command.getClass().getName(), ex);
-        } catch (Throwable ex) {
-            throw new DataLinkException("Exception thrown: " + command.getClass().getName(), ex);
-        }
+
+    public <P> int exec(CommandEntityDelete cmd, Parameters<P> parameters, P params) throws DataLinkException {
+        throw new DataLinkException("CommandEntityDelete not supported.");
     }
-    public final <R, P> R find(Object command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
-        try {
-            MethodHandle mh = MethodHandles.lookup().findVirtual(this.getClass(), "_find", MethodType.methodType(Object.class, command.getClass(), Results.class, Parameters.class, Object.class));
-            return (R) mh.invoke(this, command, results, parameters, params);
-        } catch (DataLinkException ex) {
-            throw ex;  
-        } catch (NoSuchMethodException | IllegalAccessException ex) {
-            throw new DataLinkException("Command type not supported: " + command.getClass().getName(), ex);
-        } catch (Throwable ex) {
-            throw new DataLinkException("Exception thrown: " + command.getClass().getName(), ex);
-        }
+    public <P> int exec(CommandEntityInsert cmd, Parameters<P> parameters, P params) throws DataLinkException {
+        throw new DataLinkException("CommandEntityInsert not supported.");
     }
-    public final <R, P> List<R> query(Object command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
-        try {
-            MethodHandle mh = MethodHandles.lookup().findVirtual(this.getClass(), "_query", MethodType.methodType(List.class, command.getClass(), Results.class, Parameters.class, Object.class));
-            return (List<R>) mh.invoke(this, command, results, parameters, params);
-        } catch (DataLinkException ex) {
-            throw ex;  
-        } catch (NoSuchMethodException | IllegalAccessException ex) {
-            throw new DataLinkException("Command type not supported: " + command.getClass().getName(), ex);
-        } catch (Throwable ex) {
-            throw new DataLinkException("Exception thrown: " + command.getClass().getName(), ex);
-        }
+    public <P> int exec(CommandEntityUpdate cmd, Parameters<P> parameters, P params) throws DataLinkException {
+        throw new DataLinkException("CommandEntityUpdate not supported.");
     }
+    public <P> int exec(SQLCommand cmd, Parameters<P> parameters, P params) throws DataLinkException {
+        throw new DataLinkException("SQLCommand not supported.");
+    }
+    public <P> int exec(String cmd, Parameters<P> parameters, P params) throws DataLinkException {
+        throw new DataLinkException("SQL String command command not supported.");
+    }
+    public <R, P> R find(CommandEntityGet command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
+        throw new DataLinkException("CommandEntityGet not supported.");
+    }
+    public <R, P> R find(CommandEntityList command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
+        throw new DataLinkException("CommandEntityList not supported.");
+    }
+    public <R, P> R find(String command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
+        throw new DataLinkException("SQL String command not supported.");
+    }
+    public <R, P> R find(SQLCommand command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
+        throw new DataLinkException("SQLCommand not supported.");
+    }
+    public <R, P> List<R> query(CommandEntityList command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
+        throw new DataLinkException("CommandEntityList not supported.");
+    }
+    public <R, P> List<R> query(String command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
+        throw new DataLinkException("SQL String command not supported.");
+    }
+    public <R, P> List<R> query(SQLCommand command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
+        throw new DataLinkException("SQLCommand not supported.");
+    }           
     
     @Override
-    public abstract void close() throws DataLinkException;
+    public void close() throws DataLinkException {        
+    }
     
     /**
      *
@@ -236,10 +239,6 @@ public abstract class DataLink implements AutoCloseable {
         return delete(getSourceTable((Class<? extends P>) value.getClass()), value);
     }
     
-    public final <P> int upsert(P value) throws DataLinkException {
-        return upsert(getSourceTable((Class<? extends P>) value.getClass()), value);
-    }
-    
     public final <P> int update(P value) throws DataLinkException {
         return update(getSourceTable((Class<? extends P>) value.getClass()), value); 
     }
@@ -285,11 +284,7 @@ public abstract class DataLink implements AutoCloseable {
     public final <P> int delete(SourceTable<P> sourcetable, P value) throws DataLinkException {
         return exec(sourcetable.getStatementDelete(), value);
     }
-    
-    public final <P> int upsert(SourceTable<P> sourcetable, P value) throws DataLinkException {
-        return exec(new StatementUpsert<P>(sourcetable), value);
-    }
-    
+
     public final <P> int update(SourceTable<P> sourcetable, P value) throws DataLinkException {
         return exec(sourcetable.getStatementUpdate(), value);
     }

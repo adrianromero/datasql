@@ -17,8 +17,7 @@
 
 package com.adr.datasql.tests;
 
-import com.adr.datasql.link.SQLCommandNamed;
-import com.adr.datasql.link.SQLCommandFilter;
+import com.adr.datasql.adaptor.sql.SQLCommandNamed;
 import java.text.ParseException;
 import org.junit.Assert;
 import org.junit.Test;
@@ -46,15 +45,5 @@ public class NSQLTest {
         } catch (ParseException e) {
            Assert.assertEquals(e.getMessage(), 53, e.getErrorOffset());
         }
-    }
-    
-    @Test
-    public void testSQLFilter() throws ParseException {
- 
-        Assert.assertEquals("select * from table where (field1 = :field1 AND field2 = :field2)[field1, field2]",
-                new SQLCommandFilter("select * from table where :(filter)", "field1", "field2").toString());
-        
-        Assert.assertEquals("select * from table where (1 = 1)[]",
-                new SQLCommandFilter("select * from table where :(filter)").toString());       
-    }  
+    } 
 }

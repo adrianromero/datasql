@@ -1,7 +1,7 @@
-//    Data SQLCommand is a light JDBC wrapper.
-//    Copyright (C) 2014 Adrián Romero Corchado.
+//    Data SQL is a light JDBC wrapper.
+//    Copyright (C) 2015 Adrián Romero Corchado.
 //
-//    This file is part of Data SQLCommand
+//    This file is part of Data SQL
 //
 //     Licensed under the Apache License, Version 2.0 (the "License");
 //     you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql;
+package com.adr.datasql.adaptor.sql;
 
 import com.adr.datasql.data.MetaData;
 import com.adr.datasql.data.ParametersMap;
@@ -28,10 +28,14 @@ import java.util.Map;
  *
  * @author adrian
  */
+public class SQLStatementMap extends SQLStatement<Map<String, Object>, Map<String, Object>> {
 
-public class QueryMap extends Query<Map<String, Object>, Map<String, Object>> {
+    public SQLStatementMap(String command, String... paramnames) {
+        super(command, paramnames);
+        init();
+    }
 
-    public QueryMap(Object command) {
+    public SQLStatementMap(SQLCommand command) {
         super(command);
         init();
     }
@@ -41,13 +45,14 @@ public class QueryMap extends Query<Map<String, Object>, Map<String, Object>> {
         this.setResults(ResultsMapMeta.getInstance());
     }   
     
-    public QueryMap setParameters(MetaData... metadatas) {
+    public SQLStatementMap setParameters(MetaData... metadatas) {
         setParameters(new ParametersMap(metadatas));
         return this;
     }       
 
-    public QueryMap setResults(MetaData... metadatas) {
+    public SQLStatementMap setResults(MetaData... metadatas) {
         setResults(new ResultsMap(metadatas));
         return this;
     }     
+    
 }

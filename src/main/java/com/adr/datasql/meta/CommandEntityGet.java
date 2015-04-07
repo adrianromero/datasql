@@ -17,12 +17,22 @@
 
 package com.adr.datasql.meta;
 
+import com.adr.datasql.Parameters;
+import com.adr.datasql.Results;
+import com.adr.datasql.link.DataLink;
+import com.adr.datasql.link.DataLinkException;
+
 /**
  *
  * @author adrian
  */
-public class CommandEntityGet extends CommandEntityAbstract {
+public class CommandEntityGet extends CommandEntityAbstract implements CommandFind {
     public CommandEntityGet(String name, String[] keys, String[] fields) {
         super(name, keys, fields);
-    }     
+    } 
+
+    @Override
+    public <R, P> R find(DataLink link, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
+        return link.find(this, results, parameters, params);
+    }
 }

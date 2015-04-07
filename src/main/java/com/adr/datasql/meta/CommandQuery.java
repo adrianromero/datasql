@@ -18,21 +18,15 @@
 package com.adr.datasql.meta;
 
 import com.adr.datasql.Parameters;
+import com.adr.datasql.Results;
 import com.adr.datasql.link.DataLink;
 import com.adr.datasql.link.DataLinkException;
+import java.util.List;
 
 /**
  *
  * @author adrian
  */
-public class CommandEntityInsert extends CommandEntityAbstract implements CommandExec {
-    public CommandEntityInsert(String name, String[] keys, String[] fields) {
-        super(name, keys, fields);
-    }  
-
-    @Override
-    public <P> int exec(DataLink link, Parameters<P> parameters, P params) throws DataLinkException {
-        return link.exec(this, parameters, params);
-    }   
-    
+public interface CommandQuery {
+    public <R, P> List<R> query(DataLink link, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException;    
 }

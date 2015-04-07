@@ -15,7 +15,7 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql.link;
+package com.adr.datasql.adaptor.sql;
 
 import java.text.ParseException;
 import java.util.ArrayList;

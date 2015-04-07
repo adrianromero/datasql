@@ -1,7 +1,7 @@
-//    Data Command is a light JDBC wrapper.
+//    Data CommandExec is a light JDBC wrapper.
 //    Copyright (C) 2015 Adrián Romero Corchado.
 //
-//    This file is part of Data Command
+//    This file is part of Data CommandExec
 //
 //     Licensed under the Apache License, Version 2.0 (the "License");
 //     you may not use this file except in compliance with the License.
@@ -17,12 +17,21 @@
 
 package com.adr.datasql.meta;
 
+import com.adr.datasql.Parameters;
+import com.adr.datasql.link.DataLink;
+import com.adr.datasql.link.DataLinkException;
+
 /**
  *
  * @author adrian
  */
-public class CommandEntityDelete extends CommandEntityAbstract {
+public class CommandEntityDelete extends CommandEntityAbstract implements CommandExec {
     public CommandEntityDelete(String name, String[] keys, String[] fields) {
         super(name, keys, fields);
-    }    
+    }
+
+    @Override
+    public <P> int exec(DataLink link, Parameters<P> parameters, P params) throws DataLinkException {
+        return link.exec(this, parameters, params);
+    }   
 }

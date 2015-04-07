@@ -17,7 +17,7 @@
 
 package com.adr.datasql.databases;
 
-import com.adr.datasql.link.SQLDataLinkFactory;
+import com.adr.datasql.adaptor.sql.SQLDataLinkFactory;
 import javax.sql.DataSource;
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.junit.After;
