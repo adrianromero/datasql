@@ -26,7 +26,7 @@ import java.util.List;
  *
  * @author adrian
  */
-public class SQLCommandSQLNamed extends CommandSQL {
+public class CommandSQLNamed extends CommandSQL {
     
     private static final char CHAR_ETX = '\u0003';
     
@@ -36,7 +36,7 @@ public class SQLCommandSQLNamed extends CommandSQL {
     private static final int STATE_PARAMETERSTART = 3;
     private static final int STATE_PARAMETERPART = 4;
 
-    public SQLCommandSQLNamed(String command) throws ParseException {
+    public CommandSQLNamed(String command) throws ParseException {
         
         StringBuilder parsedcommand = new StringBuilder();
         StringBuilder parametername = new StringBuilder();

@@ -19,7 +19,7 @@ package com.adr.datasql.tests;
 
 import com.adr.datasql.meta.BasicStatementFind;
 import com.adr.datasql.Kind;
-import com.adr.datasql.adaptor.sql.SQLCommandSQLNamed;
+import com.adr.datasql.adaptor.sql.CommandSQLNamed;
 import com.adr.datasql.meta.StatementExec;
 import com.adr.datasql.meta.StatementFind;
 import com.adr.datasql.meta.CommandSQL;
@@ -63,7 +63,7 @@ public class QueriesTest {
             parameters.put("id", "two");
             parameters.put("code", "two code");
             parameters.put("name", "two name");
-            link.exec(new SQLStatementMap(new SQLCommandSQLNamed("insert into mytest(id, code, name) values (:id, :code, :name)")), parameters);
+            link.exec(new SQLStatementMap(new CommandSQLNamed("insert into mytest(id, code, name) values (:id, :code, :name)")), parameters);
 
             Object[] result = link.find(new SQLStatementArray("select id, code, name from mytest where id = ?"), "two");
             Assert.assertEquals("[two, two code, two name]", Arrays.toString(result));
