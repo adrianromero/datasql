@@ -38,6 +38,12 @@ public class BasicStatementQuery<R, P> implements StatementQuery<R, P> {
     public BasicStatementQuery(CommandQuery command) {
         this.command = command;
     }
+    public BasicStatementQuery(String command) {
+        this(new CommandGeneric(command));
+    }
+    public BasicStatementQuery(String command, int type) {
+        this(new CommandGeneric(command, type));
+    }
 
     @Override
     public final List<R> query(DataLink link, P params) throws DataLinkException {

@@ -37,6 +37,12 @@ public class BasicStatementFind<R, P> implements StatementFind<R, P> {
     public BasicStatementFind(CommandFind command) {
         this.command = command;
     }
+    public BasicStatementFind(String command) {
+        this(new CommandGeneric(command));
+    }   
+    public BasicStatementFind(String command, int type) {
+        this(new CommandGeneric(command, type));
+    }
 
     @Override
     public final R find(DataLink link, P params) throws DataLinkException {

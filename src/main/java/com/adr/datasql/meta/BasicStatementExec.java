@@ -34,7 +34,13 @@ public class BasicStatementExec<P> implements StatementExec<P> {
     public BasicStatementExec(CommandExec command) {
         this.command = command;
     }
-    
+    public BasicStatementExec(String command) {
+        this.command = new CommandGeneric(command);
+    }   
+    public BasicStatementExec(String command, int type) {
+        this.command = new CommandGeneric(command, type);
+    }
+
     @Override
     public final int exec(DataLink link, P params) throws DataLinkException {
         return command.exec(link, getParameters(), params);
