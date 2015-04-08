@@ -45,7 +45,7 @@ public class H2TestSuite {
     @BeforeClass
     public static void setUpClass() throws Exception {       
         cpds = JdbcConnectionPool.create("jdbc:h2:~/h2testdb", "sa", "");     
-        DataBase.setDataLinkFactory(new SQLDataLinkFactory(cpds));
+        DataBase.setDataLinkFactory(new SQLDataLinkFactory().init(cpds));
     }
 
     @AfterClass

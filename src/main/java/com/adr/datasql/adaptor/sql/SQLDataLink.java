@@ -43,13 +43,14 @@ import java.util.logging.Logger;
  *
  * @author adrian
  */
-class SQLDataLink extends DataLink {
+public class SQLDataLink extends DataLink {
     
     private static final Logger logger = Logger.getLogger(SQLDataLink.class.getName());  
-    private final Connection c;
+    private Connection c;
     
-    SQLDataLink(Connection c) {
+    public SQLDataLink init(Connection c) {
         this.c = c;
+        return this;
     }
     
     @Override

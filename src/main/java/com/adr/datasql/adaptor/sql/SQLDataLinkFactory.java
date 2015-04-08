@@ -31,19 +31,26 @@ import javax.sql.DataSource;
  */
 public class SQLDataLinkFactory implements DataLinkFactory {
     
-    private final DataSource ds;
+    private DataSource ds = null;
     
-    public SQLDataLinkFactory(DataSource ds) {
+    public SQLDataLinkFactory init(DataSource ds) {
         this.ds = ds;
+        return this;
     }
 
     @Override
     public final DataLink getDataLink() throws DataLinkException {
         try {
-            return new SQLDataLink(ds.getConnection());
+            SQLDataLink dl = buildSQLDataLink();
+            dl.init(ds.getConnection());
+            return dl;
         } catch (SQLException ex) {
             throw new DataLinkException(ex);
         }
+    }
+    
+    protected SQLDataLink buildSQLDataLink() {
+        return new SQLDataLink();    
     }
 
     public static final Kind<?> getKind(int type) {
