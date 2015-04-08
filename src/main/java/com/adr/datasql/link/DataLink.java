@@ -48,16 +48,16 @@ import java.util.Set;
  */
 public abstract class DataLink implements AutoCloseable {
 
-    public <P> int exec(CommandEntityDelete cmd, Parameters<P> parameters, P params) throws DataLinkException {
+    public <P> int exec(CommandEntityDelete command, Parameters<P> parameters, P params) throws DataLinkException {
         throw new DataLinkException("CommandEntityDelete not supported.");
     }
-    public <P> int exec(CommandEntityInsert cmd, Parameters<P> parameters, P params) throws DataLinkException {
+    public <P> int exec(CommandEntityInsert command, Parameters<P> parameters, P params) throws DataLinkException {
         throw new DataLinkException("CommandEntityInsert not supported.");
     }
-    public <P> int exec(CommandEntityUpdate cmd, Parameters<P> parameters, P params) throws DataLinkException {
+    public <P> int exec(CommandEntityUpdate command, Parameters<P> parameters, P params) throws DataLinkException {
         throw new DataLinkException("CommandEntityUpdate not supported.");
     }
-    public <P> int exec(CommandSQL cmd, Parameters<P> parameters, P params) throws DataLinkException {
+    public <P> int exec(CommandSQL command, Parameters<P> parameters, P params) throws DataLinkException {
         throw new DataLinkException("Command SQL not supported.");
     }
     public <P> int exec(CommandGeneric cmd, Parameters<P> parameters, P params) throws DataLinkException {
