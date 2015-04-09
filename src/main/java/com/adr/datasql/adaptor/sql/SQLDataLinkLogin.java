@@ -44,4 +44,27 @@ public class SQLDataLinkLogin extends SQLDataLink {
             return super.query(command, results, parameters, params); // call parent.
         }
     }  
+    
+    @Override
+    public <P> int exec(CommandGeneric command, Parameters<P> parameters, P params) throws DataLinkException {
+        if ("SAVE_USER".equals(command.getCommand())) {
+            // just displayname, password, image and visible
+            return exec(new CommandSQL("UPDATE ..."), parameters, params);
+        } else {
+            return super.exec(command, parameters, params); // call parent.
+        }
+    }
+
+    @Override
+    public <R, P> R find(CommandGeneric command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
+        if ("GET_USER".equals(command.getCommand())) {
+            // it is a view: role_id, role, (active == true)...
+            return find(new CommandSQL(
+                    "SELECT U.ID, U.NAME, U.DISPLAYNAME, U.PASSWORD, U.CODECARD, U.ROLE_ID, R.NAME AS ROLE, U.VISIBLE, U.IMAGE " +
+                    "FROM USER U JOIN ROLE R ON U.ROLE_ID = R.ID " +
+                    "WHERE U.NAME = ? AND U.ACTIVE = TRUE"), results, parameters, params);
+        } else {
+            return super.find(command, results, parameters, params); // call parent.
+        }
+    }    
 }
