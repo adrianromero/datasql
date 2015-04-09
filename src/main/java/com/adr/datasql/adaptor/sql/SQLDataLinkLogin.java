@@ -37,9 +37,9 @@ public class SQLDataLinkLogin extends SQLDataLink {
     @Override
     public <R, P> List<R> query(CommandGeneric command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
         if ("QUERY_VISIBLE_USERS".equals(command.getCommand())) {
-            return query(new CommandSQL("SELECT ID, NAME, DISPLAYNAME, IMAGE FROM USER WHERE VISIBLE = TRUE AND ACTIVE = TRUE ORDER BY NAME"), results, parameters, params);
+            return query(new CommandSQL("select id, name, displayname, image from user where visible = true and active = true order by name"), results, parameters, params);
         } else if ("QUERY_PERMISSIONS".equals(command.getCommand())) {
-            return query(new CommandSQL("SELECT S.CODE, S.NAME FROM SUBJECT S JOIN PERMISSION P ON S.ID = P.SUBJECT_ID WHERE P.ROLE_ID = ?", "ROLE_ID"), results, parameters, params);
+            return query(new CommandSQL("select s.code, s.name from subject s join permission p on s.id = p.subject_id where p.role_id = ?", "role_id"), results, parameters, params);
         } else {
             return super.query(command, results, parameters, params); // call parent.
         }
@@ -49,7 +49,8 @@ public class SQLDataLinkLogin extends SQLDataLink {
     public <P> int exec(CommandGeneric command, Parameters<P> parameters, P params) throws DataLinkException {
         if ("SAVE_USER".equals(command.getCommand())) {
             // just displayname, password, image and visible
-            return exec(new CommandSQL("UPDATE ..."), parameters, params);
+            return exec(new CommandSQL("update user set displayname = ?, password = ?, visible = ?, image = ? where id = ?",
+                "displayname", "password", "visible", "image", "id"), parameters, params);
         } else {
             return super.exec(command, parameters, params); // call parent.
         }
@@ -59,10 +60,10 @@ public class SQLDataLinkLogin extends SQLDataLink {
     public <R, P> R find(CommandGeneric command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
         if ("GET_USER".equals(command.getCommand())) {
             // it is a view: role_id, role, (active == true)...
-            return find(new CommandSQL(
-                    "SELECT U.ID, U.NAME, U.DISPLAYNAME, U.PASSWORD, U.CODECARD, U.ROLE_ID, R.NAME AS ROLE, U.VISIBLE, U.IMAGE " +
-                    "FROM USER U JOIN ROLE R ON U.ROLE_ID = R.ID " +
-                    "WHERE U.NAME = ? AND U.ACTIVE = TRUE"), results, parameters, params);
+            return find(new CommandSQL(               
+                    "select u.id, u.name, u.displayname, u.password, u.codecard, u.role_id, r.name as role, u.visible, u.image " +
+                    "from user u join role r on u.role_id = r.id " +
+                    "where u.name = ? and u.active = true", "name"), results, parameters, params);
         } else {
             return super.find(command, results, parameters, params); // call parent.
         }
