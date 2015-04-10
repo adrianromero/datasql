@@ -29,11 +29,7 @@ import java.util.List;
  * @author adrian
  */
 public class SQLDataLinkLogin extends SQLDataLink {
-    
-    public static final int QUERY_VISIBLE_USERS = 1230001;
-    public static final int FIND_USER_PASWORD = 1230002;
-    public static final int QUERY_PERMISSIONS = 1230003;
-    
+
     @Override
     public <R, P> List<R> query(CommandGeneric command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
         if ("QUERY_VISIBLE_USERS".equals(command.getCommand())) {
