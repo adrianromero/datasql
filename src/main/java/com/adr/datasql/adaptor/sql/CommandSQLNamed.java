@@ -84,7 +84,7 @@ public class CommandSQLNamed extends CommandSQL {
                 }    
             } else if (state == STATE_PARAMETERSTART) {
                 if (c == CHAR_ETX) {
-                    throw new DataLinkException("Error parsing command. Bad identifier. Character:" + i);
+                    throw new DataLinkException("Error parsing command. Bad identifier. Character: " + i);
                 } else if (Character.isJavaIdentifierStart(c)) {
                     parametername = new StringBuilder();
                     parametername.append(c);

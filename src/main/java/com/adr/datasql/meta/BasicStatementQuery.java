@@ -19,7 +19,6 @@ package com.adr.datasql.meta;
 
 import com.adr.datasql.Parameters;
 import com.adr.datasql.Results;
-import com.adr.datasql.link.CommandType;
 import com.adr.datasql.link.DataLink;
 import com.adr.datasql.link.DataLinkException;
 import java.util.List;
@@ -38,12 +37,6 @@ public class BasicStatementQuery<R, P> implements StatementQuery<R, P> {
 
     public BasicStatementQuery(CommandQuery command) {
         this.command = command;
-    }
-    public BasicStatementQuery(String command) {
-        this(new CommandGeneric(command));
-    }
-    public BasicStatementQuery(String command, CommandType type) {
-        this(new CommandGeneric(command, type));
     }
 
     @Override

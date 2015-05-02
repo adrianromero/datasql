@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2014 Adrián Romero Corchado.
+//    Copyright (C) 2014-2015 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -18,7 +18,7 @@
 package com.adr.datasql.tests;
 
 import com.adr.datasql.adaptor.sql.CommandSQLNamed;
-import java.text.ParseException;
+import com.adr.datasql.link.DataLinkException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -32,7 +32,7 @@ public class NSQLTest {
     }
 
     @Test
-    public void testQueries() throws ParseException {
+    public void testQueries() throws DataLinkException {
         
         Assert.assertEquals("select * from table where name = ? and surname = ?[name, surname]", 
                 new CommandSQLNamed("select * from table where name = :name and surname = :surname").toString());
@@ -42,8 +42,8 @@ public class NSQLTest {
                 new CommandSQLNamed("select * from table where date > ':mydate' and date < :mydate").toString());
         try {
             new CommandSQLNamed("select * from table where date > :mydate and date < :").toString();
-        } catch (ParseException e) {
-           Assert.assertEquals(e.getMessage(), 53, e.getErrorOffset());
+        } catch (DataLinkException e) {
+           Assert.assertEquals("Error parsing command. Bad identifier. Character: 53", e.getMessage());
         }
     } 
 }

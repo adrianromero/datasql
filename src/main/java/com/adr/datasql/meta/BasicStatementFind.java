@@ -19,7 +19,6 @@ package com.adr.datasql.meta;
 
 import com.adr.datasql.Parameters;
 import com.adr.datasql.Results;
-import com.adr.datasql.link.CommandType;
 import com.adr.datasql.link.DataLink;
 import com.adr.datasql.link.DataLinkException;
 
@@ -37,12 +36,6 @@ public class BasicStatementFind<R, P> implements StatementFind<R, P> {
 
     public BasicStatementFind(CommandFind command) {
         this.command = command;
-    }
-    public BasicStatementFind(String command) {
-        this(new CommandGeneric(command));
-    }   
-    public BasicStatementFind(String command, CommandType type) {
-        this(new CommandGeneric(command, type));
     }
 
     @Override
