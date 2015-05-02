@@ -22,6 +22,7 @@ import com.adr.datasql.KindParameters;
 import com.adr.datasql.KindResults;
 import com.adr.datasql.Parameters;
 import com.adr.datasql.Results;
+import com.adr.datasql.link.CommandType;
 import com.adr.datasql.link.DataLink;
 import com.adr.datasql.link.DataLinkException;
 import com.adr.datasql.meta.CommandEntityDelete;
@@ -29,6 +30,7 @@ import com.adr.datasql.meta.CommandEntityGet;
 import com.adr.datasql.meta.CommandEntityInsert;
 import com.adr.datasql.meta.CommandEntityList;
 import com.adr.datasql.meta.CommandEntityUpdate;
+import com.adr.datasql.meta.CommandGeneric;
 import com.adr.datasql.meta.StatementOrder;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -66,6 +68,14 @@ public class SQLDataLink extends DataLink {
         return exec(SQLDataLink.this.buildSQLCommand(command), parameters, params);    
     }
     @Override
+    public <P> int exec(CommandGeneric command, Parameters<P> parameters, P params) throws DataLinkException {
+        if (command.getType() == CommandType.SQLNAMED) {
+            return exec(new CommandSQLNamed(command.getCommand()), parameters, params);
+        } else {
+            return super.exec(command, parameters, params); // call parent.
+        }
+    }    
+    @Override
     public <P> int exec(CommandSQL command, Parameters<P> parameters, P params) throws DataLinkException {
         logger.log(Level.INFO, "Executing prepared SQL: {0}", command);
 
@@ -88,6 +98,14 @@ public class SQLDataLink extends DataLink {
     public <R, P> R find(CommandEntityList command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {        
         return find(buildSQLCommand(command), results, parameters, params);
     }  
+    @Override
+    public <R, P> R find(CommandGeneric command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
+        if (command.getType() == CommandType.SQLNAMED) {
+            return find(new CommandSQLNamed(command.getCommand()), results, parameters, params);
+        } else {
+            return super.find(command, results, parameters, params); // call parent.
+        }
+    }        
     @Override
     public <R, P> R find(CommandSQL command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
         logger.log(Level.INFO, "Executing prepared SQL: {0}", command);
@@ -115,6 +133,14 @@ public class SQLDataLink extends DataLink {
     public <R, P> List<R> query(CommandEntityList command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
         return query(buildSQLCommand(command), results, parameters, params);
     }
+    @Override
+    public <R, P> List<R> query(CommandGeneric command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
+        if (command.getType() == CommandType.SQLNAMED) {
+            return query(new CommandSQLNamed(command.getCommand()), results, parameters, params);
+        } else {
+            return super.query(command, results, parameters, params); // call parent.
+        }
+    }        
     @Override
     public <R, P> List<R> query(CommandSQL command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
         logger.log(Level.INFO, "Executing prepared SQL: {0}", command);

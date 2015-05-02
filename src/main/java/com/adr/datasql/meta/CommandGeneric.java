@@ -19,9 +19,11 @@ package com.adr.datasql.meta;
 
 import com.adr.datasql.Parameters;
 import com.adr.datasql.Results;
+import com.adr.datasql.link.CommandType;
 import com.adr.datasql.link.DataLink;
 import com.adr.datasql.link.DataLinkException;
 import java.util.List;
+import java.util.Objects;
 
 /**
  *
@@ -30,22 +32,22 @@ import java.util.List;
 public class CommandGeneric implements CommandQuery, CommandFind, CommandExec {
 
     private final String command;
-    private final int type;  
+    private final CommandType type;  
     
-    public CommandGeneric(String command, int type) {
+    public CommandGeneric(String command, CommandType type) {
         this.command = command;
         this.type = type;
     }
     
     public CommandGeneric(String command) {
-        this(command, 0);
+        this(command, CommandType.STATIC);
     }
     
     public final String getCommand() {
         return command;
     }
     
-    public final int getType() {
+    public final CommandType getType() {
         return type;
     }
 
@@ -63,5 +65,27 @@ public class CommandGeneric implements CommandQuery, CommandFind, CommandExec {
     public <P> int exec(DataLink link, Parameters<P> parameters, P params) throws DataLinkException {
         return link.exec(this, parameters, params);
     }
-    
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + Objects.hashCode(this.command);
+        hash = 37 * hash + Objects.hashCode(this.type);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final CommandGeneric other = (CommandGeneric) obj;
+        if (!Objects.equals(this.command, other.command)) {
+            return false;
+        }
+        return this.type == other.type;
+    }    
 }

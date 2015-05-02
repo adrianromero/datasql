@@ -20,6 +20,7 @@ package com.adr.datasql.adaptor.sql;
 import com.adr.datasql.Parameters;
 import com.adr.datasql.Results;
 import com.adr.datasql.link.DataLinkException;
+import com.adr.datasql.link.DataLinkStatic;
 import com.adr.datasql.meta.CommandGeneric;
 import com.adr.datasql.meta.CommandSQL;
 import java.util.List;
@@ -32,9 +33,9 @@ public class SQLDataLinkLogin extends SQLDataLink {
 
     @Override
     public <R, P> List<R> query(CommandGeneric command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
-        if ("QUERY_VISIBLE_USERS".equals(command.getCommand())) {
+        if (DataLinkStatic.QUERY_VISIBLE_USERS.equals(command)) {
             return query(new CommandSQL("select id, name, displayname, image from user where visible = true and active = true order by name"), results, parameters, params);
-        } else if ("QUERY_PERMISSIONS".equals(command.getCommand())) {
+        } else if (DataLinkStatic.QUERY_PERMISSIONS.equals(command)) {
             return query(new CommandSQL("select s.code, s.name from subject s join permission p on s.id = p.subject_id where p.role_id = ?", "role_id"), results, parameters, params);
         } else {
             return super.query(command, results, parameters, params); // call parent.
@@ -43,7 +44,7 @@ public class SQLDataLinkLogin extends SQLDataLink {
     
     @Override
     public <P> int exec(CommandGeneric command, Parameters<P> parameters, P params) throws DataLinkException {
-        if ("SAVE_USER".equals(command.getCommand())) {
+        if (DataLinkStatic.SAVE_USER.equals(command)) {
             // just displayname, password, image and visible
             return exec(new CommandSQL("update user set displayname = ?, password = ?, visible = ?, image = ? where id = ?",
                 "displayname", "password", "visible", "image", "id"), parameters, params);
@@ -54,7 +55,7 @@ public class SQLDataLinkLogin extends SQLDataLink {
 
     @Override
     public <R, P> R find(CommandGeneric command, Results<R> results, Parameters<P> parameters, P params) throws DataLinkException {
-        if ("GET_USER".equals(command.getCommand())) {
+        if (DataLinkStatic.GET_USER.equals(command)) {
             // it is a view: role_id, role, (active == true)...
             return find(new CommandSQL(               
                     "select u.id, u.name, u.displayname, u.password, u.codecard, u.role_id, r.name as role, u.visible, u.image " +

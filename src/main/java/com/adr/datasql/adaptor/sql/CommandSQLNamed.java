@@ -17,8 +17,8 @@
 
 package com.adr.datasql.adaptor.sql;
 
+import com.adr.datasql.link.DataLinkException;
 import com.adr.datasql.meta.CommandSQL;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +36,7 @@ public class CommandSQLNamed extends CommandSQL {
     private static final int STATE_PARAMETERSTART = 3;
     private static final int STATE_PARAMETERPART = 4;
 
-    public CommandSQLNamed(String command) throws ParseException {
+    public CommandSQLNamed(String command) throws DataLinkException {
         
         StringBuilder parsedcommand = new StringBuilder();
         StringBuilder parametername = new StringBuilder();
@@ -69,7 +69,7 @@ public class CommandSQLNamed extends CommandSQL {
                     parsedcommand.append(c);
                     state = STATE_LOOK;
                 } else if (c == CHAR_ETX) {   
-                    throw new ParseException("Error parsing command. Invalid literal.", i);
+                    throw new DataLinkException("Error parsing command. Invalid literal. Character: " + i);
                 } else {
                     parsedcommand.append(c);
                 }
@@ -78,19 +78,19 @@ public class CommandSQLNamed extends CommandSQL {
                     parsedcommand.append(c);
                     state = STATE_LOOK;
                 } else if (c == CHAR_ETX) {   
-                    throw new ParseException("Error parsing command Invalid literal.", i);
+                    throw new DataLinkException("Error parsing command Invalid literal. Character: " + i);
                 } else {
                     parsedcommand.append(c);
                 }    
             } else if (state == STATE_PARAMETERSTART) {
                 if (c == CHAR_ETX) {
-                    throw new ParseException("Error parsing command. Bad identifier.", i);
+                    throw new DataLinkException("Error parsing command. Bad identifier. Character:" + i);
                 } else if (Character.isJavaIdentifierStart(c)) {
                     parametername = new StringBuilder();
                     parametername.append(c);
                     state = STATE_PARAMETERPART;
                 } else {
-                    throw new ParseException("Error parsing command. Bad identifier.", i);
+                    throw new DataLinkException("Error parsing command. Bad identifier. Character: " + i);
                 }
             } else if (state == STATE_PARAMETERPART) {
                 if (c == CHAR_ETX) { 
@@ -108,7 +108,7 @@ public class CommandSQLNamed extends CommandSQL {
                     state = STATE_LOOK;
                 }
             } else {
-                throw new ParseException("Error parsing command. Invalid state.", i);
+                throw new DataLinkException("Error parsing command. Invalid state. Character: " + i);
             }
 
             i++;

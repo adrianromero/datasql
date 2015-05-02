@@ -18,6 +18,7 @@
 package com.adr.datasql.meta;
 
 import com.adr.datasql.Parameters;
+import com.adr.datasql.link.CommandType;
 import com.adr.datasql.link.DataLink;
 import com.adr.datasql.link.DataLinkException;
 
@@ -37,7 +38,7 @@ public class BasicStatementExec<P> implements StatementExec<P> {
     public BasicStatementExec(String command) {
         this.command = new CommandGeneric(command);
     }   
-    public BasicStatementExec(String command, int type) {
+    public BasicStatementExec(String command, CommandType type) {
         this.command = new CommandGeneric(command, type);
     }
 
