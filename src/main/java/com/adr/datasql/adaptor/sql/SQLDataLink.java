@@ -38,6 +38,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -49,9 +50,11 @@ public class SQLDataLink extends DataLink {
     
     private static final Logger logger = Logger.getLogger(SQLDataLink.class.getName());  
     private Connection c;
+    private Map<String, SQLView> viewsmap;
     
-    public SQLDataLink init(Connection c) {
+    public SQLDataLink init(Connection c, Map<String, SQLView> viewsmap) {
         this.c = c;
+        this.viewsmap = viewsmap;
         return this;
     }
     
@@ -173,6 +176,16 @@ public class SQLDataLink extends DataLink {
             throw new DataLinkException(ex);
         }
     }
+    
+    private String getTableName(String viewname) {
+        SQLView v = viewsmap.get(viewname);
+        return v == null ? viewname : v.getTable();
+    }
+       
+    private String getSentence(String viewname) {
+        SQLView v = viewsmap.get(viewname);
+        return (v == null ? viewname : "(" + v.getSentence() + ")") + " TABLE_ALIAS";
+    }
        
     private CommandSQL buildSQLCommand(CommandEntityInsert command) {
         
@@ -181,7 +194,7 @@ public class SQLDataLink extends DataLink {
         ArrayList<String> fieldslist = new ArrayList<>();
         
         sentence.append("INSERT INTO ");
-        sentence.append(command.getName());
+        sentence.append(getTableName(command.getName()));
         sentence.append("(");
                
         boolean filter = false;
@@ -209,7 +222,7 @@ public class SQLDataLink extends DataLink {
         ArrayList<String> keyfields = new ArrayList<>();
         
         sentence.append("DELETE FROM ");
-        sentence.append(command.getName());
+        sentence.append(getTableName(command.getName()));
         
         for (String f: command.getKeys()) {
                 sentencefilter.append(sentencefilter.length() == 0 ? " WHERE " : " AND ");
@@ -228,7 +241,7 @@ public class SQLDataLink extends DataLink {
         ArrayList<String> keyfields = new ArrayList<String>();
         
         sentence.append("UPDATE ");
-        sentence.append(command.getName());
+        sentence.append(getTableName(command.getName()));
                
         boolean filter = false;
         for (String f: command.getFields()) {
@@ -272,7 +285,7 @@ public class SQLDataLink extends DataLink {
         }    
         
         sqlsent.append(" FROM ");       
-        sqlsent.append(command.getName());
+        sqlsent.append(getSentence(command.getName()));
         
         // WHERE CLAUSE
         if (command.getCriteria() != null) {

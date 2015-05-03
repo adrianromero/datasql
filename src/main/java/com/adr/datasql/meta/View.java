@@ -1,7 +1,7 @@
-//    Data CommandSQL is a light JDBC wrapper.
-//    Copyright (C) 2014 Adrián Romero Corchado.
+//    Data SQLCommand is a light JDBC wrapper.
+//    Copyright (C) 2012-2015 Adrián Romero Corchado.
 //
-//    This file is part of Data CommandSQL
+//    This file is part of Data SQLCommand
 //
 //     Licensed under the Apache License, Version 2.0 (the "License");
 //     you may not use this file except in compliance with the License.
@@ -15,16 +15,9 @@
 //     See the License for the specific language governing permissions and
 //     limitations under the License.
 
-package com.adr.datasql.adaptor.sql;
+package com.adr.datasql.meta;
 
-import com.adr.datasql.meta.CommandSQL;
-import com.adr.datasql.meta.BasicStatementQuery;
 import com.adr.datasql.data.MetaData;
-import com.adr.datasql.meta.StatementQuery;
-import com.adr.datasql.meta.Field;
-import com.adr.datasql.meta.SourceList;
-import com.adr.datasql.meta.SourceListFactory;
-import com.adr.datasql.meta.StatementOrder;
 import com.adr.datasql.orm.RecordParameters;
 import com.adr.datasql.orm.RecordResults;
 import java.util.ArrayList;
@@ -37,36 +30,36 @@ import java.util.stream.Collectors;
  *
  * @author adrian
  */
-public class SQLEntityList implements SourceListFactory {
+public class View implements SourceListFactory {
     
-    private String sentence = null;
+    private String name = null;
     private final List<Field> fields = new ArrayList<>();
     
-    public SQLEntityList() {        
+    public View() {
     }
     
-    public SQLEntityList(String sentence, Field... fields) {
-        this.sentence = sentence;
+    public View(String name, Field... fields) {
+        this.name = name;
         this.fields.addAll(Arrays.asList(fields));
-    }
+    }   
 
-    public String getSentence() {
-        return sentence;
+    public String getName() {
+        return name;
     }
     
-    public void setSentence(String sentence) {
-        this.sentence = sentence;
+    public void setName(String name) {
+        this.name = name;
     }
  
     public List<Field> getFields() {
         return fields;
-    }  
+    }
     
     @Override
     public String toString() {
-        return "EntityList {sentence: " + Objects.toString(sentence) + ", fields: " + Objects.toString(fields) + "}";
-    }   
-    
+        return "View {name: " + Objects.toString(getName()) + ", fields: " + Objects.toString(getFields()) + "}";
+    }
+
     private MetaData[] projection = null;
     @Override
     public MetaData[] defProjection() {
@@ -89,23 +82,23 @@ public class SQLEntityList implements SourceListFactory {
     
     @Override
     public <R, F> SourceList<R, F> createSourceList(RecordResults<R> record, RecordParameters<F> filter) {
-        return new EntityListSourceList(this, record, filter);
+        return new EntitySourceList(this, record, filter);
     }
     
-    private static class EntityListSourceList<R, F> implements SourceList<R, F> {
+    private static class EntitySourceList<R, F> implements SourceList<R, F> {
         
-        private final SQLEntityList entitylist;
+        private final View entity;
         private final RecordResults<R> record;
         private final RecordParameters<F> filter;
         private MetaData[] projection;
         private MetaData[] criteria;
         private StatementOrder[] order;
         
-        public EntityListSourceList(SQLEntityList entitylist, RecordResults<R> record, RecordParameters<F> filter) {
-            this.entitylist = entitylist;
+        public EntitySourceList(View entity, RecordResults<R> record, RecordParameters<F> filter) {
+            this.entity = entity;
             this.record = record;
             this.filter = filter;
-            this.projection = entitylist.defProjection();
+            this.projection = entity.defProjection();
             this.criteria = null;
             this.order = null;
         }
@@ -114,12 +107,12 @@ public class SQLEntityList implements SourceListFactory {
         public void setProjection(MetaData[] projection) {
             this.projection = projection;
         }
-
+        
         @Override
         public void setCriteria(MetaData[] criteria) {
             this.criteria = criteria;
         }
-
+        
         @Override
         public void setOrder(StatementOrder[] order) {
             this.order = order;
@@ -127,31 +120,9 @@ public class SQLEntityList implements SourceListFactory {
         
         @Override
         public StatementQuery<R, F> getStatementList() {
-            return SQLEntityList.getStatementList(record, filter, entitylist.getSentence(), projection, criteria, order);
+            CommandEntityList command = new CommandEntityList(entity.getName(), MetaData.getNames(projection), MetaData.getNames(criteria), order);
+            return new BasicStatementQuery<R, F>(command).setResults(record.createResults(projection)).setParameters(filter.createParams(criteria));
         }  
-    }  
-    
-    private static<R, P> StatementQuery<R, P> getStatementList(RecordResults<R> results, RecordParameters<P> parameters, String sentence, MetaData[] projection, MetaData[] criteria, StatementOrder[] order) {
-        
-        StringBuilder sqlsent = new StringBuilder(sentence);
-        
-        // the-filter-too. TO-DO
-        
-        // ORDER BY CLAUSE
-        boolean comma = false;
-        for (StatementOrder o: order) {
-            if (comma) {
-                sqlsent.append(", ");
-            } else {
-                sqlsent.append(" ORDER BY ");
-                comma = true;
-            }           
-            sqlsent.append(o.getName());
-            sqlsent.append(o.getOrder() == StatementOrder.Order.ASC ? " ASC" : " DESC");               
-        }
-
-        // build statement
-        CommandSQL sql = new CommandSQL(sqlsent.toString());     
-        return new BasicStatementQuery<R, P>(sql).setResults(results.createResults(projection)).setParameters(parameters.createParams(criteria));
-    }   
+    } 
 }
+

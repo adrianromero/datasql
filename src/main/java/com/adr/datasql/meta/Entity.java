@@ -20,116 +20,29 @@ package com.adr.datasql.meta;
 import com.adr.datasql.data.MetaData;
 import com.adr.datasql.orm.Record;
 import com.adr.datasql.orm.RecordArray;
-import com.adr.datasql.orm.RecordParameters;
-import com.adr.datasql.orm.RecordResults;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  *
  * @author adrian
  */
-public class Entity implements SourceTableFactory, SourceListFactory {
-    
-    private String name = null;
-    private final List<Field> fields = new ArrayList<Field>();
+public class Entity extends View implements SourceTableFactory {
     
     public Entity() {
     }
     
     public Entity(String name, Field... fields) {
-        this.name = name;
-        this.fields.addAll(Arrays.asList(fields));
+        super(name, fields);
     }   
-
-    public String getName() {
-        return name;
-    }
-    
-    public void setName(String name) {
-        this.name = name;
-    }
- 
-    public List<Field> getFields() {
-        return fields;
-    }
     
     @Override
     public String toString() {
-        return "Entity {name: " + Objects.toString(name) + ", fields: " + Objects.toString(fields) + "}";
-    }
-
-    private MetaData[] projection = null;
-    @Override
-    public MetaData[] defProjection() {
-        if (projection == null) {
-            List<MetaData> l =  fields.stream().map(f -> new MetaData(f.getName(), f.getKind())).collect(Collectors.toList()); 
-            projection = l.toArray(new MetaData[l.size()]);
-        }
-        return projection;
-    }
-    
-    private MetaData[] projectionkeys = null;
-    @Override
-    public MetaData[] defProjectionKeys() {
-        if (projectionkeys == null) {            
-            List<MetaData> l = fields.stream().filter(f -> f.isKey()).map(f -> new MetaData(f.getName(), f.getKind())).collect(Collectors.toList());    
-            projectionkeys = l.toArray(new MetaData[l.size()]);
-        }
-        return projectionkeys;
-    } 
-    
-    @Override
-    public <R, F> SourceList<R, F> createSourceList(RecordResults<R> record, RecordParameters<F> filter) {
-        return new EntitySourceList(this, record, filter);
+        return "Entity {name: " + Objects.toString(getName()) + ", fields: " + Objects.toString(getFields()) + "}";
     }
     
     @Override
     public <R> SourceTable<R> createSourceTable(Record<R> record) {
         return new EntitySourceTable(this, record);
-    }
-    
-    private static class EntitySourceList<R, F> implements SourceList<R, F> {
-        
-        private final Entity entity;
-        private final RecordResults<R> record;
-        private final RecordParameters<F> filter;
-        private MetaData[] projection;
-        private MetaData[] criteria;
-        private StatementOrder[] order;
-        
-        public EntitySourceList(Entity entity, RecordResults<R> record, RecordParameters<F> filter) {
-            this.entity = entity;
-            this.record = record;
-            this.filter = filter;
-            this.projection = entity.defProjection();
-            this.criteria = null;
-            this.order = null;
-        }
-        
-        @Override
-        public void setProjection(MetaData[] projection) {
-            this.projection = projection;
-        }
-        
-        @Override
-        public void setCriteria(MetaData[] criteria) {
-            this.criteria = criteria;
-        }
-        
-        @Override
-        public void setOrder(StatementOrder[] order) {
-            this.order = order;
-        }
-        
-        @Override
-        public StatementQuery<R, F> getStatementList() {
-            CommandEntityList command = new CommandEntityList(entity.getName(), MetaData.getNames(projection), MetaData.getNames(criteria), order);
-            return new BasicStatementQuery<R, F>(command).setResults(record.createResults(projection)).setParameters(filter.createParams(criteria));
-        }  
     }
     
     private static class EntitySourceTable<R> implements SourceTable<R> {

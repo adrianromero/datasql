@@ -23,6 +23,8 @@ import com.adr.datasql.link.DataLinkException;
 import com.adr.datasql.link.DataLinkFactory;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.HashMap;
+import java.util.Map;
 import javax.sql.DataSource;
 
 /**
@@ -32,9 +34,14 @@ import javax.sql.DataSource;
 public class SQLDataLinkFactory implements DataLinkFactory {
     
     private DataSource ds = null;
+    private Map<String, SQLView> viewsmap;
     
-    public SQLDataLinkFactory init(DataSource ds) {
+    public SQLDataLinkFactory init(DataSource ds, SQLView ... views) {
         this.ds = ds;
+        this.viewsmap = new HashMap<>();
+        for (SQLView v : views) {
+            viewsmap.put(v.getName(), v);
+        } 
         return this;
     }
 
@@ -42,7 +49,7 @@ public class SQLDataLinkFactory implements DataLinkFactory {
     public final DataLink getDataLink() throws DataLinkException {
         try {
             SQLDataLink dl = buildSQLDataLink();
-            dl.init(ds.getConnection());
+            dl.init(ds.getConnection(), viewsmap);
             return dl;
         } catch (SQLException ex) {
             throw new DataLinkException(ex);
