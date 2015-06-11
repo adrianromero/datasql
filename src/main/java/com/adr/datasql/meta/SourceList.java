@@ -26,7 +26,6 @@ import com.adr.datasql.data.MetaData;
  * @param <F>
  */
 public interface SourceList<R, F> {   
-    public void setProjection(MetaData[] projection);
     public void setCriteria(MetaData[] criteria);
     public void setOrder(StatementOrder[] order);   
     public StatementQuery<R, F> getStatementList(); 

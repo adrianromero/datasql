@@ -32,8 +32,8 @@ import java.util.stream.Collectors;
  */
 public class View implements SourceListFactory {
     
-    private String name = null;
-    private final List<Field> fields = new ArrayList<>();
+    protected String name = null;
+    protected final List<Field> fields = new ArrayList<>();
     
     public View() {
     }
@@ -64,22 +64,12 @@ public class View implements SourceListFactory {
     @Override
     public MetaData[] defProjection() {
         if (projection == null) {
-            List<MetaData> l =  fields.stream().map(f -> new MetaData(f.getName(), f.getKind())).collect(Collectors.toList()); 
+            List<MetaData> l =  fields.stream().filter(f -> f.isLoad()).map(f -> new MetaData(f.getName(), f.getKind())).collect(Collectors.toList()); 
             projection = l.toArray(new MetaData[l.size()]);
         }
         return projection;
     }
-    
-    private MetaData[] projectionkeys = null;
-    @Override
-    public MetaData[] defProjectionKeys() {
-        if (projectionkeys == null) {            
-            List<MetaData> l = fields.stream().filter(f -> f.isKey()).map(f -> new MetaData(f.getName(), f.getKind())).collect(Collectors.toList());    
-            projectionkeys = l.toArray(new MetaData[l.size()]);
-        }
-        return projectionkeys;
-    } 
-    
+
     @Override
     public <R, F> SourceList<R, F> createSourceList(RecordResults<R> record, RecordParameters<F> filter) {
         return new EntitySourceList(this, record, filter);
@@ -90,7 +80,6 @@ public class View implements SourceListFactory {
         private final View entity;
         private final RecordResults<R> record;
         private final RecordParameters<F> filter;
-        private MetaData[] projection;
         private MetaData[] criteria;
         private StatementOrder[] order;
         
@@ -98,14 +87,8 @@ public class View implements SourceListFactory {
             this.entity = entity;
             this.record = record;
             this.filter = filter;
-            this.projection = entity.defProjection();
             this.criteria = null;
             this.order = null;
-        }
-        
-        @Override
-        public void setProjection(MetaData[] projection) {
-            this.projection = projection;
         }
         
         @Override
@@ -120,8 +103,8 @@ public class View implements SourceListFactory {
         
         @Override
         public StatementQuery<R, F> getStatementList() {
-            CommandEntityList command = new CommandEntityList(entity.getName(), MetaData.getNames(projection), MetaData.getNames(criteria), order);
-            return new BasicStatementQuery<R, F>(command).setResults(record.createResults(projection)).setParameters(filter.createParams(criteria));
+            CommandEntityList command = new CommandEntityList(entity.getName(), MetaData.getNames(entity.defProjection()), MetaData.getNames(criteria), order);
+            return new BasicStatementQuery<R, F>(command).setResults(record.createResults(entity.defProjection())).setParameters(filter.createParams(criteria));
         }  
     } 
 }

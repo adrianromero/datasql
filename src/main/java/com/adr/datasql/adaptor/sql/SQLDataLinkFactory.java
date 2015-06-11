@@ -34,15 +34,18 @@ import javax.sql.DataSource;
 public class SQLDataLinkFactory implements DataLinkFactory {
     
     private DataSource ds = null;
-    private Map<String, SQLView> viewsmap;
+    private final Map<String, SQLView> viewsmap = new HashMap<>();
     
     public SQLDataLinkFactory init(DataSource ds, SQLView ... views) {
         this.ds = ds;
-        this.viewsmap = new HashMap<>();
         for (SQLView v : views) {
-            viewsmap.put(v.getName(), v);
+            addView(v);
         } 
         return this;
+    }
+    
+    protected void addView(SQLView v) {
+        viewsmap.put(v.getName(), v);
     }
 
     @Override

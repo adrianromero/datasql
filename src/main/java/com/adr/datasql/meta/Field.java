@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2014 Adrián Romero Corchado.
+//    Copyright (C) 2014-2015 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -28,6 +28,8 @@ public class Field {
     protected Kind kind;
     protected String name;
     protected boolean key;
+    private boolean load;
+    private boolean save;
     
     public Field() {
         this(null, null, false);
@@ -41,6 +43,8 @@ public class Field {
         this.name = name;
         this.kind = kind;
         this.key = key;
+        this.load = true;
+        this.save = true;
     }
     
     public final String getName() {
@@ -61,6 +65,22 @@ public class Field {
     
     public boolean isKey() {
         return key;
+    }
+
+    public boolean isLoad() {
+        return load;
+    }
+
+    public void setLoad(boolean load) {
+        this.load = load;
+    }
+
+    public boolean isSave() {
+        return save;
+    }
+
+    public void setSave(boolean save) {
+        this.save = save;
     }
     
     public void setKey(boolean key) {

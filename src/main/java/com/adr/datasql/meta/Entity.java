@@ -20,7 +20,9 @@ package com.adr.datasql.meta;
 import com.adr.datasql.data.MetaData;
 import com.adr.datasql.orm.Record;
 import com.adr.datasql.orm.RecordArray;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -40,6 +42,26 @@ public class Entity extends View implements SourceTableFactory {
         return "Entity {name: " + Objects.toString(getName()) + ", fields: " + Objects.toString(getFields()) + "}";
     }
     
+    private MetaData[] editable = null;
+    @Override
+    public MetaData[] defEditable() {
+        if (editable == null) {
+            List<MetaData> l =  fields.stream().filter(f -> f.isSave()).map(f -> new MetaData(f.getName(), f.getKind())).collect(Collectors.toList()); 
+            editable = l.toArray(new MetaData[l.size()]);
+        }
+        return editable;
+    }
+    
+    private MetaData[] editablekeys = null;
+    @Override
+    public MetaData[] defEditableKeys() {
+        if (editablekeys == null) {            
+            List<MetaData> l = fields.stream().filter(f -> f.isKey()).map(f -> new MetaData(f.getName(), f.getKind())).collect(Collectors.toList());    
+            editablekeys = l.toArray(new MetaData[l.size()]);
+        }
+        return editablekeys;
+    }     
+    
     @Override
     public <R> SourceTable<R> createSourceTable(Record<R> record) {
         return new EntitySourceTable(this, record);
@@ -57,26 +79,26 @@ public class Entity extends View implements SourceTableFactory {
         
         @Override
         public StatementFind<R, Object[]> getStatementGet() {
-            CommandEntityGet command = new CommandEntityGet(entity.getName(), MetaData.getNames(entity.defProjectionKeys()), MetaData.getNames(entity.defProjection()));
-            return new BasicStatementFind<R, Object[]>(command).setResults(record.createResults(entity.defProjection())).setParameters(new RecordArray().createParams(entity.defProjectionKeys()));
+            CommandEntityGet command = new CommandEntityGet(entity.getName(), MetaData.getNames(entity.defEditableKeys()), MetaData.getNames(entity.defEditable()));
+            return new BasicStatementFind<R, Object[]>(command).setResults(record.createResults(entity.defEditable())).setParameters(new RecordArray().createParams(entity.defEditableKeys()));
         }
 
         @Override
         public StatementExec<R> getStatementDelete() {
-            CommandEntityDelete command = new CommandEntityDelete(entity.getName(), MetaData.getNames(entity.defProjectionKeys()), MetaData.getNames(entity.defProjection()));
-            return new BasicStatementExec<R>(command).setParameters(record.createParams(entity.defProjection()));
+            CommandEntityDelete command = new CommandEntityDelete(entity.getName(), MetaData.getNames(entity.defEditableKeys()), MetaData.getNames(entity.defEditable()));
+            return new BasicStatementExec<R>(command).setParameters(record.createParams(entity.defEditable()));
         }
 
         @Override
         public StatementExec<R> getStatementUpdate() {
-            CommandEntityUpdate command = new CommandEntityUpdate(entity.getName(), MetaData.getNames(entity.defProjectionKeys()), MetaData.getNames(entity.defProjection()));
-            return new BasicStatementExec<R>(command).setParameters(record.createParams(entity.defProjection()));            
+            CommandEntityUpdate command = new CommandEntityUpdate(entity.getName(), MetaData.getNames(entity.defEditableKeys()), MetaData.getNames(entity.defEditable()));
+            return new BasicStatementExec<R>(command).setParameters(record.createParams(entity.defEditable()));            
         }
 
         @Override
         public StatementExec<R> getStatementInsert() {
-            CommandEntityInsert command = new CommandEntityInsert(entity.getName(), MetaData.getNames(entity.defProjectionKeys()), MetaData.getNames(entity.defProjection()));
-            return new BasicStatementExec<R>(command).setParameters(record.createParams(entity.defProjection()));            
+            CommandEntityInsert command = new CommandEntityInsert(entity.getName(), MetaData.getNames(entity.defEditableKeys()), MetaData.getNames(entity.defEditable()));
+            return new BasicStatementExec<R>(command).setParameters(record.createParams(entity.defEditable()));            
         }
     }
 }

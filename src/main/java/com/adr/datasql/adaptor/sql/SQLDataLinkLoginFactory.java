@@ -17,11 +17,23 @@
 
 package com.adr.datasql.adaptor.sql;
 
+import javax.sql.DataSource;
+
 /**
  *
  * @author adrian
  */
 public class SQLDataLinkLoginFactory extends SQLDataLinkFactory {
+        
+    @Override
+    public SQLDataLinkFactory init(DataSource ds, SQLView ... views) {        
+       addView(new SQLView(
+               "view_permission", 
+               "select permission.id, permission.role_id, subject.id as subject_id, subject.name as subject_name, subject.code as subject_code "
+                       + "from permission join subject on permission.subject_id = subject.id",
+               "permission"));       
+       return super.init(ds, views);
+    }    
     
     @Override
     protected SQLDataLink buildSQLDataLink() {

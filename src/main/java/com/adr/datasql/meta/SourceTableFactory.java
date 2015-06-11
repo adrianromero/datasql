@@ -1,5 +1,5 @@
 //    Data SQL is a light JDBC wrapper.
-//    Copyright (C) 2014 Adrián Romero Corchado.
+//    Copyright (C) 2014-2015 Adrián Romero Corchado.
 //
 //    This file is part of Data SQL
 //
@@ -25,7 +25,7 @@ import com.adr.datasql.orm.Record;
  * @author adrian
  */
 public interface SourceTableFactory {
-    public MetaData[] defProjection();
-    public MetaData[] defProjectionKeys();    
+    public MetaData[] defEditable();
+    public MetaData[] defEditableKeys();        
     public <R> SourceTable<R> createSourceTable(Record<R> record);    
 }
