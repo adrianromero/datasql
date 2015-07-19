@@ -52,14 +52,9 @@ public class Entity extends View implements SourceTableFactory {
         return editable;
     }
     
-    private MetaData[] editablekeys = null;
     @Override
     public MetaData[] defEditableKeys() {
-        if (editablekeys == null) {            
-            List<MetaData> l = fields.stream().filter(f -> f.isKey()).map(f -> new MetaData(f.getName(), f.getKind())).collect(Collectors.toList());    
-            editablekeys = l.toArray(new MetaData[l.size()]);
-        }
-        return editablekeys;
+        return defProjectionKeys(); // EditableKeys and ProjectionKeys are the same in Views -> Entities
     }     
     
     @Override

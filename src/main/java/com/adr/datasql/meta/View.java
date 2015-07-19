@@ -18,6 +18,7 @@
 package com.adr.datasql.meta;
 
 import com.adr.datasql.data.MetaData;
+import com.adr.datasql.orm.RecordArray;
 import com.adr.datasql.orm.RecordParameters;
 import com.adr.datasql.orm.RecordResults;
 import java.util.ArrayList;
@@ -69,7 +70,17 @@ public class View implements SourceListFactory {
         }
         return projection;
     }
-
+    
+    private MetaData[] keys = null;
+    @Override
+    public MetaData[] defProjectionKeys() {
+        if (keys == null) {            
+            List<MetaData> l = fields.stream().filter(f -> f.isKey()).map(f -> new MetaData(f.getName(), f.getKind())).collect(Collectors.toList());    
+            keys = l.toArray(new MetaData[l.size()]);
+        }
+        return keys;
+    }     
+    
     @Override
     public <R, F> SourceList<R, F> createSourceList(RecordResults<R> record, RecordParameters<F> filter) {
         return new EntitySourceList(this, record, filter);
@@ -77,14 +88,14 @@ public class View implements SourceListFactory {
     
     private static class EntitySourceList<R, F> implements SourceList<R, F> {
         
-        private final View entity;
+        private final View view;
         private final RecordResults<R> record;
         private final RecordParameters<F> filter;
         private MetaData[] criteria;
         private StatementOrder[] order;
         
-        public EntitySourceList(View entity, RecordResults<R> record, RecordParameters<F> filter) {
-            this.entity = entity;
+        public EntitySourceList(View view, RecordResults<R> record, RecordParameters<F> filter) {
+            this.view = view;
             this.record = record;
             this.filter = filter;
             this.criteria = null;
@@ -103,9 +114,15 @@ public class View implements SourceListFactory {
         
         @Override
         public StatementQuery<R, F> getStatementList() {
-            CommandEntityList command = new CommandEntityList(entity.getName(), MetaData.getNames(entity.defProjection()), MetaData.getNames(criteria), order);
-            return new BasicStatementQuery<R, F>(command).setResults(record.createResults(entity.defProjection())).setParameters(filter.createParams(criteria));
+            CommandEntityList command = new CommandEntityList(view.getName(), MetaData.getNames(view.defProjection()), MetaData.getNames(criteria), order);
+            return new BasicStatementQuery<R, F>(command).setResults(record.createResults(view.defProjection())).setParameters(filter.createParams(criteria));
         }  
+
+        @Override
+        public StatementFind<R, Object[]> getStatementFind() {
+            CommandEntityGet command = new CommandEntityGet(view.getName(), MetaData.getNames(view.defProjectionKeys()), MetaData.getNames(view.defProjection()));
+            return new BasicStatementFind<R, Object[]>(command).setResults(record.createResults(view.defProjection())).setParameters(new RecordArray().createParams(view.defProjectionKeys()));
+        }       
     } 
 }
 

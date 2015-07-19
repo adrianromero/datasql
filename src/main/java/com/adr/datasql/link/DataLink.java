@@ -294,6 +294,10 @@ public abstract class DataLink implements AutoCloseable {
         return find(sourcetable.getStatementGet(), key);
     }
     
+    public final <P> P find(SourceList<P, ?> sourcelist, Object... key) throws DataLinkException { 
+        return find(sourcelist.getStatementFind(), key);
+    }
+    
     public final <P> List<P> list(SourceList<P, ?> sourcelist) throws DataLinkException {
         return query(sourcelist.getStatementList());
     } 

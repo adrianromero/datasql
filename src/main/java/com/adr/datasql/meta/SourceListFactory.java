@@ -28,5 +28,6 @@ import com.adr.datasql.orm.RecordResults;
 public interface SourceListFactory {
     
     public MetaData[] defProjection();
+    public MetaData[] defProjectionKeys();
     public <R, F> SourceList<R, F> createSourceList(RecordResults<R> record, RecordParameters<F> filter);
 }

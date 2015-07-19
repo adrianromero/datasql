@@ -28,5 +28,6 @@ import com.adr.datasql.data.MetaData;
 public interface SourceList<R, F> {   
     public void setCriteria(MetaData[] criteria);
     public void setOrder(StatementOrder[] order);   
-    public StatementQuery<R, F> getStatementList(); 
+    public StatementQuery<R, F> getStatementList();
+    public StatementFind<R, Object[]> getStatementFind(); 
 }
