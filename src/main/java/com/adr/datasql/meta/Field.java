@@ -27,9 +27,10 @@ public class Field {
     
     protected Kind kind;
     protected String name;
-    protected boolean key;
     private boolean load;
     private boolean save;
+    
+    protected boolean key;
     
     public Field() {
         this(null, null, false);
@@ -62,10 +63,6 @@ public class Field {
     public final void setKind(Kind kind) {
         this.kind = kind;
     }
-    
-    public boolean isKey() {
-        return key;
-    }
 
     public boolean isLoad() {
         return load;
@@ -81,6 +78,10 @@ public class Field {
 
     public void setSave(boolean save) {
         this.save = save;
+    }
+    
+    public boolean isKey() {
+        return key;
     }
     
     public void setKey(boolean key) {
