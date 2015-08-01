@@ -64,11 +64,11 @@ public class SQLDataLink extends DataLink {
     }
     @Override
     public <P> int exec(CommandEntityUpdate command, Parameters<P> parameters, P params) throws DataLinkException {
-        return exec(SQLDataLink.this.buildSQLCommand(command), parameters, params);        
+        return exec(buildSQLCommand(command), parameters, params);        
     }
     @Override
     public <P> int exec(CommandEntityDelete command, Parameters<P> parameters, P params) throws DataLinkException {
-        return exec(SQLDataLink.this.buildSQLCommand(command), parameters, params);    
+        return exec(buildSQLCommand(command), parameters, params);    
     }
     @Override
     public <P> int exec(CommandGeneric command, Parameters<P> parameters, P params) throws DataLinkException {
@@ -265,7 +265,7 @@ public class SQLDataLink extends DataLink {
     }
     
     private CommandSQL buildSQLCommand(CommandEntityGet command) {
-        return SQLDataLink.this.buildSQLCommand(new CommandEntityList(command.getName(), command.getFields(), command.getKeys(), null));
+        return buildSQLCommand(new CommandEntityList(command.getName(), command.getFields(), command.getKeys(), null));
     }
 
     private CommandSQL buildSQLCommand(CommandEntityList command) {
