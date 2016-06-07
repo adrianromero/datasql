@@ -23,4 +23,5 @@ package com.adr.datasql.link;
  */
 public interface DataLinkFactory {
     public DataLink getDataLink() throws DataLinkException;
+//    public void process(DataLinkTransaction t) throws DataLinkException;
 }

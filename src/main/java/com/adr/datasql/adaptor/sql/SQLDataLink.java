@@ -181,7 +181,7 @@ public class SQLDataLink extends DataLink {
         SQLView v = viewsmap.get(viewname);
         return v == null ? viewname : v.getTable();
     }
-       
+   
     private String getSentence(String viewname) {
         SQLView v = viewsmap.get(viewname);
         return (v == null ? viewname : "(" + v.getSentence() + ")") + " TABLE_ALIAS";
