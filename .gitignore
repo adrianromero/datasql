@@ -1,5 +1,8 @@
-# test database
-
+# build application files
 target/
-mytestdb/
-derby.log
+/nbproject/
+/.gradle/
+/.nb-gradle/
+/build/
+/private/
+
